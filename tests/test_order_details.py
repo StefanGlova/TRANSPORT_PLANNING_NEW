@@ -7,10 +7,10 @@ class TestOrderDetails(unittest.TestCase):
         # sample orderbook.csv file for testing
         with open("orderbook.csv", "w") as file:
             file.write(
-                "Customer Name, Customer Postcode, SKU, Qty, Vehicle Type, Due Date\n"
+                "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
             )
-            file.write("Alice,E1W 2RG,UG460,57,trailer,trailer,2024-04-10\n")
-            file.write("Bob,N9 9LA,PB115,1000,rigid,2023-11-10\n")
+            file.write("Alice,E1W 2RG,SKU123,57,trailer,trailer,2024-04-10\n")
+            file.write("Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n")
 
         # initialize OrderParser
         parser = OrderParser("orderbook.csv")
