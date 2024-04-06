@@ -5,7 +5,7 @@ class ParseCSV:
     def __init__(self, file_path):
         self.file_path = file_path
 
-    def parse_csv(self):
+    def parse(self):
         parsed_data = []
         with open(self.file_path, "r") as file:
             reader = csv.DictReader(file)

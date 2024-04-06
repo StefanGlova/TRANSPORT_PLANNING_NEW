@@ -2,17 +2,15 @@ from parse_csv import ParseCSV
 
 
 class OrderParser:
-    def __init__(self, file_path):
-        self.file_path = file_path
+    def __init__(self, parsed_data):
+        self.parsed_data = parsed_data
 
     def parse_orderbook(self):
-
-        parsed_data = ParseCSV(self.file_path).parse_csv()
 
         # create variable orderbook for dictionary datastructure which stores data from orderbook file
         orderbook = {"trailer": list(), "rigid": list(), "ERROR": list()}
 
-        for row in parsed_data:
+        for row in self.parsed_data:
             customer = {
                 "Customer Name": row["Customer Name"],
                 "Customer Postcode": row["Customer Postcode"],
@@ -27,6 +25,6 @@ class OrderParser:
             elif vehicle == "rigid":
                 orderbook["rigid"].append(customer)
             else:
-                pass
+                orderbook["ERROR"].append(customer)
 
         return orderbook
