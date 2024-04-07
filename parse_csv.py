@@ -28,7 +28,6 @@ class ParseCSV:
         Returns:
             list: A list of dictionaries, where each dictionary represents row in parsed file
         """
-
         # list which stores the parsed data
         parsed_data = []
         with open(self.file_path, "r") as file:

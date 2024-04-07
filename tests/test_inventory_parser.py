@@ -11,12 +11,15 @@ class TestInventoryParser(unittest.TestCase):
         """
         Test parsing list of dictionaries.
 
+        This test case verifies that InventoryParser class correctly parse and organised input list of dictionaries and return dictionary, which correctly groupt sum value and group key, where key is SKU and value Qty.
 
 
         It checks:
-        -
+        - Qty when SKU is in parsed_data once and qty is 0
+        - Qty when SKU is in parsed_data once and qty is positive Int
+        - Qty when SKU is in parased_data more then once and qty is positive Int
         """
-
+        # Create parsed_data list of dicts for testing purpose
         parsed_data = [
             {
                 "SKU": "SKU1",
@@ -38,10 +41,8 @@ class TestInventoryParser(unittest.TestCase):
 
         # Initialize InventoryParser object
         parser = InventoryParser(parsed_data)
-
         # Parse the inventory
         inventory = parser.parse_inventory()
-
         # Verify the parsed data
         self.assertEqual(len(inventory), 3)
         self.assertEqual(inventory["SKU1"], 20)

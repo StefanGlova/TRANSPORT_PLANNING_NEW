@@ -21,6 +21,7 @@ class TestOrderParser(unittest.TestCase):
         - The existence and correctness of orders with invalid vehicle info
         """
 
+        # Create parsed_data list of dicts for testing purpose
         parsed_data = [
             {
                 "Customer Name": "Alice",
@@ -50,10 +51,8 @@ class TestOrderParser(unittest.TestCase):
 
         # Initialize OrderParser object
         parser = OrderParser(parsed_data)
-
         # Parse the orderbook
         orders_by_vehicle = parser.parse_orderbook()
-
         # Verify the parsed data
         self.assertEqual(len(orders_by_vehicle["trailer"]), 1)
         self.assertEqual(len(orders_by_vehicle["rigid"]), 1)

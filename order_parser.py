@@ -10,14 +10,13 @@ class OrderParser:
 
     def parse_orderbook(self) -> dict:
         """
+        Parse data from parsed_data list into dictionary of lists.
 
         Returns:
             dictionary: A orderbook dictionary of three lists: trailer, rigid and ERROR. Each list is list of dictionarie containing information about orders.
         """
-
-        # Dict datastructure which stores data from orderbook file
+        # Initialize dict datastructure which stores data from orderbook file
         orderbook = {"trailer": list(), "rigid": list(), "ERROR": list()}
-
         # Iterate over each item of the parsed_data list
         for row in self.parsed_data:
             # Create customer variable (dict) which store data from each row
