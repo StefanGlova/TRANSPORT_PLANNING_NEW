@@ -1,4 +1,5 @@
 import unittest
+from postcode_parser import PostcodeParser
 
 
 class TestPostcodeParser(unittest.TestCase):
@@ -17,12 +18,10 @@ class TestPostcodeParser(unittest.TestCase):
         postcodes = parser.parse_postcodes()
 
         self.assertEqual(len(postcodes), 2)
-        self.assertEqual(postcodes[0]["Postcode"], "ABC")
-        self.assertEqual(postcodes[0]["Latitude"], 1.123456)
-        self.assertEqual(postcodes[0]["Longitude"], 50.123456)
-        self.assertEqual(postcodes[1]["Postcode"], "EFG")
-        self.assertEqual(postcodes[1]["Latitude"], 1.987654)
-        self.assertEqual(postcodes[1]["Longitude"], 50.654987)
+        self.assertEqual(postcodes["ABC"]["Latitude"], 1.123456)
+        self.assertEqual(postcodes["ABC"]["Longitude"], 50.123456)
+        self.assertEqual(postcodes["EFG"]["Latitude"], 1.987654)
+        self.assertEqual(postcodes["EFG"]["Longitude"], 50.654987)
 
 
 if __name__ == "__main__":
