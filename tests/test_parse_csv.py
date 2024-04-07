@@ -1,5 +1,5 @@
 import unittest
-from parse_csv import ParseCSV
+from parse_csv import ParseCSV, EmptyFileError
 
 
 class TestParseCSV(unittest.TestCase):

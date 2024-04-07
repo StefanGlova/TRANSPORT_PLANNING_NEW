@@ -1,6 +1,16 @@
 import csv
 
 
+class EmptyFileError(Exception):
+    """
+    Custom exception raised when the file is empty.
+    """
+
+    def __init__(self, filename):
+        super().__init__(f"The file '{filename}' is empty.")
+        self.filename = filename
+
+
 class ParseCSV:
     def __init__(self, file_path: str) -> None:
         """
@@ -24,8 +34,17 @@ class ParseCSV:
         with open(self.file_path, "r") as file:
             # Create a CSV reader object using DictReader from csv module
             reader = csv.DictReader(file)
-            # Iterate over each row in the CSV reader object
-            for row in reader:
-                # Append row to parsed_data list
-                parsed_data.append(row)
+            # Check if file is empty
+            if not any(reader):
+                raise EmptyFileError(self.file_path)
+            else:
+                # Reset the file pointer to beginning of the file
+                file.seek(0)
+                # Skip header row
+                next(reader, None)
+                # Iterate over each row in the CSV reader object
+                for row in reader:
+                    # Append row to parsed_data list
+                    parsed_data.append(row)
+
         return parsed_data
