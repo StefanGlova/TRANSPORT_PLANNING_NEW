@@ -4,3 +4,5 @@ __pycache__/
 *.pyo
 orderbook.csv
 inventory.csv
+other_test_file.csv
+empty.csv
