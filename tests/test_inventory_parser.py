@@ -1,4 +1,5 @@
 import unittest
+from inventory_parser import InventoryParser
 
 
 class TestInventoryParser(unittest.TestCase):
@@ -18,16 +19,20 @@ class TestInventoryParser(unittest.TestCase):
 
         parsed_data = [
             {
-                "SKU1": "15",
+                "SKU": "SKU1",
+                "Qty": "15",
             },
             {
-                "SKU2": "0",
+                "SKU": "SKU2",
+                "Qty": "0",
             },
             {
-                "SKU1": "5",
+                "SKU": "SKU1",
+                "Qty": "5",
             },
             {
-                "SKU3": "8",
+                "SKU": "SKU3",
+                "Qty": "8",
             },
         ]
 
@@ -35,7 +40,7 @@ class TestInventoryParser(unittest.TestCase):
         parser = InventoryParser(parsed_data)
 
         # Parse the inventory
-        inventory = parser.parse_invenvtory()
+        inventory = parser.parse_inventory()
 
         # Verify the parsed data
         self.assertEqual(len(inventory), 3)
