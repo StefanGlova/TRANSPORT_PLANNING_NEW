@@ -1,10 +1,13 @@
 import unittest
+import threading
 import os
 from parse_csv import ParseCSV, EmptyFileError
 
 # Crate path to directory where tesing files will be stored
 current_dir = os.path.dirname(os.path.realpath(__file__))
 TEST_FILES_PATH = os.path.join(current_dir, "test_files")
+NUM_THREADS = 5
+
 # Checking if directory exist and if not creating it
 os.makedirs(TEST_FILES_PATH, exist_ok=True)
 
@@ -79,6 +82,7 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(context.exception.filename, empty_file)
 
     def test_different_delimiter_and_format(self):
+        # TODO
         """
         Test parcing csv file into list of dictionaries with if file is not in  csv format, but txt; also to test for different delimiter, replacing previously used ',' with '-'.
 
@@ -174,6 +178,48 @@ class TestParseCSV(unittest.TestCase):
                 "Due Date": "2023-11-10",
             },
         )
+
+    def test_concurrency(self):
+
+        test_concurrency_file = os.path.join(TEST_FILES_PATH, "concurrency.csv")
+
+        with open(test_concurrency_file, "w") as concurrency_file:
+            concurrency_file.write(
+                "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
+            )
+            concurrency_file.write("Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n")
+            concurrency_file.write("Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n")
+
+        parser = ParseCSV(test_concurrency_file)
+        parsed_data_all_threads = []
+        threads = []
+
+        def worker():
+            parsed_data = parser.parse()
+            parsed_data_all_threads.append(parsed_data)
+
+        for _ in range(NUM_THREADS):
+            thread = threading.Thread(target=worker)
+            threads.append(thread)
+
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        expected_data = {
+            "Customer Name": "Bob",
+            "Customer Postcode": "N9 9LA",
+            "SKU": "SKU456",
+            "Qty": "1000",
+            "Vehicle Type": "rigid",
+            "Due Date": "2023-11-10",
+        }
+
+        self.assertEqual(len(parsed_data_all_threads), NUM_THREADS)
+        for parsed_data_thread in parsed_data_all_threads:
+            self.assertEqual(parsed_data_thread[1], expected_data)
 
 
 if __name__ == "__main__":
