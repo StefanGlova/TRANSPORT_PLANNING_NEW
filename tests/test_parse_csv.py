@@ -138,6 +138,43 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(parsed_data_encoding_test_file[1]["Customer Name"], "复")
         self.assertEqual(parsed_data_encoding_test_file[0]["SKU"], "Mäkčeň")
 
+    def test_large_file_handling(self):
+        large_file = os.path.join(TEST_FILES_PATH, "large.csv")
+        all_rows = "Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n"
+        middle_row = "Error Vehicle Type,PostCode,SKU2,5,wrong vehicle,2023-11-10\n"
+        last_row = "Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n"
+        rows_number = 5_000_000
+
+        with open(large_file, "w") as large:
+            large.write(
+                "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
+            )
+            for _ in range(rows_number):
+                large.write(all_rows)
+
+            large.write(middle_row)
+
+            for _ in range(rows_number):
+                large.write(all_rows)
+
+            large.write(last_row)
+
+        large_file_object = ParseCSV(large_file)
+        parsed_data_large_file = large_file_object.parse()
+
+        self.assertEqual(len(parsed_data_large_file), 10_000_002)
+        self.assertEqual(
+            parsed_data_large_file[10_000_001],
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
