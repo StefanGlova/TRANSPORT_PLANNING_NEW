@@ -245,6 +245,13 @@ class TestParseCSV(unittest.TestCase):
             self.assertEqual(parsed_data_thread[1], expected_data)
 
     def test_permission_error(self):
+        """
+        Test parcing csv file into list of dictionaries -testing for Permission error in case of parsing file without access permission
+
+        It checks:
+        - PermissionError raised
+        """
+        # Create test file
         file_without_permission = os.path.join(TEST_FILES_PATH, "permission.csv")
         with open(file_without_permission, "w") as no_permission:
             no_permission.write(
@@ -253,11 +260,16 @@ class TestParseCSV(unittest.TestCase):
             no_permission.write("Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n")
             no_permission.write("Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n")
 
+        # Change permission access to the file
         os.chmod(file_without_permission, 0o000)
 
+        # Check for raising PermissionError
         parser = ParseCSV(file_without_permission)  #
         with self.assertRaises(PermissionError):
             parser.parse()
+
+        # Setting file to original state, so it can be deleted and rewritten when test is run next time
+        os.chmod(file_without_permission, 0o644)
 
 
 if __name__ == "__main__":
