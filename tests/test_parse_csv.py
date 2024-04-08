@@ -68,16 +68,32 @@ class TestParseCSV(unittest.TestCase):
         - Test raises custom EmptyFileError exception when csv file is empty.
         """
         # Create empty csv file
-
-        test_empty_file = os.path.join(TEST_FILES_PATH, "empty.csv")
-        with open(test_empty_file, "w") as empty_file:
+        empty_file = os.path.join(TEST_FILES_PATH, "empty.csv")
+        with open(empty_file, "w") as empty:
             pass
         # Create ParseCSV object from empty file and test if it raise EmptyFileError exception when parse method is applied on it.
-        parser = ParseCSV(test_empty_file)
+        parser = ParseCSV(empty_file)
         with self.assertRaises(EmptyFileError) as context:
             parser.parse()
         # Check that EmptyFileError exception raises correct custom error message
-        self.assertEqual(context.exception.filename, test_empty_file)
+        self.assertEqual(context.exception.filename, empty_file)
+
+    def test_different_delimiter_and_format(self):
+        different_delimiter_file = os.path.join(
+            TEST_FILES_PATH, "different_delimiter.txt"
+        )
+        with open(different_delimiter_file, "w") as different_delimiter:
+            different_delimiter.write(
+                "Customer Name-Customer Postcode-SKU-Qty-Vehicle Type-Due Date\n"
+            )
+            different_delimiter.write("Alice-E1W 2RG-SKU123-57-trailer-2024-04-10\n")
+            different_delimiter.write("Bob-N9 9LA-SKU456-1000-rigid-2023-11-10\n")
+            different_delimiter.write(
+                "Error Vehicle Type-PostCode-SKU2-5-wrong vehicle-2023-11-10\n"
+            )
+        different_delimiter = ParseCSV(different_delimiter_file)
+        parsed_data_different_delimiter_file = different_delimiter.parse()
+        self.assertEqual(len(parsed_data_different_delimiter_file), 3)
 
 
 if __name__ == "__main__":
