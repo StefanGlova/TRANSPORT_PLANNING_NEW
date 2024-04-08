@@ -2,8 +2,10 @@ import unittest
 import os
 from parse_csv import ParseCSV, EmptyFileError
 
+# Crate path to directory where tesing files will be stored
 current_dir = os.path.dirname(os.path.realpath(__file__))
 TEST_FILES_PATH = os.path.join(current_dir, "test_files")
+# Checking if directory exist and if not creating it
 os.makedirs(TEST_FILES_PATH, exist_ok=True)
 
 
