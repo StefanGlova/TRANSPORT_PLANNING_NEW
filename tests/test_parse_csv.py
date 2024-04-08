@@ -122,7 +122,7 @@ class TestParseCSV(unittest.TestCase):
         }
 
         # Create ParseCSV objects from data in file
-        different_delimiter = ParseCSV(different_delimiter_file)
+        different_delimiter = ParseCSV(different_delimiter_file, delimiter="-")
         # Apply parse method to both objects
         parsed_data_different_delimiter_file = different_delimiter.parse()
         # Check for correct outcome

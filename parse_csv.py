@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 
 class EmptyFileError(Exception):
@@ -12,14 +13,16 @@ class EmptyFileError(Exception):
 
 
 class ParseCSV:
-    def __init__(self, file_path: str) -> None:
+    def __init__(self, file_path: str, delimiter: str = ",") -> None:
         """
         Construction method for the ParseCSV class.
 
         Parameters:
             file_path (str): The path to CSV file which will be parsed.
+            delimiter (str): The delimiter used in the CSV file with ',' as default.
         """
         self.file_path = file_path
+        self.delimiter = delimiter
 
     def parse(self) -> list:
         """
@@ -28,22 +31,34 @@ class ParseCSV:
         Returns:
             list: A list of dictionaries, where each dictionary represents row in parsed file
         """
-        # list which stores the parsed data
-        parsed_data = []
-        with open(self.file_path, "r") as file:
-            # Create a CSV reader object using DictReader from csv module
-            reader = csv.DictReader(file)
-            # Check if file is empty
-            if not any(reader):
+        if self.delimiter == ",":
+            try:
+                df = pd.read_csv(self.file_path, delimiter=self.delimiter)
+                parsed_data = df.to_dict(orient="records")
+                for row in parsed_data:
+                    for key, value in row.items():
+                        row[key] = str(value)
+            except pd.errors.EmptyDataError:
                 raise EmptyFileError(self.file_path)
-            else:
-                # Reset the file pointer to beginning of the file
-                file.seek(0)
-                # Skip header row
-                next(reader, None)
-                # Iterate over each row in the CSV reader object
-                for row in reader:
-                    # Append row to parsed_data list
-                    parsed_data.append(row)
+        else:
+            rows, parsed_data = list(), list()
+            with open(self.file_path, "r") as file:
+                # get header
+                header = file.readline()
+                # get rows
+                for line in file:
+                    rows.append(line)
+            header = header.strip().split(self.delimiter)
+
+            for row in rows:
+                row = row.strip().split(self.delimiter)
+                entry = dict()
+                for i in range(len(header)):
+                    if i == len(header) - 1:
+                        entry[header[i]] = self.delimiter.join(row[i:])
+                    else:
+                        entry[header[i]] = row[i]
+
+                parsed_data.append(entry)
 
         return parsed_data
