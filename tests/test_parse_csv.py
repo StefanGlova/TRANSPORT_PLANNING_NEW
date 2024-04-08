@@ -106,6 +106,29 @@ class TestParseCSV(unittest.TestCase):
         # Check for correct outcome
         self.assertEqual(len(parsed_data_different_delimiter_file), 3)
 
+    def test_encoding_issue(self):
+        encoding_test_file = os.path.join(TEST_FILES_PATH, "encoding.csv")
+        with open(encoding_test_file, "w", encoding="utf-8") as encoding_file:
+            encoding_file.write(
+                "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
+            )
+            encoding_file.write("Alice,E1W 2RG,Mäkčeň,57,trailer,2024-04-10\n")
+            encoding_file.write("复,N9 9LA,SKU456,1000,rigid,2023-11-10\n")
+            encoding_file.write(
+                "Non-ASCII Nameü,Non-ASCII Postcode,SKU789,10,trailer,2023-12-31\n"
+            )
+        # Create ParseCSV objects from data in files
+        encoding = ParseCSV(encoding_test_file)
+        # Apply parse method to both objects
+        parsed_data_encoding_test_file = encoding.parse()
+        # Check for correct outcome
+        self.assertEqual(len(parsed_data_encoding_test_file), 3)
+        self.assertEqual(
+            parsed_data_encoding_test_file[2]["Customer Name"], "Non-ASCII Nameü"
+        )
+        self.assertEqual(parsed_data_encoding_test_file[1]["Customer Name"], "复")
+        self.assertEqual(parsed_data_encoding_test_file[0]["SKU"], "Mäkčeň")
+
 
 if __name__ == "__main__":
     unittest.main()
