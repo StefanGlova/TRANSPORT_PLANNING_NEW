@@ -41,6 +41,15 @@ class TestParseCSV(unittest.TestCase):
             other_file.write("SKU,Qty\n")
             other_file.write("abc,56\n")
 
+        expected_data = {
+            "Customer Name": "Bob",
+            "Customer Postcode": "N9 9LA",
+            "SKU": "SKU456",
+            "Qty": "1000",
+            "Vehicle Type": "rigid",
+            "Due Date": "2023-11-10",
+        }
+
         # Create ParseCSV objects from data in files
         orderbook_file = ParseCSV(test_orderbook_file)
         other_test_file = ParseCSV(test_inventory_file)
@@ -50,6 +59,7 @@ class TestParseCSV(unittest.TestCase):
         # Check the outcome from test
         self.assertEqual(len(parsed_data_orderbook), 3)
         self.assertEqual(len(parsed_data_other_test), 1)
+        self.assertEqual(parsed_data_orderbook[1], expected_data)
 
     def test_missing_file(self):
         """
@@ -82,7 +92,6 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(context.exception.filename, empty_file)
 
     def test_different_delimiter_and_format(self):
-        # TODO
         """
         Test parcing csv file into list of dictionaries with if file is not in  csv format, but txt; also to test for different delimiter, replacing previously used ',' with '-'.
 
@@ -103,12 +112,22 @@ class TestParseCSV(unittest.TestCase):
                 "Error Vehicle Type-PostCode-SKU2-5-wrong vehicle-2023-11-10\n"
             )
 
+        expected_data = {
+            "Customer Name": "Bob",
+            "Customer Postcode": "N9 9LA",
+            "SKU": "SKU456",
+            "Qty": "1000",
+            "Vehicle Type": "rigid",
+            "Due Date": "2023-11-10",
+        }
+
         # Create ParseCSV objects from data in file
         different_delimiter = ParseCSV(different_delimiter_file)
         # Apply parse method to both objects
         parsed_data_different_delimiter_file = different_delimiter.parse()
         # Check for correct outcome
         self.assertEqual(len(parsed_data_different_delimiter_file), 3)
+        self.assertEqual(parsed_data_different_delimiter_file[1], expected_data)
 
     def test_encoding_issue(self):
         """
