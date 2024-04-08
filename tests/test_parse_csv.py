@@ -1,5 +1,10 @@
 import unittest
+import os
 from parse_csv import ParseCSV, EmptyFileError
+
+current_dir = os.path.dirname(os.path.realpath(__file__))
+TEST_FILES_PATH = os.path.join(current_dir, "test_files")
+os.makedirs(TEST_FILES_PATH, exist_ok=True)
 
 
 class TestParseCSV(unittest.TestCase):
@@ -17,7 +22,8 @@ class TestParseCSV(unittest.TestCase):
         - The number of elements of the list
         """
         # Create two csv files for testing purpose only
-        with open("orderbook.csv", "w") as file:
+        test_orderbook_file = os.path.join(TEST_FILES_PATH, "orderbook.csv")
+        with open(test_orderbook_file, "w") as file:
             file.write(
                 "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
             )
@@ -25,13 +31,14 @@ class TestParseCSV(unittest.TestCase):
             file.write("Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n")
             file.write("Error Vehicle Type,PostCode,SKU2,5,wrong vehicle,2023-11-10\n")
 
-        with open("other_test_file.csv", "w") as other_file:
+        test_inventory_file = os.path.join(TEST_FILES_PATH, "inventory.csv")
+        with open(test_inventory_file, "w") as other_file:
             other_file.write("SKU,Qty\n")
             other_file.write("abc,56\n")
 
         # Create ParseCSV objects from data in files
-        orderbook_file = ParseCSV("orderbook.csv")
-        other_test_file = ParseCSV("other_test_file.csv")
+        orderbook_file = ParseCSV(test_orderbook_file)
+        other_test_file = ParseCSV(test_inventory_file)
         # Apply parse method to both objects
         parsed_data_orderbook = orderbook_file.parse()
         parsed_data_other_test = other_test_file.parse()
@@ -59,14 +66,16 @@ class TestParseCSV(unittest.TestCase):
         - Test raises custom EmptyFileError exception when csv file is empty.
         """
         # Create empty csv file
-        with open("empty.csv", "w") as empty_file:
+
+        test_empty_file = os.path.join(TEST_FILES_PATH, "empty.csv")
+        with open(test_empty_file, "w") as empty_file:
             pass
         # Create ParseCSV object from empty file and test if it raise EmptyFileError exception when parse method is applied on it.
-        parser = ParseCSV("empty.csv")
+        parser = ParseCSV(test_empty_file)
         with self.assertRaises(EmptyFileError) as context:
             parser.parse()
         # Check that EmptyFileError exception raises correct custom error message
-        self.assertEqual(context.exception.filename, "empty.csv")
+        self.assertEqual(context.exception.filename, test_empty_file)
 
 
 if __name__ == "__main__":
