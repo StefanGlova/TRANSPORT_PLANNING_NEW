@@ -99,7 +99,7 @@ class TestParseCSV(unittest.TestCase):
                 "Error Vehicle Type-PostCode-SKU2-5-wrong vehicle-2023-11-10\n"
             )
 
-        # Create ParseCSV objects from data in files
+        # Create ParseCSV objects from data in file
         different_delimiter = ParseCSV(different_delimiter_file)
         # Apply parse method to both objects
         parsed_data_different_delimiter_file = different_delimiter.parse()
@@ -107,6 +107,15 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(len(parsed_data_different_delimiter_file), 3)
 
     def test_encoding_issue(self):
+        """
+        Test parcing csv file into list of dictionaries using utf-8 encoding to ensure it handle non ascii characters correctly.
+
+        It checks:
+        - Number of elements in the list
+        - Check for non ascii string Nameü
+        - Check for non ascii string Mäkčeň
+        - Check for non ascii string 复
+        """
         encoding_test_file = os.path.join(TEST_FILES_PATH, "encoding.csv")
         with open(encoding_test_file, "w", encoding="utf-8") as encoding_file:
             encoding_file.write(
@@ -117,7 +126,7 @@ class TestParseCSV(unittest.TestCase):
             encoding_file.write(
                 "Non-ASCII Nameü,Non-ASCII Postcode,SKU789,10,trailer,2023-12-31\n"
             )
-        # Create ParseCSV objects from data in files
+        # Create ParseCSV objects from data in file
         encoding = ParseCSV(encoding_test_file)
         # Apply parse method to both objects
         parsed_data_encoding_test_file = encoding.parse()
