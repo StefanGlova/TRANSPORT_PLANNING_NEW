@@ -244,6 +244,21 @@ class TestParseCSV(unittest.TestCase):
         for parsed_data_thread in parsed_data_all_threads:
             self.assertEqual(parsed_data_thread[1], expected_data)
 
+    def test_permission_error(self):
+        file_without_permission = os.path.join(TEST_FILES_PATH, "permission.csv")
+        with open(file_without_permission, "w") as no_permission:
+            no_permission.write(
+                "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
+            )
+            no_permission.write("Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n")
+            no_permission.write("Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n")
+
+        os.chmod(file_without_permission, 0o000)
+
+        parser = ParseCSV(file_without_permission)  #
+        with self.assertRaises(PermissionError):
+            parser.parse()
+
 
 if __name__ == "__main__":
     unittest.main()
