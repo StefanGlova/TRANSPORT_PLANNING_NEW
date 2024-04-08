@@ -79,6 +79,13 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(context.exception.filename, empty_file)
 
     def test_different_delimiter_and_format(self):
+        """
+        Test parcing csv file into list of dictionaries with if file is not in  csv format, but txt; also to test for different delimiter, replacing previously used ',' with '-'.
+
+        It checks:
+        - Number of elements in the list, when file is in txt format and delimiter is '-'.
+        """
+        # Create txt file with '-' as delimiter
         different_delimiter_file = os.path.join(
             TEST_FILES_PATH, "different_delimiter.txt"
         )
@@ -91,8 +98,12 @@ class TestParseCSV(unittest.TestCase):
             different_delimiter.write(
                 "Error Vehicle Type-PostCode-SKU2-5-wrong vehicle-2023-11-10\n"
             )
+
+        # Create ParseCSV objects from data in files
         different_delimiter = ParseCSV(different_delimiter_file)
+        # Apply parse method to both objects
         parsed_data_different_delimiter_file = different_delimiter.parse()
+        # Check for correct outcome
         self.assertEqual(len(parsed_data_different_delimiter_file), 3)
 
 
