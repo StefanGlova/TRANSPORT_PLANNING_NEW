@@ -120,6 +120,7 @@ class TestParseCSV(unittest.TestCase):
         - Check for non ascii string Mäkčeň
         - Check for non ascii string 复
         """
+        # Create encoding.csv file where not all characters are ASCII
         encoding_test_file = os.path.join(TEST_FILES_PATH, "encoding.csv")
         with open(encoding_test_file, "w", encoding="utf-8") as encoding_file:
             encoding_file.write(
@@ -132,7 +133,7 @@ class TestParseCSV(unittest.TestCase):
             )
         # Create ParseCSV objects from data in file
         encoding = ParseCSV(encoding_test_file)
-        # Apply parse method to both objects
+        # Apply parse method to the object
         parsed_data_encoding_test_file = encoding.parse()
         # Check for correct outcome
         self.assertEqual(len(parsed_data_encoding_test_file), 3)
@@ -143,6 +144,14 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(parsed_data_encoding_test_file[0]["SKU"], "Mäkčeň")
 
     def test_large_file_handling(self):
+        """
+        Test parcing csv file into list of dictionaries -testing with large file with more then 10_000_000 lines.
+
+        It checks:
+        - Number of elements in the list
+        - Check that dictionary of last line is as expected
+        """
+        # Create file with more then 10_000_000 lines
         large_file = os.path.join(TEST_FILES_PATH, "large.csv")
         all_rows = "Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n"
         middle_row = "Error Vehicle Type,PostCode,SKU2,5,wrong vehicle,2023-11-10\n"
@@ -162,10 +171,12 @@ class TestParseCSV(unittest.TestCase):
                 large.write(all_rows)
 
             large.write(last_row)
-
+        # Create ParseCSV objects from data in file
         large_file_object = ParseCSV(large_file)
+        # Apply parse method to the object
         parsed_data_large_file = large_file_object.parse()
 
+        # Check for correct outcome
         self.assertEqual(len(parsed_data_large_file), 10_000_002)
         self.assertEqual(
             parsed_data_large_file[10_000_001],
@@ -180,9 +191,15 @@ class TestParseCSV(unittest.TestCase):
         )
 
     def test_concurrency(self):
+        """
+        Test parcing csv file into list of dictionaries -testing for concurrency usage of the csv file to ensure it parse data correctly, even if used simultaneously by more threads.
 
+        It checks:
+        - Number of elements in the list
+        - Check that dictionary on possition 1 is as expected for each thread.
+        """
+        # Create test file
         test_concurrency_file = os.path.join(TEST_FILES_PATH, "concurrency.csv")
-
         with open(test_concurrency_file, "w") as concurrency_file:
             concurrency_file.write(
                 "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
@@ -190,24 +207,28 @@ class TestParseCSV(unittest.TestCase):
             concurrency_file.write("Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n")
             concurrency_file.write("Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n")
 
+        # Create ParseCSV objects from data in file
         parser = ParseCSV(test_concurrency_file)
-        parsed_data_all_threads = []
-        threads = []
+        # Initialize 2 empty lists
+        parsed_data_all_threads, threads = list(), list()
 
+        # Define function which apply parse method and append parsed_data to the list
         def worker():
             parsed_data = parser.parse()
             parsed_data_all_threads.append(parsed_data)
 
+        # Create threads and append each to the list
         for _ in range(NUM_THREADS):
             thread = threading.Thread(target=worker)
             threads.append(thread)
 
+        # Run all threads
         for thread in threads:
             thread.start()
-
         for thread in threads:
             thread.join()
 
+        # Data for check
         expected_data = {
             "Customer Name": "Bob",
             "Customer Postcode": "N9 9LA",
@@ -217,7 +238,9 @@ class TestParseCSV(unittest.TestCase):
             "Due Date": "2023-11-10",
         }
 
+        # Check of all threads has been processed
         self.assertEqual(len(parsed_data_all_threads), NUM_THREADS)
+        # Check that each thread has correct outcome
         for parsed_data_thread in parsed_data_all_threads:
             self.assertEqual(parsed_data_thread[1], expected_data)
 
