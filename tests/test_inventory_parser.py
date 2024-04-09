@@ -1,3 +1,5 @@
+# TODO - to be deleted
+
 import unittest
 from inventory_parser import InventoryParser
 
