@@ -11,6 +11,16 @@ NUM_THREADS = 5
 # Checking if directory exist and if not creating it
 os.makedirs(TEST_FILES_PATH, exist_ok=True)
 
+# Test data sample used by TextParseCSV object in various method when checking for correct outcome
+TEST_DATA_SAMPLE = {
+    "Customer Name": "Bob",
+    "Customer Postcode": "N9 9LA",
+    "SKU": "SKU456",
+    "Qty": "1000",
+    "Vehicle Type": "rigid",
+    "Due Date": "2023-11-10",
+}
+
 
 class TestParseCSV(unittest.TestCase):
     """
@@ -41,25 +51,17 @@ class TestParseCSV(unittest.TestCase):
             other_file.write("SKU,Qty\n")
             other_file.write("abc,56\n")
 
-        expected_data = {
-            "Customer Name": "Bob",
-            "Customer Postcode": "N9 9LA",
-            "SKU": "SKU456",
-            "Qty": "1000",
-            "Vehicle Type": "rigid",
-            "Due Date": "2023-11-10",
-        }
-
         # Create ParseCSV objects from data in files
         orderbook_file = ParseCSV(test_orderbook_file)
         other_test_file = ParseCSV(test_inventory_file)
         # Apply parse method to both objects
         parsed_data_orderbook = orderbook_file.parse()
         parsed_data_other_test = other_test_file.parse()
+
         # Check the outcome from test
         self.assertEqual(len(parsed_data_orderbook), 3)
         self.assertEqual(len(parsed_data_other_test), 1)
-        self.assertEqual(parsed_data_orderbook[1], expected_data)
+        self.assertEqual(parsed_data_orderbook[1], TEST_DATA_SAMPLE)
 
     def test_missing_file(self):
         """
@@ -88,6 +90,7 @@ class TestParseCSV(unittest.TestCase):
         parser = ParseCSV(empty_file)
         with self.assertRaises(EmptyFileError) as context:
             parser.parse()
+
         # Check that EmptyFileError exception raises correct custom error message
         self.assertEqual(context.exception.filename, empty_file)
 
@@ -112,22 +115,14 @@ class TestParseCSV(unittest.TestCase):
                 "Error Vehicle Type-PostCode-SKU2-5-wrong vehicle-2023-11-10\n"
             )
 
-        expected_data = {
-            "Customer Name": "Bob",
-            "Customer Postcode": "N9 9LA",
-            "SKU": "SKU456",
-            "Qty": "1000",
-            "Vehicle Type": "rigid",
-            "Due Date": "2023-11-10",
-        }
-
         # Create ParseCSV objects from data in file
         different_delimiter = ParseCSV(different_delimiter_file, delimiter="-")
         # Apply parse method to both objects
         parsed_data_different_delimiter_file = different_delimiter.parse()
+
         # Check for correct outcome
         self.assertEqual(len(parsed_data_different_delimiter_file), 3)
-        self.assertEqual(parsed_data_different_delimiter_file[1], expected_data)
+        self.assertEqual(parsed_data_different_delimiter_file[1], TEST_DATA_SAMPLE)
 
     def test_encoding_issue(self):
         """
@@ -154,6 +149,7 @@ class TestParseCSV(unittest.TestCase):
         encoding = ParseCSV(encoding_test_file)
         # Apply parse method to the object
         parsed_data_encoding_test_file = encoding.parse()
+
         # Check for correct outcome
         self.assertEqual(len(parsed_data_encoding_test_file), 3)
         self.assertEqual(
@@ -190,6 +186,7 @@ class TestParseCSV(unittest.TestCase):
                 large.write(all_rows)
 
             large.write(last_row)
+
         # Create ParseCSV objects from data in file
         large_file_object = ParseCSV(large_file)
         # Apply parse method to the object
@@ -197,17 +194,7 @@ class TestParseCSV(unittest.TestCase):
 
         # Check for correct outcome
         self.assertEqual(len(parsed_data_large_file), 10_000_002)
-        self.assertEqual(
-            parsed_data_large_file[10_000_001],
-            {
-                "Customer Name": "Bob",
-                "Customer Postcode": "N9 9LA",
-                "SKU": "SKU456",
-                "Qty": "1000",
-                "Vehicle Type": "rigid",
-                "Due Date": "2023-11-10",
-            },
-        )
+        self.assertEqual(parsed_data_large_file[10_000_001], TEST_DATA_SAMPLE)
 
     def test_concurrency(self):
         """
@@ -247,21 +234,11 @@ class TestParseCSV(unittest.TestCase):
         for thread in threads:
             thread.join()
 
-        # Data for check
-        expected_data = {
-            "Customer Name": "Bob",
-            "Customer Postcode": "N9 9LA",
-            "SKU": "SKU456",
-            "Qty": "1000",
-            "Vehicle Type": "rigid",
-            "Due Date": "2023-11-10",
-        }
-
         # Check of all threads has been processed
         self.assertEqual(len(parsed_data_all_threads), NUM_THREADS)
         # Check that each thread has correct outcome
         for parsed_data_thread in parsed_data_all_threads:
-            self.assertEqual(parsed_data_thread[1], expected_data)
+            self.assertEqual(parsed_data_thread[1], TEST_DATA_SAMPLE)
 
     def test_permission_error(self):
         """
