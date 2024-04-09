@@ -1,7 +1,8 @@
 import unittest
 import threading
 import os
-from parse_csv import ParseCSV, EmptyFileError
+from parse_csv import ParseCSV
+from errors import EmptyFileError
 
 # Crate path to directory where tesing files will be stored
 current_dir = os.path.dirname(os.path.realpath(__file__))
