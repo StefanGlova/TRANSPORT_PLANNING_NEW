@@ -3,6 +3,7 @@ import threading
 import os
 from parse_csv import ParseCSV
 from errors import EmptyFileError
+from inventory_parser import InventoryParser
 
 
 # Crate path to directory where tesing files will be stored
@@ -269,7 +270,7 @@ class TestParseCSV(unittest.TestCase):
         # Setting file to original state, so it can be deleted and rewritten when test is run next time
         os.chmod(file_without_permission, 0o644)
 
-    def test_inventory_parser(self, filetype="inventory") -> None:
+    def test_inventory_parser(self) -> None:
         """
         Test parsing list of dictionaries.
 
