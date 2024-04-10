@@ -1,3 +1,6 @@
+# TODO to be deleted
+
+
 class InventoryParser:
     def __init__(self, parsed_data: list):
         """

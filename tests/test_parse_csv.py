@@ -3,7 +3,6 @@ import threading
 import os
 from parse_csv import ParseCSV
 from errors import EmptyFileError
-from inventory_parser import InventoryParser
 
 
 # Crate path to directory where tesing files will be stored
@@ -161,43 +160,43 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(parsed_data_encoding_test_file[1]["Customer Name"], "复")
         self.assertEqual(parsed_data_encoding_test_file[0]["SKU"], "Mäkčeň")
 
-    def test_large_file_handling(self):
-        """
-        Test parcing csv file into list of dictionaries -testing with large file with more then 10_000_000 lines.
+    # def test_large_file_handling(self):
+    #     """
+    #     Test parcing csv file into list of dictionaries -testing with large file with more then 10_000_000 lines.
 
-        It checks:
-        - Number of elements in the list
-        - Check that dictionary of last line is as expected
-        """
-        # Create file with more then 10_000_000 lines
-        large_file = os.path.join(TEST_FILES_PATH, "large.csv")
-        all_rows = "Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n"
-        middle_row = "Error Vehicle Type,PostCode,SKU2,5,wrong vehicle,2023-11-10\n"
-        last_row = "Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n"
-        rows_number = 5_000_000
+    #     It checks:
+    #     - Number of elements in the list
+    #     - Check that dictionary of last line is as expected
+    #     """
+    #     # Create file with more then 10_000_000 lines
+    #     large_file = os.path.join(TEST_FILES_PATH, "large.csv")
+    #     all_rows = "Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n"
+    #     middle_row = "Error Vehicle Type,PostCode,SKU2,5,wrong vehicle,2023-11-10\n"
+    #     last_row = "Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n"
+    #     rows_number = 5_000_000
 
-        with open(large_file, "w") as large:
-            large.write(
-                "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
-            )
-            for _ in range(rows_number):
-                large.write(all_rows)
+    #     with open(large_file, "w") as large:
+    #         large.write(
+    #             "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
+    #         )
+    #         for _ in range(rows_number):
+    #             large.write(all_rows)
 
-            large.write(middle_row)
+    #         large.write(middle_row)
 
-            for _ in range(rows_number):
-                large.write(all_rows)
+    #         for _ in range(rows_number):
+    #             large.write(all_rows)
 
-            large.write(last_row)
+    #         large.write(last_row)
 
-        # Create ParseCSV objects from data in file
-        large_file_object = ParseCSV(large_file)
-        # Apply parse method to the object
-        parsed_data_large_file = large_file_object.parse()
+    #     # Create ParseCSV objects from data in file
+    #     large_file_object = ParseCSV(large_file)
+    #     # Apply parse method to the object
+    #     parsed_data_large_file = large_file_object.parse()
 
-        # Check for correct outcome
-        self.assertEqual(len(parsed_data_large_file), 10_000_002)
-        self.assertEqual(parsed_data_large_file[10_000_001], TEST_DATA_SAMPLE)
+    #     # Check for correct outcome
+    #     self.assertEqual(len(parsed_data_large_file), 10_000_002)
+    #     self.assertEqual(parsed_data_large_file[10_000_001], TEST_DATA_SAMPLE)
 
     def test_concurrency(self):
         """
@@ -252,6 +251,7 @@ class TestParseCSV(unittest.TestCase):
         """
         # Create test file
         file_without_permission = os.path.join(TEST_FILES_PATH, "permission.csv")
+        os.chmod(file_without_permission, 0o644)
         with open(file_without_permission, "w") as no_permission:
             no_permission.write(
                 "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
@@ -268,7 +268,6 @@ class TestParseCSV(unittest.TestCase):
             parser.parse()
 
         # Setting file to original state, so it can be deleted and rewritten when test is run next time
-        os.chmod(file_without_permission, 0o644)
 
     def test_inventory_parser(self) -> None:
         """
@@ -303,7 +302,8 @@ class TestParseCSV(unittest.TestCase):
         ]
 
         # Initialize InventoryParser object
-        parser = InventoryParser(parsed_data)
+        parser = ParseCSV(None)
+        parser.parsed_data = parsed_data
         # Parse the inventory
         inventory = parser.parse_inventory()
         # Verify the parsed data

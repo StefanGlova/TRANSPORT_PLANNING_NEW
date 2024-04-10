@@ -67,3 +67,19 @@ class ParseCSV:
                 parsed_data.append(entry)
 
         return parsed_data
+
+    def parse_inventory(self) -> dict:
+        """
+        Parse data from parsed_data list into dictionary and group them by SKU.
+
+        Returns:
+            dictionary: An inventory dictionary of SKU and it qty, grouped by SKU.
+        """
+        # Initialize dict datastructure which stores inventry key value pairs
+        inventory = dict()
+        # Iterate over each item of the parsed_data list
+        for row in self.parsed_data:
+            # If SKU already exist in inventory dict, then it increment its value by Qty, if does not exist, it adds it with its initial Qty
+            inventory[row["SKU"]] = inventory.get(row["SKU"], 0) + int(row["Qty"])
+
+        return inventory
