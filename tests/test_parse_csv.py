@@ -3,7 +3,6 @@ import threading
 import os
 from parse_csv import ParseCSV
 from errors import EmptyFileError
-from order_parser import OrderParser
 
 
 # Crate path to directory where tesing files will be stored
@@ -356,7 +355,8 @@ class TestParseCSV(unittest.TestCase):
         ]
 
         # Initialize OrderParser object
-        parser = OrderParser(parsed_data)
+        parser = ParseCSV(None)
+        parser.parsed_data = parsed_data
         # Parse the orderbook
         orders_by_vehicle = parser.parse_orderbook()
         # Verify the parsed data
