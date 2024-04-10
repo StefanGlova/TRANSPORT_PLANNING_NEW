@@ -2,7 +2,7 @@ import unittest
 import threading
 import os
 from parse_csv import ParseCSV
-from errors import EmptyFileError
+from errors import EmptyFileError, WrongKeysError
 
 
 # Crate path to directory where tesing files will be stored
@@ -357,8 +357,10 @@ class TestParseCSV(unittest.TestCase):
             keys_set = set(key for d in data for key in d.keys())
             parser.parsed_data = data
             if keys_set != correct_keys:
-                with self.assertRaises(WrongKeysError):
+                with self.assertRaises(WrongKeysError) as context:
                     inventory = parser.parse_inventory()
+                self.assertEqual(context.exception.method_called, "parse_inventory")
+                self.assertEqual(context.exception.correct_keys, correct_keys)
 
     def test_order_parser(self) -> None:
         """
