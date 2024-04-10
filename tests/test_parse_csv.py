@@ -3,6 +3,7 @@ import threading
 import os
 from parse_csv import ParseCSV
 from errors import EmptyFileError
+from order_parser import OrderParser
 
 
 # Crate path to directory where tesing files will be stored
