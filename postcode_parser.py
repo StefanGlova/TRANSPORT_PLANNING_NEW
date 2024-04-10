@@ -1,3 +1,6 @@
+# TODO to be deleted
+
+
 class PostcodeParser:
     def __init__(self, parsed_data: list):
         """
