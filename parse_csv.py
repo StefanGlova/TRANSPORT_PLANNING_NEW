@@ -1,5 +1,5 @@
 import pandas as pd
-from errors import EmptyFileError
+from errors import EmptyFileError, WrongKeysError
 
 
 class ParseCSV:
@@ -76,9 +76,22 @@ class ParseCSV:
             dictionary: An inventory dictionary of SKU and it qty, grouped by SKU.
         """
         # Initialize dict datastructure which stores inventry key value pairs
-        inventory = dict()
+        inventory, correct_keys = dict(), {"SKU", "Qty"}
+
+        # Check if parsed_data is not empty list
+        if self.parsed_data == []:
+            raise WrongKeysError(
+                method_called="parse_inventory", correct_keys=("SKU", "Qty")
+            )
+
         # Iterate over each item of the parsed_data list
         for row in self.parsed_data:
+            # Check if row only contains correct keys
+            if set(key for key in row.keys()) != correct_keys:
+                raise WrongKeysError(
+                    method_called="parse_inventory", correct_keys=("SKU", "Qty")
+                )
+
             # If SKU already exist in inventory dict, then it increment its value by Qty, if does not exist, it adds it with its initial Qty
             inventory[row["SKU"]] = inventory.get(row["SKU"], 0) + int(row["Qty"])
 
