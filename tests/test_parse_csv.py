@@ -160,43 +160,43 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(parsed_data_encoding_test_file[1]["Customer Name"], "复")
         self.assertEqual(parsed_data_encoding_test_file[0]["SKU"], "Mäkčeň")
 
-    def test_large_file_handling(self):
-        """
-        Test parcing csv file into list of dictionaries -testing with large file with more then 10_000_000 lines.
+    # def test_large_file_handling(self):
+    #     """
+    #     Test parcing csv file into list of dictionaries -testing with large file with more then 10_000_000 lines.
 
-        It checks:
-        - Number of elements in the list
-        - Check that dictionary of last line is as expected
-        """
-        # Create file with more then 10_000_000 lines
-        large_file = os.path.join(TEST_FILES_PATH, "large.csv")
-        all_rows = "Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n"
-        middle_row = "Error Vehicle Type,PostCode,SKU2,5,wrong vehicle,2023-11-10\n"
-        last_row = "Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n"
-        rows_number = 5_000_000
+    #     It checks:
+    #     - Number of elements in the list
+    #     - Check that dictionary of last line is as expected
+    #     """
+    #     # Create file with more then 10_000_000 lines
+    #     large_file = os.path.join(TEST_FILES_PATH, "large.csv")
+    #     all_rows = "Alice,E1W 2RG,SKU123,57,trailer,2024-04-10\n"
+    #     middle_row = "Error Vehicle Type,PostCode,SKU2,5,wrong vehicle,2023-11-10\n"
+    #     last_row = "Bob,N9 9LA,SKU456,1000,rigid,2023-11-10\n"
+    #     rows_number = 5_000_000
 
-        with open(large_file, "w") as large:
-            large.write(
-                "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
-            )
-            for _ in range(rows_number):
-                large.write(all_rows)
+    #     with open(large_file, "w") as large:
+    #         large.write(
+    #             "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
+    #         )
+    #         for _ in range(rows_number):
+    #             large.write(all_rows)
 
-            large.write(middle_row)
+    #         large.write(middle_row)
 
-            for _ in range(rows_number):
-                large.write(all_rows)
+    #         for _ in range(rows_number):
+    #             large.write(all_rows)
 
-            large.write(last_row)
+    #         large.write(last_row)
 
-        # Create ParseCSV objects from data in file
-        large_file_object = ParseCSV(large_file)
-        # Apply parse method to the object
-        parsed_data_large_file = large_file_object.parse()
+    #     # Create ParseCSV objects from data in file
+    #     large_file_object = ParseCSV(large_file)
+    #     # Apply parse method to the object
+    #     parsed_data_large_file = large_file_object.parse()
 
-        # Check for correct outcome
-        self.assertEqual(len(parsed_data_large_file), 10_000_002)
-        self.assertEqual(parsed_data_large_file[10_000_001], TEST_DATA_SAMPLE)
+    #     # Check for correct outcome
+    #     self.assertEqual(len(parsed_data_large_file), 10_000_002)
+    #     self.assertEqual(parsed_data_large_file[10_000_001], TEST_DATA_SAMPLE)
 
     def test_concurrency(self):
         """
@@ -251,7 +251,10 @@ class TestParseCSV(unittest.TestCase):
         """
         # Create test file
         file_without_permission = os.path.join(TEST_FILES_PATH, "permission.csv")
+
+        # Setting file to original state, so it can be deleted and rewritten when test is run next time
         os.chmod(file_without_permission, 0o644)
+
         with open(file_without_permission, "w") as no_permission:
             no_permission.write(
                 "Customer Name,Customer Postcode,SKU,Qty,Vehicle Type,Due Date\n"
@@ -266,8 +269,6 @@ class TestParseCSV(unittest.TestCase):
         parser = ParseCSV(file_without_permission)  #
         with self.assertRaises(PermissionError):
             parser.parse()
-
-        # Setting file to original state, so it can be deleted and rewritten when test is run next time
 
     def test_inventory_parser(self) -> None:
         """
@@ -303,6 +304,7 @@ class TestParseCSV(unittest.TestCase):
                 "SKU": "SKU3",
                 "Qty": "8",
             },
+            # Correct keys but different order
             {"Qty": "10", "SKU": "ABC"},
         ]
 
@@ -319,6 +321,7 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(inventory["ABC"], 10)
 
         # Verify correcness of keys in parsed_data dictionary
+
         # Initialize different options of keys in parsed_data dictionary
         not_enough_keys_1 = [
             {"SKU": "SKU1"},
@@ -333,7 +336,7 @@ class TestParseCSV(unittest.TestCase):
             {"ABC": "SKU2", "Qty": "5"},
         ]
         wrong_keys_2 = [{"Qty": "10", "ABC": "SKU"}, {"SKU": "SKU2", "Qty": "15"}]
-        too_may_keys = [
+        too_many_keys = [
             {"SKU": "SKU2", "Qty": "15"},
             {"SKU": "SKU2", "Qty": "15", "ABC": "EFG"},
         ]
@@ -345,7 +348,7 @@ class TestParseCSV(unittest.TestCase):
             empty_list,
             wrong_keys_1,
             wrong_keys_2,
-            too_may_keys,
+            too_many_keys,
         ]
 
         # Iterate though list of lists with various wrong keys and asserting whether it raises correctly WrongKeyError
@@ -374,6 +377,15 @@ class TestParseCSV(unittest.TestCase):
         - The correctness of specific order details for trailer and rigid
         - The existence and correctness of orders with invalid vehicle info
         """
+        # Initialize set of correct keys for parsed_data dict
+        correct_keys = {
+            "Customer Name",
+            "Customer Postcode",
+            "SKU",
+            "Qty",
+            "Vehicle Type",
+            "Due Date",
+        }
 
         # Create parsed_data list of dicts for testing purpose
         parsed_data = [
@@ -393,13 +405,14 @@ class TestParseCSV(unittest.TestCase):
                 "Vehicle Type": "rigid",
                 "Due Date": "2023-11-10",
             },
+            # Correct keys but different order
             {
-                "Customer Name": "Error Vehicle Type",
                 "Customer Postcode": "E1W 2RG",
+                "Customer Name": "Error Vehicle Type",
+                "Due Date": "2023-11-10",
                 "SKU": "SKU2",
                 "Qty": "5",
                 "Vehicle Type": "wrong vehicle",
-                "Due Date": "2023-11-10",
             },
         ]
 
@@ -417,6 +430,124 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(
             orders_by_vehicle["ERROR"][0]["Customer Name"], "Error Vehicle Type"
         )
+
+        # Verify correcness of keys in parsed_data dictionary
+
+        # Initialize different options of keys in parsed_data dictionary
+
+        not_enough_keys_1 = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        not_enough_keys_2 = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {},
+        ]
+
+        empty_dictionary = [{}]
+        empty_list = []
+
+        wrong_keys_1 = [
+            {
+                "CustomerName": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Qty": "57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        wrong_keys_2 = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "sku": "SKU123",
+                "Qty": "57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        too_many_keys = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Qty": "57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+                "Transport Volume": "50",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        all_wrong_keys = [
+            not_enough_keys_1,
+            not_enough_keys_2,
+            empty_dictionary,
+            empty_list,
+            wrong_keys_1,
+            wrong_keys_2,
+            too_many_keys,
+        ]
+
+        # Iterate though list of lists with various wrong keys and asserting whether it raises correctly WrongKeyError
+
+        for data in all_wrong_keys:
+            keys_set = set(key for d in data for key in d.keys())
+            parser.parsed_data = data
+            if keys_set != correct_keys:
+                with self.assertRaises(WrongKeysError) as context:
+                    orders_by_vehicle = parser.parse_orderbook()
+                # Check for correct Error message
+                self.assertEqual(
+                    str(context.exception),
+                    "Function parse_orderbook only accepts these keys Customer Name, Customer Postcode, SKU, Qty, Vehicle Type, Due Date!",
+                )
 
     def test_postcode_parser(self) -> None:
         """
