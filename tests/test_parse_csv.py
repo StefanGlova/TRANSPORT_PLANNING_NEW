@@ -280,6 +280,7 @@ class TestParseCSV(unittest.TestCase):
         - Qty when SKU is in parsed_data once and qty is 0
         - Qty when SKU is in parsed_data once and qty is positive Int
         - Qty when SKU is in parased_data more then once and qty is positive Int
+        - Whether each dictionary in input list only contains correct keys: 'SKU' and 'Qty' and if not raises custom WrongKeyError
         """
         # Initialize set of correct keys for parsed_data dict
         correct_keys = {"SKU", "Qty"}
@@ -324,20 +325,14 @@ class TestParseCSV(unittest.TestCase):
             {"SKU": "ABC"},
             {"SKU": "SKU2", "Qty": "15"},
         ]
-
         not_enough_keys_2 = [{"Qty": "15"}, {}, {"SKU": "SKU1", "Qty": "15"}]
-
         empty_dictionary = [{}]
-
         empty_list = []
-
         wrong_keys_1 = [
             {"SKU": "SKU1", "Qty": "15"},
             {"ABC": "SKU2", "Qty": "5"},
         ]
-
         wrong_keys_2 = [{"Qty": "10", "ABC": "SKU"}, {"SKU": "SKU2", "Qty": "15"}]
-
         too_may_keys = [
             {"SKU": "SKU2", "Qty": "15"},
             {"SKU": "SKU2", "Qty": "15", "ABC": "EFG"},
@@ -353,13 +348,14 @@ class TestParseCSV(unittest.TestCase):
             too_may_keys,
         ]
 
+        # Iterate though list of lists with various wrong keys and asserting whether it raises correctly WrongKeyError
         for data in all_wrong_keys:
             keys_set = set(key for d in data for key in d.keys())
             parser.parsed_data = data
             if keys_set != correct_keys:
                 with self.assertRaises(WrongKeysError) as context:
                     inventory = parser.parse_inventory()
-
+                # Check for correct Error message
                 self.assertEqual(
                     str(context.exception),
                     "Function parse_inventory only accepts these keys SKU, Qty!",
