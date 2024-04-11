@@ -284,7 +284,7 @@ class TestParseCSV(unittest.TestCase):
         - Whether each dictionary in input list only contains correct keys: 'SKU' and 'Qty' and if not raises custom WrongKeyError
         """
         # Initialize set of correct keys for parsed_data dict
-        correct_keys = {"SKU", "Qty"}
+        correct_keys = ["SKU", "Qty"]
 
         # Create parsed_data list of dicts for testing purpose
         parsed_data = [
@@ -353,9 +353,9 @@ class TestParseCSV(unittest.TestCase):
 
         # Iterate though list of lists with various wrong keys and asserting whether it raises correctly WrongKeyError
         for data in all_wrong_keys:
-            keys_set = set(key for d in data for key in d.keys())
+            keys_set = sorted(list(set(key for d in data for key in d.keys())))
             parser.parsed_data = data
-            if keys_set != correct_keys:
+            if keys_set != sorted(correct_keys):
                 with self.assertRaises(WrongKeysError) as context:
                     inventory = parser.parse_inventory()
                 # Check for correct Error message
@@ -378,14 +378,14 @@ class TestParseCSV(unittest.TestCase):
         - The existence and correctness of orders with invalid vehicle info
         """
         # Initialize set of correct keys for parsed_data dict
-        correct_keys = {
+        correct_keys = [
             "Customer Name",
             "Customer Postcode",
             "SKU",
             "Qty",
             "Vehicle Type",
             "Due Date",
-        }
+        ]
 
         # Create parsed_data list of dicts for testing purpose
         parsed_data = [
@@ -538,9 +538,9 @@ class TestParseCSV(unittest.TestCase):
         # Iterate though list of lists with various wrong keys and asserting whether it raises correctly WrongKeyError
 
         for data in all_wrong_keys:
-            keys_set = set(key for d in data for key in d.keys())
+            keys_set = sorted(list(set(key for d in data for key in d.keys())))
             parser.parsed_data = data
-            if keys_set != correct_keys:
+            if keys_set != sorted(correct_keys):
                 with self.assertRaises(WrongKeysError) as context:
                     orders_by_vehicle = parser.parse_orderbook()
                 # Check for correct Error message

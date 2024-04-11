@@ -76,20 +76,20 @@ class ParseCSV:
             dictionary: An inventory dictionary of SKU and it qty, grouped by SKU.
         """
         # Initialize dict datastructure which stores inventry key value pairs
-        inventory, correct_keys = dict(), {"SKU", "Qty"}
+        inventory, correct_keys = dict(), ["SKU", "Qty"]
 
         # Check if parsed_data is not empty list
         if self.parsed_data == []:
             raise WrongKeysError(
-                method_called="parse_inventory", correct_keys=("SKU", "Qty")
+                method_called="parse_inventory", correct_keys=correct_keys
             )
 
         # Iterate over each item of the parsed_data list
         for row in self.parsed_data:
             # Check if row only contains correct keys
-            if set(key for key in row.keys()) != correct_keys:
+            if sorted(list(set(key for key in row.keys()))) != sorted(correct_keys):
                 raise WrongKeysError(
-                    method_called="parse_inventory", correct_keys=("SKU", "Qty")
+                    method_called="parse_inventory", correct_keys=correct_keys
                 )
 
             # If SKU already exist in inventory dict, then it increment its value by Qty, if does not exist, it adds it with its initial Qty
@@ -106,8 +106,28 @@ class ParseCSV:
         """
         # Initialize dict datastructure which stores data from orderbook file
         orderbook = {"trailer": list(), "rigid": list(), "ERROR": list()}
+        correct_keys = [
+            "Customer Name",
+            "Customer Postcode",
+            "SKU",
+            "Qty",
+            "Vehicle Type",
+            "Due Date",
+        ]
+
+        # Check if parsed_data is not empty list
+        if self.parsed_data == []:
+            raise WrongKeysError(
+                method_called="parse_orderbook", correct_keys=correct_keys
+            )
+
         # Iterate over each item of the parsed_data list
         for row in self.parsed_data:
+            # Check if row only contains correct keys
+            if sorted(list(set(key for key in row.keys()))) != sorted(correct_keys):
+                raise WrongKeysError(
+                    method_called="parse_orderbook", correct_keys=correct_keys
+                )
             # Create customer variable (dict) which store data from each row
             customer = {
                 "Customer Name": row["Customer Name"],
