@@ -281,7 +281,7 @@ class TestParseCSV(unittest.TestCase):
         - Qty when SKU is in parsed_data once and qty is 0
         - Qty when SKU is in parsed_data once and qty is positive Int
         - Qty when SKU is in parased_data more then once and qty is positive Int
-        - Whether each dictionary in input list only contains correct keys: 'SKU' and 'Qty' and if not raises custom WrongKeyError
+        - Whether each dictionary in input list only contains correct keys: 'SKU' and 'Qty' and if not raises custom WrongKeyError with correct message
         """
         # Initialize set of correct keys for parsed_data dict
         correct_keys = ["SKU", "Qty"]
@@ -376,6 +376,7 @@ class TestParseCSV(unittest.TestCase):
         - The number of orers in ERROR list
         - The correctness of specific order details for trailer and rigid
         - The existence and correctness of orders with invalid vehicle info
+        - Whether each dictionary in input list only contains correct keys and if not it checks for raising custome WrongKeyError with correct message
         """
         # Initialize set of correct keys for parsed_data dict
         correct_keys = [
