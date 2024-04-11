@@ -75,7 +75,7 @@ class ParseCSV:
         Returns:
             dictionary: An inventory dictionary of SKU and it qty, grouped by SKU.
         """
-        # Initialize dict datastructure which stores inventry key value pairs
+        # Initialize dict datastructure which stores inventry key value pairs and also variable correct_keys
         inventory, correct_keys = dict(), ["SKU", "Qty"]
 
         # Check if parsed_data is not empty list
@@ -104,7 +104,7 @@ class ParseCSV:
         Returns:
             dictionary: A orderbook dictionary of three lists: trailer, rigid and ERROR. Each list is list of dictionarie containing information about orders.
         """
-        # Initialize dict datastructure which stores data from orderbook file
+        # Initialize dict datastructure which stores inventry key value pairs and also variable correct_keys
         orderbook = {"trailer": list(), "rigid": list(), "ERROR": list()}
         correct_keys = [
             "Customer Name",
@@ -128,6 +128,7 @@ class ParseCSV:
                 raise WrongKeysError(
                     method_called="parse_orderbook", correct_keys=correct_keys
                 )
+
             # Create customer variable (dict) which store data from each row
             customer = {
                 "Customer Name": row["Customer Name"],
@@ -156,10 +157,23 @@ class ParseCSV:
         Returns:
             dictionary: An postcode dictionary with postcode as key and value of nasted dictionary with Latitude and Longitude as key and value of float type.
         """
-        # Initialize dict datastructure which stores postcodes
-        postcodes = dict()
+        # Initialize dict datastructure which stores inventry key value pairs and also variable correct_keys
+        postcodes, correct_keys = dict(), ["Postcode", "Latitude", "Longitude"]
+
+        # Check if parsed_data is not empty list
+        if self.parsed_data == []:
+            raise WrongKeysError(
+                method_called="parse_postcodes", correct_keys=correct_keys
+            )
+
         # Iterate over each item of the parsed_data list
         for row in self.parsed_data:
+            # Check if row only contains correct keys
+            if sorted(list(set(key for key in row.keys()))) != sorted(correct_keys):
+                raise WrongKeysError(
+                    method_called="parse_postcodes", correct_keys=correct_keys
+                )
+
             # Initialize nasted dict inside postcodes dict
             postcodes[row["Postcode"]] = dict()
             # Assign Latitude and Longitude to each postcode

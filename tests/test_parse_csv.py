@@ -283,7 +283,7 @@ class TestParseCSV(unittest.TestCase):
         - Qty when SKU is in parased_data more then once and qty is positive Int
         - Whether each dictionary in input list only contains correct keys: 'SKU' and 'Qty' and if not raises custom WrongKeyError with correct message
         """
-        # Initialize set of correct keys for parsed_data dict
+        # Initialize list of correct keys for parsed_data dict
         correct_keys = ["SKU", "Qty"]
 
         # Create parsed_data list of dicts for testing purpose
@@ -378,7 +378,7 @@ class TestParseCSV(unittest.TestCase):
         - The existence and correctness of orders with invalid vehicle info
         - Whether each dictionary in input list only contains correct keys and if not it checks for raising custome WrongKeyError with correct message
         """
-        # Initialize set of correct keys for parsed_data dict
+        # Initialize list of correct keys for parsed_data dict
         correct_keys = [
             "Customer Name",
             "Customer Postcode",
@@ -563,10 +563,14 @@ class TestParseCSV(unittest.TestCase):
         - Latitude of each postcode is correct value and type (float)
         - Longitude of each postcode is correct value and type (float)
         """
+        # Initialize list of correct keys for parsed_data dict
+        correct_keys = ["Postcode", "Latitude", "Longitude"]
+
         # Create parsed_data list of dicts for testing purpose
         parsed_data = [
             {"Postcode": "ABC", "Latitude": "1.123456", "Longitude": "50.123456"},
-            {"Postcode": "EFG", "Latitude": "1.987654", "Longitude": "50.654987"},
+            # Correct keys but different order
+            {"Latitude": "1.987654", "Postcode": "EFG", "Longitude": "50.654987"},
         ]
         # Initialize PostcodeParser object
         parser = ParseCSV(None)
@@ -579,6 +583,67 @@ class TestParseCSV(unittest.TestCase):
         self.assertEqual(postcodes["ABC"]["Longitude"], 50.123456)
         self.assertEqual(postcodes["EFG"]["Latitude"], 1.987654)
         self.assertEqual(postcodes["EFG"]["Longitude"], 50.654987)
+
+        # Verify correcness of keys in parsed_data dictionary
+
+        # Initialize different options of keys in parsed_data dictionary
+
+        not_enough_keys_1 = [
+            {"Postcode": "ABC", "Longitude": "50.123456"},
+            {"Latitude": "1.987654", "Postcode": "EFG", "Longitude": "50.654987"},
+        ]
+
+        not_enough_keys_2 = [
+            {"Latitude": "1.987654", "Postcode": "EFG", "Longitude": "50.654987"},
+            {},
+        ]
+
+        empty_dictionary = [{}]
+        empty_list = []
+
+        wrong_keys_1 = [
+            {"postcode": "ABC", "Latitude": "1.123456", "Longitude": "50.123456"},
+            {"Latitude": "1.987654", "Postcode": "EFG", "Longitude": "50.654987"},
+        ]
+
+        wrong_keys_2 = [
+            {"Postcode": "ABC", "Latitude": "1.123456", "Longitude": "50.123456"},
+            {"Postcode": "EFG", "Lat": "1.987654", "Long": "50.654987"},
+        ]
+
+        too_many_keys = [
+            {"Postcode": "ABC", "Latitude": "1.123456", "Longitude": "50.123456"},
+            {
+                "Latitude": "1.987654",
+                "Postcode": "EFG",
+                "Longitude": "50.654987",
+                "Distance": "125",
+            },
+        ]
+
+        all_wrong_keys = [
+            not_enough_keys_1,
+            not_enough_keys_2,
+            empty_dictionary,
+            empty_list,
+            wrong_keys_1,
+            wrong_keys_2,
+            too_many_keys,
+        ]
+
+        # Iterate though list of lists with various wrong keys and asserting whether it raises correctly WrongKeyError
+
+        for data in all_wrong_keys:
+            keys_set = sorted(list(set(key for d in data for key in d.keys())))
+            parser.parsed_data = data
+            if keys_set != sorted(correct_keys):
+                with self.assertRaises(WrongKeysError) as context:
+                    orders_by_vehicle = parser.parse_postcodes()
+                # Check for correct Error message
+                self.assertEqual(
+                    str(context.exception),
+                    "Function parse_postcodes only accepts these keys Postcode, Latitude, Longitude!",
+                )
 
 
 if __name__ == "__main__":
