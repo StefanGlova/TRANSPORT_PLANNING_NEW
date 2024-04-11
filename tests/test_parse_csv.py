@@ -270,6 +270,9 @@ class TestParseCSV(unittest.TestCase):
         with self.assertRaises(PermissionError):
             parser.parse()
 
+        # Setting file to original state, so it can be deleted and rewritten when test is run next time
+        os.chmod(file_without_permission, 0o644)
+
     def test_inventory_parser(self) -> None:
         """
         Test parsing list of dictionaries.
