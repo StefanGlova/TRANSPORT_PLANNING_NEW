@@ -77,7 +77,11 @@ class GeneralFileParser:
         """
         # Initialize dict datastructure which stores inventry key value pairs and also variable correct_keys
         postcodes, correct_keys = dict(), ["Postcode", "Latitude", "Longitude"]
-
+        fields = {
+            "Postcode": "string",
+            "Latitude": "Decimal place number",
+            "Longitude": "Decimal place number",
+        }
         # Check if parsed_data is not empty list
         if self.parsed_data == []:
             raise WrongKeysError(
@@ -92,10 +96,20 @@ class GeneralFileParser:
                     method_called="parse_postcodes", correct_keys=correct_keys
                 )
 
+            # Check if Latitude and Longitude has decimal place numeric value. If has, convert to float data type, if not, raise error
+            try:
+                lat = float(row["Latitude"])
+            except ValueError:
+                raise WrongValueTypeError("Latitude", fields)
+            try:
+                long = float(row["Longitude"])
+            except ValueError:
+                raise WrongValueTypeError("Longitude", fields)
+
             # Initialize nasted dict inside postcodes dict
             postcodes[row["Postcode"]] = dict()
             # Assign Latitude and Longitude to each postcode
-            postcodes[row["Postcode"]]["Latitude"] = float(row["Latitude"])
-            postcodes[row["Postcode"]]["Longitude"] = float(row["Longitude"])
+            postcodes[row["Postcode"]]["Latitude"] = lat
+            postcodes[row["Postcode"]]["Longitude"] = long
 
         return postcodes
