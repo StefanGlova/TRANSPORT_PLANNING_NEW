@@ -28,7 +28,7 @@ class WrongValueTypeError(Exception):
 
     def __init__(self, parameter: str, field: dict):
         super().__init__(f"Parameter {parameter} must be {field[parameter]}")
-
+        self.parameter = parameter
         self.field = field
 
 
@@ -39,3 +39,5 @@ class WrongNumericRange(Exception):
 
     def __init__(self, parameter: str, range: dict):
         super().__init__(f"Parameter {parameter} {range[parameter]}")
+        self.parameter = parameter
+        self.range = range
