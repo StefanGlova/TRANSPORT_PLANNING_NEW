@@ -1,6 +1,6 @@
 import unittest
 from modules.data_processing_module.process_postcodes import ProcessPostcodes
-from modules.errors import WrongKeysError, WrongValueTypeError
+from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
 
 PARSER = ProcessPostcodes(None)
 CORRECT_KEYS = ["Postcode", "Latitude", "Longitude"]
@@ -120,6 +120,55 @@ class TestPostcodeParser(unittest.TestCase):
                 str(context.exception),
                 "Parameter Latitude must be Decimal place number",
             )
+
+    def test_postcodes_number_range(self):
+        print("test Postcodes numbers range")
+
+        parsed_data = [
+            # Latitude edge cases
+            {"Postcode": "ABC", "Latitude": "-90", "Longitude": "50.123456"},
+            {"Postcode": "ABC", "Latitude": "90", "Longitude": "50.123456"},
+            {"Postcode": "ABC", "Latitude": "-90.001", "Longitude": "50.123456"},
+            {"Postcode": "ABC", "Latitude": "90.001", "Longitude": "50.123456"},
+            {"Postcode": "ABC", "Latitude": "0", "Longitude": "50.123456"},
+            {"Postcode": "ABC", "Latitude": "-1", "Longitude": "50.123456"},
+            {"Postcode": "ABC", "Latitude": "1", "Longitude": "50.123456"},
+            {"Postcode": "ABC", "Latitude": "-180", "Longitude": "50.123456"},
+            {"Postcode": "ABC", "Latitude": "180", "Longitude": "50.123456"},
+            # Longitude edge cases
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "-180"},
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "180"},
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "-180.001"},
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "180.001"},
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "0"},
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "-1"},
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "1"},
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "-200"},
+            {"Postcode": "ABC", "Latitude": "1.987654", "Longitude": "200"},
+        ]
+
+        PARSER.parsed_data = parsed_data
+
+        # latitude_range = [-90, 90]
+        # longitude_range = [-180, 180]
+
+        for line in parsed_data:
+            lat = float(line["Latitude"])
+            long = float(line["Longitude"])
+            if lat < -90 or lat > 90:
+                with self.assertRaises(WrongNumericRange) as context:
+                    postcodes = PARSER.parse_postcodes()
+                    self.assertEqual(
+                        str(context.exception),
+                        "Parameter Latitude must be in range from -90 to +90",
+                    )
+            if long < -180 or long > 180:
+                with self.assertRaises(WrongNumericRange) as context:
+                    postcodes = PARSER.parse_postcodes()
+                    self.assertEqual(
+                        str(context.exception),
+                        "Parameter Longitude must be in range from -180 to +180",
+                    )
 
 
 if __name__ == "__main__":
