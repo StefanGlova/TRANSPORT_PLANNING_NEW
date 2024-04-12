@@ -133,6 +133,39 @@ class TestInventoryParser(unittest.TestCase):
                 "Parameter Qty must be number",
             )
 
+    def test_inventory_numbers_range(self):
+        print("test Inventory numbers range")
+
+        parsed_data = [
+            {
+                "SKU": "SKU1",
+                "Qty": "15",
+            },
+            {
+                "SKU": "SKU2",
+                "Qty": "0",
+            },
+            {
+                "SKU": "SKU1",
+                "Qty": "-5",
+            },
+            {
+                "SKU": "SKU3",
+                "Qty": "-10",
+            },
+        ]
+
+        PARSER.parsed_data = parsed_data
+
+        for line in parsed_data:
+            if float(line["Qty"]) < 0:
+                with self.assertRaises(WrongNumericRange) as context:
+                    inventory = PARSER.parse_inventory()
+                    self.assertEqual(
+                        str(context.exception),
+                        "Parameter Qty must be larger or equal to Zero",
+                    )
+
 
 if __name__ == "__main__":
     unittest.main()
