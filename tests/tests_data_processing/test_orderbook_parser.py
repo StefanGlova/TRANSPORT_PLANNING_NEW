@@ -216,7 +216,7 @@ class TestOrderbookParser(unittest.TestCase):
             PARSER.parsed_data = data
             if keys_set != sorted(CORRECT_KEYS):
                 with self.assertRaises(WrongKeysError) as context:
-                    orders_by_vehicle = PARSER.parse_orderbook()
+                    PARSER.parse_orderbook()
                 # Check for correct Error message
                 self.assertEqual(
                     str(context.exception),
@@ -248,7 +248,7 @@ class TestOrderbookParser(unittest.TestCase):
         PARSER.parsed_data = [parsed_data[0]]
 
         with self.assertRaises(WrongValueTypeError) as context:
-            orderbook = PARSER.parse_orderbook()
+            PARSER.parse_orderbook()
             self.assertEqual(
                 str(context.exception),
                 "Parameter Qty must be number",
@@ -257,7 +257,7 @@ class TestOrderbookParser(unittest.TestCase):
         PARSER.parsed_data = [parsed_data[1]]
 
         with self.assertRaises(WrongValueTypeError) as context:
-            orderbook = PARSER.parse_orderbook()
+            PARSER.parse_orderbook()
             self.assertEqual(str(context.exception), "Parameter Due Date must be date")
 
     def test_orderbook_numbers_range(self):
@@ -287,7 +287,7 @@ class TestOrderbookParser(unittest.TestCase):
         for line in parsed_data:
             if float(line["Qty"]) < 0:
                 with self.assertRaises(WrongNumericRange) as context:
-                    orderbook = PARSER.parse_orderbook()
+                    PARSER.parse_orderbook()
                     self.assertEqual(
                         str(context.exception), "Parameter Qty cannot be negative"
                     )

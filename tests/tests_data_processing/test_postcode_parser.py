@@ -97,7 +97,7 @@ class TestPostcodeParser(unittest.TestCase):
             PARSER.parsed_data = data
             if keys_set != sorted(CORRECT_KEYS):
                 with self.assertRaises(WrongKeysError) as context:
-                    orders_by_vehicle = PARSER.parse_postcodes()
+                    PARSER.parse_postcodes()
                 # Check for correct Error message
                 self.assertEqual(
                     str(context.exception),
@@ -115,7 +115,7 @@ class TestPostcodeParser(unittest.TestCase):
         PARSER.parsed_data = parsed_data
 
         with self.assertRaises(WrongValueTypeError) as context:
-            postcodes = PARSER.parse_postcodes()
+            PARSER.parse_postcodes()
             self.assertEqual(
                 str(context.exception),
                 "Parameter Latitude must be Decimal place number",
@@ -157,14 +157,14 @@ class TestPostcodeParser(unittest.TestCase):
             long = float(line["Longitude"])
             if lat < -90 or lat > 90:
                 with self.assertRaises(WrongNumericRange) as context:
-                    postcodes = PARSER.parse_postcodes()
+                    PARSER.parse_postcodes()
                     self.assertEqual(
                         str(context.exception),
                         "Parameter Latitude must be in range from -90 to +90",
                     )
             if long < -180 or long > 180:
                 with self.assertRaises(WrongNumericRange) as context:
-                    postcodes = PARSER.parse_postcodes()
+                    PARSER.parse_postcodes()
                     self.assertEqual(
                         str(context.exception),
                         "Parameter Longitude must be in range from -180 to +180",
