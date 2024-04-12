@@ -1,6 +1,6 @@
 import unittest
 from modules.data_processing_module.process_orderbook import ProcessOrderbook
-from modules.errors import WrongKeysError, WrongValueTypeError
+from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
 from datetime import datetime
 import re
 
@@ -259,6 +259,38 @@ class TestOrderbookParser(unittest.TestCase):
         with self.assertRaises(WrongValueTypeError) as context:
             orderbook = PARSER.parse_orderbook()
             self.assertEqual(str(context.exception), "Parameter Due Date must be date")
+
+    def test_orderbook_numbers_range(self):
+        print("test Orderbook numbers range")
+
+        parsed_data = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Qty": "-57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "-10.53",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        PARSER.parsed_data = parsed_data
+
+        for line in parsed_data:
+            if float(line["Qty"]) < 0:
+                with self.assertRaises(WrongNumericRange) as context:
+                    orderbook = PARSER.parse_orderbook()
+                    self.assertEqual(
+                        str(context.exception), "Parameter Qty cannot be negative"
+                    )
 
 
 if __name__ == "__main__":

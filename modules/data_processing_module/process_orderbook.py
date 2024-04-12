@@ -1,4 +1,4 @@
-from modules.errors import WrongKeysError, WrongValueTypeError
+from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
 from datetime import datetime
 import re
 
@@ -34,6 +34,8 @@ class ProcessOrderbook:
             "Due Date": "date",
         }
 
+        range = {"Qty": "cannot be negative"}
+
         # Check if parsed_data is not empty list
         if self.parsed_data == []:
             raise WrongKeysError(
@@ -50,6 +52,8 @@ class ProcessOrderbook:
             # Check if Qty field has numeric value. If has, convert string to floating point number, if not raise error
             try:
                 qty = float(row["Qty"])
+                if qty < 0:
+                    raise WrongNumericRange("Qty", range)
             except ValueError:
                 raise WrongValueTypeError("Qty", fields)
 
