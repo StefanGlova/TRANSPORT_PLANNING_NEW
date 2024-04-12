@@ -1,6 +1,6 @@
 import unittest
 from modules.data_processing_module.parse_csv import GeneralFileParser
-from modules.errors import WrongKeysError
+from modules.errors import WrongKeysError, WrongValueTypeError
 
 PARSER = GeneralFileParser(None)
 CORRECT_KEYS = ["Postcode", "Latitude", "Longitude"]
@@ -103,6 +103,23 @@ class TestPostcodeParser(unittest.TestCase):
                     str(context.exception),
                     "Function parse_postcodes only accepts these keys Postcode, Latitude, Longitude!",
                 )
+
+    def test_postcodes_wrong_value_type(self):
+        print("test Postcode wrong value type")
+
+        parsed_data = [
+            {"Postcode": "ABC", "Latitude": "ABC", "Longitude": "50.123456"},
+            {"Latitude": "1.987654", "Postcode": "EFG", "Longitude": "50.654987"},
+        ]
+
+        PARSER.parsed_data = parsed_data
+
+        with self.assertRaises(WrongValueTypeError) as context:
+            postcodes = PARSER.parse_postcodes()
+            self.assertEqual(
+                str(context.exception),
+                "Parameter Latitude must be Decimal place number",
+            )
 
 
 if __name__ == "__main__":
