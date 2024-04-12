@@ -103,7 +103,7 @@ class TestInventoryParser(unittest.TestCase):
                 )
 
     def test_inventory_wrong_value_type(self):
-        print("Inventory wrong value type")
+        print("test Inventory wrong value type")
 
         parsed_data = [
             {

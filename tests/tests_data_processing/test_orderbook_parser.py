@@ -1,6 +1,6 @@
 import unittest
 from modules.data_processing_module.parse_csv import GeneralFileParser
-from modules.errors import WrongKeysError
+from modules.errors import WrongKeysError, WrongValueTypeError
 
 PARSER = GeneralFileParser(None)
 CORRECT_KEYS = [
@@ -77,7 +77,7 @@ class TestOrderbookParser(unittest.TestCase):
 
     def test_orderbook_incorrect_inputs(self):
 
-        print("test Inventory incorrect")
+        print("test Orderbook incorrect")
 
         # Initialize different options of keys in parsed_data dictionary
 
@@ -194,6 +194,43 @@ class TestOrderbookParser(unittest.TestCase):
                     str(context.exception),
                     "Function parse_orderbook only accepts these keys Customer Name, Customer Postcode, SKU, Qty, Vehicle Type, Due Date!",
                 )
+
+    def test_orderbook_wrong_value_type(self):
+        print("test Orderbook wrong value type")
+
+        parsed_data = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Qty": "ABC",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "ABCD",
+            },
+        ]
+
+        PARSER.parsed_data = [parsed_data[0]]
+
+        with self.assertRaises(WrongValueTypeError) as context:
+            orderbook = PARSER.parse_orderbook()
+            self.assertEqual(
+                str(context.exception),
+                "Parameter Qty must be number",
+            )
+
+        PARSER.parsed_data = [parsed_data[1]]
+
+        with self.assertRaises(WrongValueTypeError) as context:
+            orderbook = PARSER.parse_orderbook()
+            self.assertEqual(str(context.exception), "Parameter Due Date must be date")
 
 
 if __name__ == "__main__":

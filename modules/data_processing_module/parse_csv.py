@@ -1,5 +1,7 @@
 import pandas as pd
 from modules.errors import EmptyFileError, WrongKeysError, WrongValueTypeError
+from datetime import datetime
+import re
 
 
 class GeneralFileParser:
@@ -86,6 +88,15 @@ class GeneralFileParser:
             "Due Date",
         ]
 
+        fields = {
+            "Customer Name": "string",
+            "Customer Postcode": "string",
+            "SKU": "string",
+            "Qty": "number",
+            "Vehicle Type": "string",
+            "Due Date": "date",
+        }
+
         # Check if parsed_data is not empty list
         if self.parsed_data == []:
             raise WrongKeysError(
@@ -99,14 +110,26 @@ class GeneralFileParser:
                 raise WrongKeysError(
                     method_called="parse_orderbook", correct_keys=correct_keys
                 )
+            # Check if Qty field has numeric value
+            try:
+                qty = int(row["Qty"])
+            except ValueError:
+                raise WrongValueTypeError("Qty", fields)
 
+            # Check if Due Date field has date format
+            try:
+                date_string = row["Due Date"]
+                match = re.search(r"\d{4}-\d{2}-\d{2}", date_string)
+                date = datetime.strptime(match.group(), "%Y-%m-%d").date()
+            except AttributeError:
+                raise WrongValueTypeError("Due Date", fields)
             # Create customer variable (dict) which store data from each row
             customer = {
                 "Customer Name": row["Customer Name"],
                 "Customer Postcode": row["Customer Postcode"],
                 "SKU": row["SKU"],
-                "Qty": row["Qty"],
-                "Due Date": row["Due Date"],
+                "Qty": qty,
+                "Due Date": date,
             }
             # Create vehicle variable (str) which stores vehicle type
             vehicle = row["Vehicle Type"]
