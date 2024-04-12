@@ -1,0 +1,200 @@
+import unittest
+from modules.data_processing_module.parse_csv import GeneralFileParser
+from modules.errors import WrongKeysError
+
+PARSER = GeneralFileParser(None)
+CORRECT_KEYS = [
+    "Customer Name",
+    "Customer Postcode",
+    "SKU",
+    "Qty",
+    "Vehicle Type",
+    "Due Date",
+]
+
+
+class TestOrderbookParser(unittest.TestCase):
+
+    def test_orderbook_correct_input(self) -> None:
+        """
+        Test parsing list of dictionaries.
+
+        This test case verifies that OrderParser class correctly parse and organised input list of dictionaries and return dictionary, which separate orders by vehicle type as trailer, rigid and ERROR.
+
+        It checks:
+        - The number of orders in the trailer list
+        - The number of orders in rigid list
+        - The number of orers in ERROR list
+        - The correctness of specific order details for trailer and rigid
+        - The existence and correctness of orders with invalid vehicle info
+        - Whether each dictionary in input list only contains correct keys and if not it checks for raising custome WrongKeyError with correct message
+        """
+
+        print("test Orderbook correct")
+
+        # Create parsed_data list of dicts for testing purpose
+        parsed_data = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Qty": "57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+            # Correct keys but different order
+            {
+                "Customer Postcode": "E1W 2RG",
+                "Customer Name": "Error Vehicle Type",
+                "Due Date": "2023-11-10",
+                "SKU": "SKU2",
+                "Qty": "5",
+                "Vehicle Type": "wrong vehicle",
+            },
+        ]
+
+        # Initialize OrderParser object
+        PARSER.parsed_data = parsed_data
+        # Parse the orderbook
+        orders_by_vehicle = PARSER.parse_orderbook()
+        # Verify the parsed data
+        self.assertEqual(len(orders_by_vehicle["trailer"]), 1)
+        self.assertEqual(len(orders_by_vehicle["rigid"]), 1)
+        self.assertEqual(orders_by_vehicle["trailer"][0]["Customer Name"], "Alice")
+        self.assertEqual(orders_by_vehicle["rigid"][0]["Customer Postcode"], "N9 9LA")
+        self.assertEqual(len(orders_by_vehicle["ERROR"]), 1)
+        self.assertEqual(
+            orders_by_vehicle["ERROR"][0]["Customer Name"], "Error Vehicle Type"
+        )
+
+    def test_orderbook_incorrect_inputs(self):
+
+        print("test Inventory incorrect")
+
+        # Initialize different options of keys in parsed_data dictionary
+
+        not_enough_keys_1 = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        not_enough_keys_2 = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {},
+        ]
+
+        empty_dictionary = [{}]
+        empty_list = []
+
+        wrong_keys_1 = [
+            {
+                "CustomerName": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Qty": "57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        wrong_keys_2 = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "sku": "SKU123",
+                "Qty": "57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        too_many_keys = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Qty": "57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+                "Transport Volume": "50",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
+        ]
+
+        all_wrong_keys = [
+            not_enough_keys_1,
+            not_enough_keys_2,
+            empty_dictionary,
+            empty_list,
+            wrong_keys_1,
+            wrong_keys_2,
+            too_many_keys,
+        ]
+
+        # Iterate though list of lists with various wrong keys and asserting whether it raises correctly WrongKeyError
+
+        for data in all_wrong_keys:
+            keys_set = sorted(list(set(key for d in data for key in d.keys())))
+            PARSER.parsed_data = data
+            if keys_set != sorted(CORRECT_KEYS):
+                with self.assertRaises(WrongKeysError) as context:
+                    orders_by_vehicle = PARSER.parse_orderbook()
+                # Check for correct Error message
+                self.assertEqual(
+                    str(context.exception),
+                    "Function parse_orderbook only accepts these keys Customer Name, Customer Postcode, SKU, Qty, Vehicle Type, Due Date!",
+                )
+
+
+if __name__ == "__main__":
+    unittest.main()

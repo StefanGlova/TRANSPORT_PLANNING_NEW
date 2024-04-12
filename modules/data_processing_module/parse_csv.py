@@ -1,8 +1,8 @@
 import pandas as pd
-from errors import EmptyFileError, WrongKeysError
+from modules.errors import EmptyFileError, WrongKeysError
 
 
-class ParseCSV:
+class GeneralFileParser:
     def __init__(self, file_path: str, delimiter: str = ",") -> None:
         """
         Construction method for the ParseCSV class.
