@@ -1,6 +1,7 @@
 import unittest
 from modules.data_processing_module.process_inventory import ProcessInventory
-from modules.errors import WrongKeysError, WrongValueTypeError
+from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
+
 
 PARSER = ProcessInventory(None)
 CORRECT_KEYS = ["SKU", "Qty"]
@@ -163,7 +164,7 @@ class TestInventoryParser(unittest.TestCase):
                     inventory = PARSER.parse_inventory()
                     self.assertEqual(
                         str(context.exception),
-                        "Parameter Qty must be larger or equal to Zero",
+                        "Parameter Qty cannot be negative",
                     )
 
 

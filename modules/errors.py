@@ -30,3 +30,12 @@ class WrongValueTypeError(Exception):
         super().__init__(f"Parameter {parameter} must be {field[parameter]}")
 
         self.field = field
+
+
+class WrongNumericRange(Exception):
+    """
+    Custom exception raised when numeric value is not in expected range.
+    """
+
+    def __init__(self, parameter: str, range: dict):
+        super().__init__(f"Parameter {parameter} {range[parameter]}")

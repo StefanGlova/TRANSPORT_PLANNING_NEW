@@ -1,4 +1,4 @@
-from modules.errors import WrongKeysError, WrongValueTypeError
+from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
 
 
 class ProcessInventory:
@@ -15,6 +15,7 @@ class ProcessInventory:
         # Initialize dict datastructure which stores inventry key value pairs and also variable correct_keys
         inventory, correct_keys = dict(), ["SKU", "Qty"]
         fields = {"SKU": "string", "Qty": "number"}
+        range = {"Qty": "cannot be negative"}
 
         # Check if parsed_data is not empty list
         if self.parsed_data == []:
@@ -32,6 +33,8 @@ class ProcessInventory:
             # Check if Qty field has numeric value
             try:
                 qty = int(row["Qty"])
+                if qty < 0:
+                    raise WrongNumericRange("Qty", range)
             except ValueError:
                 raise WrongValueTypeError("Qty", fields)
             # If SKU already exist in inventory dict, then it increment its value by Qty, if does not exist, it adds it with its initial Qty
