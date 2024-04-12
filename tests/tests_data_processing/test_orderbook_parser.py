@@ -1,6 +1,8 @@
 import unittest
 from modules.data_processing_module.process_orderbook import ProcessOrderbook
 from modules.errors import WrongKeysError, WrongValueTypeError
+from datetime import datetime
+import re
 
 PARSER = ProcessOrderbook(None)
 CORRECT_KEYS = [
@@ -59,6 +61,14 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "5",
                 "Vehicle Type": "wrong vehicle",
             },
+            {
+                "Customer Name": "Abcd",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "10.53",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+            },
         ]
 
         # Initialize OrderParser object
@@ -67,13 +77,33 @@ class TestOrderbookParser(unittest.TestCase):
         orders_by_vehicle = PARSER.parse_orderbook()
         # Verify the parsed data
         self.assertEqual(len(orders_by_vehicle["trailer"]), 1)
-        self.assertEqual(len(orders_by_vehicle["rigid"]), 1)
+        self.assertEqual(len(orders_by_vehicle["rigid"]), 2)
         self.assertEqual(orders_by_vehicle["trailer"][0]["Customer Name"], "Alice")
         self.assertEqual(orders_by_vehicle["rigid"][0]["Customer Postcode"], "N9 9LA")
         self.assertEqual(len(orders_by_vehicle["ERROR"]), 1)
         self.assertEqual(
             orders_by_vehicle["ERROR"][0]["Customer Name"], "Error Vehicle Type"
         )
+
+        # Verify that numeric value of qty is correctly converted to number
+        self.assertEqual(orders_by_vehicle["trailer"][0]["Qty"], 57)
+
+        # Verify that numeric valu eof qty is correctly converted to number even with decimal place number
+        self.assertEqual(orders_by_vehicle["rigid"][1]["Qty"], 10.53)
+
+        self.assertEqual(orders_by_vehicle["trailer"][0]["Qty"], 57)
+
+        # Verify that date value is correctly converted to datetime type
+        # First Test
+        date_string = parsed_data[0]["Due Date"]
+        match = re.search(r"\d{4}-\d{2}-\d{2}", date_string)
+        date = datetime.strptime(match.group(), "%Y-%m-%d").date()
+        self.assertEqual(orders_by_vehicle["trailer"][0]["Due Date"], date)
+        # Second Test
+        date_string = parsed_data[1]["Due Date"]
+        match = re.search(r"\d{4}-\d{2}-\d{2}", date_string)
+        date = datetime.strptime(match.group(), "%Y-%m-%d").date()
+        self.assertEqual(orders_by_vehicle["rigid"][0]["Due Date"], date)
 
     def test_orderbook_incorrect_inputs(self):
 
