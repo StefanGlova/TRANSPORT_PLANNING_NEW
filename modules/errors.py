@@ -19,3 +19,14 @@ class WrongKeysError(Exception):
         )
         self.method_called = method_called
         self.correct_keys = correct_keys
+
+
+class WrongValueTypeError(Exception):
+    """
+    Custom exception raised when value has wrong data type.
+    """
+
+    def __init__(self, parameter: str, field: dict):
+        super().__init__(f"Parameter {parameter} must be {field[parameter]}")
+
+        self.field = field

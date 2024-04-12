@@ -1,5 +1,5 @@
 import pandas as pd
-from modules.errors import EmptyFileError, WrongKeysError
+from modules.errors import EmptyFileError, WrongKeysError, WrongValueTypeError
 
 
 class GeneralFileParser:
@@ -77,6 +77,7 @@ class GeneralFileParser:
         """
         # Initialize dict datastructure which stores inventry key value pairs and also variable correct_keys
         inventory, correct_keys = dict(), ["SKU", "Qty"]
+        fields = {"SKU": "string", "Qty": "number"}
 
         # Check if parsed_data is not empty list
         if self.parsed_data == []:
@@ -91,9 +92,13 @@ class GeneralFileParser:
                 raise WrongKeysError(
                     method_called="parse_inventory", correct_keys=correct_keys
                 )
-
+            # Check if Qty field has numeric value
+            try:
+                qty = int(row["Qty"])
+            except ValueError:
+                raise WrongValueTypeError("Qty", fields)
             # If SKU already exist in inventory dict, then it increment its value by Qty, if does not exist, it adds it with its initial Qty
-            inventory[row["SKU"]] = inventory.get(row["SKU"], 0) + int(row["Qty"])
+            inventory[row["SKU"]] = inventory.get(row["SKU"], 0) + qty
 
         return inventory
 

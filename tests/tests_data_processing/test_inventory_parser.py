@@ -1,6 +1,6 @@
 import unittest
 from modules.data_processing_module.parse_csv import GeneralFileParser
-from modules.errors import WrongKeysError
+from modules.errors import WrongKeysError, WrongValueTypeError
 
 PARSER = GeneralFileParser(None)
 CORRECT_KEYS = ["SKU", "Qty"]
@@ -124,7 +124,9 @@ class TestInventoryParser(unittest.TestCase):
             },
         ]
 
-        with self.assertRaises("WrongValueTypeError") as context:
+        PARSER.parsed_data = parsed_data
+
+        with self.assertRaises(WrongValueTypeError) as context:
             inventory = PARSER.parse_inventory()
             self.assertEqual(
                 str(context.exception),
