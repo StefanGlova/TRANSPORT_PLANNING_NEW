@@ -49,7 +49,7 @@ class ProcessOrderbook:
                 )
             # Check if Qty field has numeric value
             try:
-                qty = int(row["Qty"])
+                qty = float(row["Qty"])
             except ValueError:
                 raise WrongValueTypeError("Qty", fields)
 
