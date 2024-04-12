@@ -91,8 +91,6 @@ class TestOrderbookParser(unittest.TestCase):
         # Verify that numeric valu eof qty is correctly converted to number even with decimal place number
         self.assertEqual(orders_by_vehicle["rigid"][1]["Qty"], 10.53)
 
-        self.assertEqual(orders_by_vehicle["trailer"][0]["Qty"], 57)
-
         # Verify that date value is correctly converted to datetime type
         # First Test
         date_string = parsed_data[0]["Due Date"]

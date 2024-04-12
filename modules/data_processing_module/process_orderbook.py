@@ -47,13 +47,13 @@ class ProcessOrderbook:
                 raise WrongKeysError(
                     method_called="parse_orderbook", correct_keys=correct_keys
                 )
-            # Check if Qty field has numeric value
+            # Check if Qty field has numeric value. If has, convert string to floating point number, if not raise error
             try:
                 qty = float(row["Qty"])
             except ValueError:
                 raise WrongValueTypeError("Qty", fields)
 
-            # Check if Due Date field has date format
+            # Check if Due Date field has date format. If has, convert string to datetime object, if not, raise error
             try:
                 date_string = row["Due Date"]
                 match = re.search(r"\d{4}-\d{2}-\d{2}", date_string)
