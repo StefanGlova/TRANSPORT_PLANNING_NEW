@@ -1,8 +1,8 @@
 import unittest
-from modules.data_processing_module.parse_csv import GeneralFileParser
+from modules.data_processing_module.process_orderbook import ProcessOrderbook
 from modules.errors import WrongKeysError, WrongValueTypeError
 
-PARSER = GeneralFileParser(None)
+PARSER = ProcessOrderbook(None)
 CORRECT_KEYS = [
     "Customer Name",
     "Customer Postcode",
