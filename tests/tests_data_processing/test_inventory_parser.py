@@ -102,6 +102,35 @@ class TestInventoryParser(unittest.TestCase):
                     "Function parse_inventory only accepts these keys SKU, Qty!",
                 )
 
+    def test_inventory_wrong_value_type(self):
+        print("Inventory wrong value type")
+
+        parsed_data = [
+            {
+                "SKU": "SKU1",
+                "Qty": "15",
+            },
+            {
+                "SKU": "SKU2",
+                "Qty": "0",
+            },
+            {
+                "SKU": "SKU1",
+                "Qty": "5",
+            },
+            {
+                "SKU": "SKU3",
+                "Qty": "A",
+            },
+        ]
+
+        with self.assertRaises("WrongValueTypeError") as context:
+            inventory = PARSER.parse_inventory()
+            self.assertEqual(
+                str(context.exception),
+                "Parameter Qty must be number",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
