@@ -1,4 +1,4 @@
-from modules.errors import WrongKeysError, WrongValueTypeError
+from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
 
 
 class ProcessPostcodes:
@@ -19,6 +19,11 @@ class ProcessPostcodes:
             "Latitude": "Decimal place number",
             "Longitude": "Decimal place number",
         }
+        range = {
+            "Latitude": "must be in range from -90 to +90",
+            "Longitude": "must be in range from -180 to +180",
+        }
+
         # Check if parsed_data is not empty list
         if self.parsed_data == []:
             raise WrongKeysError(
@@ -34,12 +39,18 @@ class ProcessPostcodes:
                 )
 
             # Check if Latitude and Longitude has decimal place numeric value. If has, convert to float data type, if not, raise error
+            # latitude_range = [-90, 90]
+            # longitude_range = [-180, 180]
             try:
                 lat = float(row["Latitude"])
+                if lat > 90 or lat < -90:
+                    raise WrongNumericRange("Latitude", range)
             except ValueError:
                 raise WrongValueTypeError("Latitude", fields)
             try:
                 long = float(row["Longitude"])
+                if long > 180 or long < -180:
+                    raise WrongNumericRange("Longitude", range)
             except ValueError:
                 raise WrongValueTypeError("Longitude", fields)
 
