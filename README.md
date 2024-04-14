@@ -10,14 +10,14 @@ The project is made of modules where each module is reponsible for a part of the
 
 This module is design to take file path as parameter and optional parameter 'diamiter' and create object from GeneralFileParser class. When calling parse method, it returns dataset python list containing dictionary object for each line, where key is header of original file and value of line is value.
 
-** Example Input **
+**Example Input**
 
 ```
 |'Customer Name' |'Customer Postcode' |'SKU'  |'Qty' |'Vehicle Type' |'Due Date'  |
 |'Bob'           |'N9 9LA'            |'SKU1' |'100' |'trailer'      |'2023-11-10'|
 ```
 
-** Example Output **
+**Example Output**
 
 ```
 parsed_data = [
@@ -50,7 +50,7 @@ It raises custom created Errors for following reasons:
 
 3. WrongNumericRange - if 'Qty' field is negative number
 
-** Example Input **
+**Example Input**
 
 ```
 parsed_data = [
@@ -69,7 +69,7 @@ parsed_data = [
 ]
 ```
 
-** Example Output **
+**Example Output**
 
 ```
 orderbook = {
@@ -92,7 +92,7 @@ It raises customer created Errors for following reasons:
 
 3. WrongNumericRange - if 'Qty' field is negative number
 
-** Example Input **
+**Example Input**
 
 ```
 parsed_data = [
@@ -115,7 +115,7 @@ parsed_data = [
 ]
 ```
 
-** Example Output **
+**Example Output**
 
 ```
 orderbook = {
@@ -153,7 +153,7 @@ It raises customer created Errors for following reasons:
 
 3. WrongNumericRange - if 'Latitude' is not in range of -90 and +90, or if 'Lontitude' is not in range of -180 and +180.
 
-** Example Input **
+**Example Input**
 
 ```
 parsed_data = [
@@ -170,7 +170,7 @@ parsed_data = [
 ]
 ```
 
-** Example Output **
+**Example Output**
 
 ```
 postcodes = {
