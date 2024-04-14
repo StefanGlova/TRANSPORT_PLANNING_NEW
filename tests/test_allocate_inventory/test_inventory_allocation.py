@@ -49,6 +49,51 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(inventory_left["SKU1"], 40)
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
+    def test_inventory_allocation_two_orders_case(self):
+        """
+        Similar to simple case, but 2 orders for same SKU and same vehicle type. Also 2nd different sku which is not used in any of orders.
+        """
+        print("test Allocation simple case")
+
+        # Create orderbook sample with just one order
+        orderbook = {
+            "trailer": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                },
+                {
+                    "Customer Name": "XYZ",
+                    "Customer Postcode": "XYZ123",
+                    "SKU": "SKU1",
+                    "Qty": 30,
+                    "Due Date": 2023 - 11 - 10,
+                },
+            ]
+        }
+
+        # Create inventory sample with just one sku
+        inventory = {
+            "SKU1": 100,
+            "SKU2": 100,
+        }
+
+        # Create allocater as object of InventoryAllocation class and run allocate_inventory method on the created object
+        allocator = InventoryAllocation(orderbook, inventory)
+        orderbook_allocated, inventory_left, orderbook_not_allocated = (
+            allocator.allocate_inventory()
+        )
+
+        # Verify the outcome of allocate_inventory method
+        self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 60)
+        self.assertEqual(orderbook_allocated["trailer"][1]["Allocated Qty"], 30)
+        self.assertEqual(inventory_left["SKU1"], 10)
+        self.assertEqual(inventory_left["SKU2"], 100)
+        self.assertEqual(orderbook_not_allocated["trailer"], [])
+
 
 if __name__ == "__main__":
     unittest.main()
