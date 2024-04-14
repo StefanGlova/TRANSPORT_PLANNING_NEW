@@ -1,6 +1,8 @@
 import unittest
 from modules.allocate_inventory_module.inventory_allocation import InventoryAllocation
 
+from modules.errors import EmptyDatasetError
+
 
 class TestInventoryAllocation(unittest.TestCase):
     """
@@ -252,6 +254,24 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(orderbook_not_allocated["rigid"][0]["Qty"], 30)
         self.assertEqual(orderbook_not_allocated["rigid"][1]["SKU"], "SKU5")
         self.assertEqual(orderbook_not_allocated["rigid"][1]["Qty"], 50)
+
+    def test_inventory_allocation_wrong_data(self):
+        """
+        Test for wrong data.
+        """
+
+        orderbook, inventory = dict(), dict()
+
+        allocator = InventoryAllocation(orderbook, inventory)
+
+        if orderbook == {} or inventory == {}:
+            with self.assertRaises(EmptyDatasetError) as context:
+                orderbook_allocated, inventory_left, orderbook_not_allocated = (
+                    allocator.allocate_inventory()
+                )
+            self.assertEqual(
+                str(context.exception), "Orderbook and inventory must not be empty"
+            )
 
 
 if __name__ == "__main__":

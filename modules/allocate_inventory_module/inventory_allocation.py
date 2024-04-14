@@ -1,9 +1,12 @@
+from modules.errors import EmptyDatasetError
+
+
 class InventoryAllocation:
-    def __init__(self, orderbook, inventory):
+    def __init__(self, orderbook: dict, inventory: dict):
         self.orderbook = orderbook
         self.inventory = inventory
 
-    def allocate_inventory(self):
+    def allocate_inventory(self) -> dict:
         """
         Allocate inventory method creates 3 dictionaries which are used during method run and returned at the end:
             - orderbook_allocated - new orderbook variable used for further processing which only include orders with available and allocated inventory
