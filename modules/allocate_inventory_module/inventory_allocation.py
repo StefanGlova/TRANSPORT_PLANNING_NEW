@@ -17,6 +17,9 @@ class InventoryAllocation:
         orderbook_allocated = dict()
         orderbook_not_allocated = {"trailer": [], "rigid": [], "error": []}
 
+        if self.orderbook == {} or self.inventory == {}:
+            raise EmptyDatasetError()
+
         # Iterate over each vehicle in orderbook
         for vehicle in self.orderbook:
             # Iterate over each line of the vehicle in orderbook

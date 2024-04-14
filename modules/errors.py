@@ -41,3 +41,12 @@ class WrongNumericRange(Exception):
         super().__init__(f"Parameter {parameter} {range[parameter]}")
         self.parameter = parameter
         self.range = range
+
+
+class EmptyDatasetError(Exception):
+    """
+    Custom exception raised when input dataset is empty
+    """
+
+    def __init__(self):
+        super().__init__("Orderbook and inventory must not be empty")
