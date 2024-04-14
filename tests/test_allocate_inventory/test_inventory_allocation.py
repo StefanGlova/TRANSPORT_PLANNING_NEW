@@ -150,7 +150,7 @@ class TestInventoryAllocation(unittest.TestCase):
         # length of orderbook_allocated and orderbook_not_allocated to match expected values
         self.assertEqual(len(orderbook_allocated["trailer"]), 2)
         self.assertEqual(len(orderbook_allocated["rigid"]), 1)
-        self.assertEqual(len(orderbook_not_allocated["trailer"]), 0)
+        self.assertEqual(len(orderbook_not_allocated["trailer"]), 1)
         self.assertEqual(len(orderbook_not_allocated["rigid"]), 1)
         # Allocated qty match expected values
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 100)
@@ -161,7 +161,7 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(inventory_left["SKU2"], 10)
         self.assertEqual(inventory_left["SKU3"], 0)
         # Orderbook not allocated contain correct order(s)
-        self.assertEqual(orderbook_not_allocated["trailer"], [])
+        self.assertEqual(orderbook_not_allocated["trailer"][0]["Qty"], 900)
         self.assertEqual(orderbook_not_allocated["rigid"][0]["SKU"], "SKU3")
         self.assertEqual(orderbook_not_allocated["rigid"][0]["Qty"], 30)
 

@@ -15,6 +15,7 @@ class InventoryAllocation:
             dict(),
             {"trailer": [], "rigid": [], "error": []},
         )
+        # allocated_count, not_allocated_count = 0, 0
 
         # Iterate over each vehicle in orderbook
         for vehicle in self.orderbook:
@@ -23,15 +24,43 @@ class InventoryAllocation:
                 sku = self.orderbook[vehicle][i]["SKU"]
                 qty = self.orderbook[vehicle][i]["Qty"]
                 # Check if available inventory is higher or equal then qty needed for order and if so, allocate it, reduce inventory and append order to appropriate vehicle in orderbook_allocated dictionary
-                if self.inventory[sku] >= qty:
-                    allocated = qty
-                    self.inventory[sku] -= qty
-                    self.orderbook[vehicle][i]["Allocated Qty"] = allocated
+                try:
+                    if self.inventory[sku] >= qty:
+                        allocated = qty
+                        self.inventory[sku] -= qty
+                        self.orderbook[vehicle][i]["Allocated Qty"] = allocated
 
-                    try:
-                        orderbook_allocated[vehicle].append(self.orderbook[vehicle][i])
-                    except KeyError:
-                        orderbook_allocated[vehicle] = []
-                        orderbook_allocated[vehicle].append(self.orderbook[vehicle][i])
+                        try:
+                            orderbook_allocated[vehicle].append(
+                                self.orderbook[vehicle][i]
+                            )
+                        except KeyError:
+                            orderbook_allocated[vehicle] = []
+                            orderbook_allocated[vehicle].append(
+                                self.orderbook[vehicle][i]
+                            )
+                    elif self.inventory[sku] > 0:
+                        allocated = self.inventory[sku]
+                        self.inventory[sku] -= allocated
+                        self.orderbook[vehicle][i]["Allocated Qty"] = allocated
+                        try:
+                            orderbook_allocated[vehicle].append(
+                                self.orderbook[vehicle][i]
+                            )
+                        except KeyError:
+                            orderbook_allocated[vehicle] = []
+                            orderbook_allocated[vehicle].append(
+                                self.orderbook[vehicle][i]
+                            )
+
+                        not_allocated_qty = qty - allocated
+                        self.orderbook[vehicle][i]["Qty"] = not_allocated_qty
+                        orderbook_not_allocated[vehicle].append(
+                            self.orderbook[vehicle][i]
+                        )
+
+                except KeyError:
+                    self.inventory[sku] = 0
+                    orderbook_not_allocated[vehicle].append(self.orderbook[vehicle][i])
 
         return orderbook_allocated, self.inventory, orderbook_not_allocated
