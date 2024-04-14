@@ -53,7 +53,7 @@ class TestInventoryAllocation(unittest.TestCase):
         """
         Similar to simple case, but 2 orders for same SKU and same vehicle type. Also 2nd different sku which is not used in any of orders.
         """
-        print("test Allocation simple case")
+        print("test Allocation 2 orders case")
 
         # Create orderbook sample with just one order
         orderbook = {
