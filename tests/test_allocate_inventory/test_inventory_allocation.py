@@ -94,6 +94,77 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(inventory_left["SKU2"], 100)
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
+    def test_inventory_allocation_more_complex_case(self):
+        """ """
+        print("test Allocation more complex case")
+
+        # Create orderbook sample with just one order
+        orderbook = {
+            "trailer": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "SKU": "SKU1",
+                    "Qty": 1000,
+                    "Due Date": 2023 - 11 - 10,
+                },
+                {
+                    "Customer Name": "XYZ",
+                    "Customer Postcode": "XYZ123",
+                    "SKU": "SKU2",
+                    "Qty": 30,
+                    "Due Date": 2023 - 11 - 10,
+                },
+            ],
+            "rigid": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "SKU": "SKU2",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                },
+                {
+                    "Customer Name": "XYZ",
+                    "Customer Postcode": "XYZ123",
+                    "SKU": "SKU3",
+                    "Qty": 30,
+                    "Due Date": 2023 - 11 - 10,
+                },
+            ],
+        }
+
+        # Create inventory sample with just one sku
+        inventory = {
+            "SKU1": 100,
+            "SKU2": 100,
+        }
+
+        # Create allocater as object of InventoryAllocation class and run allocate_inventory method on the created object
+        allocator = InventoryAllocation(orderbook, inventory)
+        orderbook_allocated, inventory_left, orderbook_not_allocated = (
+            allocator.allocate_inventory()
+        )
+
+        # Verify the outcome of allocate_inventory method
+        # length of orderbook_allocated and orderbook_not_allocated to match expected values
+        self.assertEqual(len(orderbook_allocated["trailer"]), 2)
+        self.assertEqual(len(orderbook_allocated["rigid"]), 1)
+        self.assertEqual(len(orderbook_not_allocated["trailer"]), 0)
+        self.assertEqual(len(orderbook_not_allocated["rigid"]), 1)
+        # Allocated qty match expected values
+        self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 100)
+        self.assertEqual(orderbook_allocated["trailer"][1]["Allocated Qty"], 30)
+        self.assertEqual(orderbook_allocated["rigid"][0]["Allocated Qty"], 60)
+        # Inventory left after allocation match expected qty
+        self.assertEqual(inventory_left["SKU1"], 0)
+        self.assertEqual(inventory_left["SKU2"], 10)
+        self.assertEqual(inventory_left["SKU3"], 0)
+        # Orderbook not allocated contain correct order(s)
+        self.assertEqual(orderbook_not_allocated["trailer"], [])
+        self.assertEqual(orderbook_not_allocated["rigid"][0]["SKU"], "SKU3")
+        self.assertEqual(orderbook_not_allocated["rigid"][0]["Qty"], 30)
+
 
 if __name__ == "__main__":
     unittest.main()
