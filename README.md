@@ -34,7 +34,7 @@ parsed_data = [
 
 The other class of data processing module is specific for content of file, ensuring that all infomation for further algoritm are correct:
 
-### a/ ProcessInventory class
+### a ProcessInventory class
 
 The object created from this class takes one paramenter - parsed_data, which is outcome of GeneralFileParser class when calling parse method.
 
@@ -78,7 +78,7 @@ orderbook = {
 }
 ```
 
-### b/ ProcessOrderbook class
+### b ProcessOrderbook class
 
 Similar to ProcessInventory, this one takes prased_data as an input, and checks if all fields are correct. The fields must be 'Customer Name' as string, 'Customer Postcode' as string, 'SKU' as string, 'Qty' as number which cannot be negative, 'Vehicle Type' as string, which should be either 'trailer' or 'rigid' and if it is different it let process further, but allocate any different in outcome to 'ERROR' list for further inventigation and finally 'Due Date' which is of date format.
 
@@ -139,7 +139,7 @@ orderbook = {
 }
 ```
 
-### c/ ProcessPostcode class
+### c ProcessPostcode class
 
 Similar to both, ProcessOrderbook class and ProcessInventory class, thsi one takes parsed_data as an input, and checks if all fields are correct. the fileds must be 'Postcode' as string, 'Latitude' as decimal number between -90 and +90; and 'Longitude' as decimal number between -180 and +180.
 
