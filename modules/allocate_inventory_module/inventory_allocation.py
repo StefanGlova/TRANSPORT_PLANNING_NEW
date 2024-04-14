@@ -23,8 +23,9 @@ class InventoryAllocation:
             for i in range(len(self.orderbook[vehicle])):
                 sku = self.orderbook[vehicle][i]["SKU"]
                 qty = self.orderbook[vehicle][i]["Qty"]
-                # Check if available inventory is higher or equal then qty needed for order and if so, allocate it, reduce inventory and append order to appropriate vehicle in orderbook_allocated dictionary
+                # Try if needed SKU has qty in inventory dictionary, if yes, process, if not add record with 0 qty and add order to orderbook_not_allocated (see 'except KeyError')
                 try:
+                    # Check if available inventory is higher or equal then qty needed for order and if so, allocate it, reduce inventory and append order to appropriate vehicle in orderbook_allocated dictionary
                     if self.inventory[sku] >= qty:
                         allocated = qty
                         self.inventory[sku] -= qty
@@ -39,6 +40,7 @@ class InventoryAllocation:
                             orderbook_allocated[vehicle].append(
                                 self.orderbook[vehicle][i]
                             )
+                    # If inventory is less than demand, but more then 0, allocate all inventory to order, reduce inventory to 0 and move rest of order to orderbook_not_allocated
                     elif self.inventory[sku] > 0:
                         allocated = self.inventory[sku]
                         self.inventory[sku] -= allocated

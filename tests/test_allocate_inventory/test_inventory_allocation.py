@@ -115,6 +115,13 @@ class TestInventoryAllocation(unittest.TestCase):
                     "Qty": 30,
                     "Due Date": 2023 - 11 - 10,
                 },
+                {
+                    "Customer Name": "EFG",
+                    "Customer Postcode": "XYZ123",
+                    "SKU": "SKU4",
+                    "Qty": 50,
+                    "Due Date": 2023 - 11 - 10,
+                },
             ],
             "rigid": [
                 {
@@ -135,10 +142,7 @@ class TestInventoryAllocation(unittest.TestCase):
         }
 
         # Create inventory sample with just one sku
-        inventory = {
-            "SKU1": 100,
-            "SKU2": 100,
-        }
+        inventory = {"SKU1": 100, "SKU2": 100, "SKU4": 0}
 
         # Create allocater as object of InventoryAllocation class and run allocate_inventory method on the created object
         allocator = InventoryAllocation(orderbook, inventory)
@@ -150,7 +154,7 @@ class TestInventoryAllocation(unittest.TestCase):
         # length of orderbook_allocated and orderbook_not_allocated to match expected values
         self.assertEqual(len(orderbook_allocated["trailer"]), 2)
         self.assertEqual(len(orderbook_allocated["rigid"]), 1)
-        self.assertEqual(len(orderbook_not_allocated["trailer"]), 1)
+        self.assertEqual(len(orderbook_not_allocated["trailer"]), 2)
         self.assertEqual(len(orderbook_not_allocated["rigid"]), 1)
         # Allocated qty match expected values
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 100)
@@ -160,8 +164,10 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(inventory_left["SKU1"], 0)
         self.assertEqual(inventory_left["SKU2"], 10)
         self.assertEqual(inventory_left["SKU3"], 0)
+        self.assertEqual(inventory_left["SKU4"], 0)
         # Orderbook not allocated contain correct order(s)
         self.assertEqual(orderbook_not_allocated["trailer"][0]["Qty"], 900)
+        self.assertEqual(orderbook_not_allocated["trailer"][1]["Qty"], 50)
         self.assertEqual(orderbook_not_allocated["rigid"][0]["SKU"], "SKU3")
         self.assertEqual(orderbook_not_allocated["rigid"][0]["Qty"], 30)
 
