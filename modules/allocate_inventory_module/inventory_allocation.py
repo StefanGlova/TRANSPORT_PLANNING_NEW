@@ -60,6 +60,7 @@ class InventoryAllocation:
                         orderbook_not_allocated[vehicle].append(
                             self.orderbook[vehicle][i]
                         )
+                    # If inventory is 0, add order to orderbook_not_allocated
                     else:
                         orderbook_not_allocated[vehicle].append(
                             self.orderbook[vehicle][i]
