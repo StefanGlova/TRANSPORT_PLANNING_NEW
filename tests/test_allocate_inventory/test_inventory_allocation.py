@@ -38,7 +38,7 @@ class TestInventoryAllocation(unittest.TestCase):
             "SKU1": 100,
         }
 
-        # Create allocater as object of InventoryAllocation class and run allocate_inventory method on the created object
+        # Create allocator as object of InventoryAllocation class and run allocate_inventory method on the created object
         allocator = InventoryAllocation(orderbook, inventory)
         orderbook_allocated, inventory_left, orderbook_not_allocated = (
             allocator.allocate_inventory()
@@ -81,7 +81,7 @@ class TestInventoryAllocation(unittest.TestCase):
             "SKU2": 100,
         }
 
-        # Create allocater as object of InventoryAllocation class and run allocate_inventory method on the created object
+        # Create allocator as object of InventoryAllocation class and run allocate_inventory method on the created object
         allocator = InventoryAllocation(orderbook, inventory)
         orderbook_allocated, inventory_left, orderbook_not_allocated = (
             allocator.allocate_inventory()
@@ -200,7 +200,7 @@ class TestInventoryAllocation(unittest.TestCase):
         # Create inventory sample with just one sku
         inventory = {"SKU1": 100, "SKU2": 100, "SKU4": 0, "SKU5": 100, "SKU6": 2000}
 
-        # Create allocater as object of InventoryAllocation class and run allocate_inventory method on the created object
+        # Create allocator as object of InventoryAllocation class and run allocate_inventory method on the created object
         allocator = InventoryAllocation(orderbook, inventory)
         orderbook_allocated, inventory_left, orderbook_not_allocated = (
             allocator.allocate_inventory()

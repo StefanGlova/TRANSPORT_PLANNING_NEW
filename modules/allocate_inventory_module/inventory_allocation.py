@@ -11,11 +11,8 @@ class InventoryAllocation:
             - inventory - same variable as input, but with updated values
         """
         # Initialize dict datastructures for the method output
-        orderbook_allocated, orderbook_not_allocated = (
-            dict(),
-            {"trailer": [], "rigid": [], "error": []},
-        )
-        # allocated_count, not_allocated_count = 0, 0
+        orderbook_allocated = dict()
+        orderbook_not_allocated = {"trailer": [], "rigid": [], "error": []}
 
         # Iterate over each vehicle in orderbook
         for vehicle in self.orderbook:
