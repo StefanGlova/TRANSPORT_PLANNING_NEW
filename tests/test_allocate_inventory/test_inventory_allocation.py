@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime
+from modules.allocate_inventory_module.inventory_allocation import InventoryAllocation
 
 
 class TestInventoryAllocation(unittest.TestCase):
@@ -8,6 +8,8 @@ class TestInventoryAllocation(unittest.TestCase):
     """
 
     def test_inventory_allocation_simple_case(self):
+
+        print("test Allocation simple case")
 
         orderbook = {
             "trailer": [
@@ -18,9 +20,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
                 },
-                {},
-            ],
-            "rigid": [],
+            ]
         }
 
         inventory = {
