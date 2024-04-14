@@ -60,6 +60,10 @@ class InventoryAllocation:
                         orderbook_not_allocated[vehicle].append(
                             self.orderbook[vehicle][i]
                         )
+                    else:
+                        orderbook_not_allocated[vehicle].append(
+                            self.orderbook[vehicle][i]
+                        )
 
                 except KeyError:
                     self.inventory[sku] = 0
