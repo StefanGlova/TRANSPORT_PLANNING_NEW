@@ -1,7 +1,7 @@
 import unittest
 from modules.allocate_inventory_module.inventory_allocation import InventoryAllocation
 
-from modules.errors import EmptyDatasetError
+from modules.errors import EmptyDatasetError, WrongKeysAllocatorError
 
 
 class TestInventoryAllocation(unittest.TestCase):
@@ -326,7 +326,7 @@ class TestInventoryAllocation(unittest.TestCase):
                 }
             ]
         }
-        # Create orderbook sample with all correct keys to test if correct Error message is raised with wrong columns in inventory
+        # Create orderbook sample with all correct keys
         orderbook_sample_2 = {
             "rigid": [
                 {
@@ -339,37 +339,26 @@ class TestInventoryAllocation(unittest.TestCase):
             ]
         }
 
-        # Create inventory sample with all correct keys to test if correct Error message is raised with wrong columns in orderbook
+        # Create inventory samples with all correct keys
         inventory_sample_1 = {"SKU1": 100, "SKU2": 100}
-        # Create inventory sample with wrong key to test if correct Error message is raised with wrong columns in inventory
         inventory_sample_2 = {"ABC": 100, "SKU2": 100}
 
         # Create InventoryAllocation objects - allocator_1 has got wrong key in orderbook and correct keys in inventory AND allocator_2 has got wrong key in inventory and all correct keys in orderbook
         allocator_1 = InventoryAllocation(orderbook_sample_1, inventory_sample_1)
         allocator_2 = InventoryAllocation(orderbook_sample_2, inventory_sample_2)
-        error_message = """
-                Function allocate_inventory takes two dictionaries: orderbook and inventory. 
-                Orderbook must be outcome from parse_orderbook method called on OrderbookParser object.
-                Inventory must be outcome from parse_inventory method called on InventoryParser object.
-                If they are not, they may not have correct keys.
-                """
+        error_message = "Function allocate_inventory takes two dictionaries: orderbook and inventory.\nOrderbook must be outcome from parse_orderbook method called on OrderbookParser object.\nInventory must be outcome from parse_inventory method called on InventoryParser object.\nIf they are not, they may not have correct keys.\n"
 
-        for key in orderbook_sample_1:
-            if key not in ["trailer", "rigid", "ERROR"]:
+        for vehicle in orderbook_sample_1:
+            if vehicle not in ["trailer", "rigid", "ERROR"]:
                 with self.assertRaises(WrongKeysAllocatorError) as context:
                     allocator_1.allocate_inventory()
                 self.assertEqual(str(context.exception), error_message)
-            for sub_key in orderbook_sample_1[key]:
-                if sub_key not in orderbook_correct_keys:
-                    with self.assertRaises(WrongKeysAllocatorError) as context:
-                        allocator_1.allocate_inventory()
-                    self.assertEqual(str(context.exception), error_message)
-
-        for key in inventory_sample_2:
-            if key not in ["SKU", "Qty"]:
-                with self.assertRaises(WrongKeysAllocatorError) as context:
-                    allocator_1.allocate_inventory()
-                self.assertEqual(str(context.exception), error_message)
+            for entry in orderbook_sample_1[vehicle]:
+                for sub_key in entry:
+                    if sub_key not in orderbook_correct_keys:
+                        with self.assertRaises(WrongKeysAllocatorError) as context:
+                            allocator_1.allocate_inventory()
+                        self.assertEqual(str(context.exception), error_message)
 
 
 if __name__ == "__main__":

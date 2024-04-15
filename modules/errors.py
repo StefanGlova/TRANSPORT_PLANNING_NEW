@@ -50,3 +50,13 @@ class EmptyDatasetError(Exception):
 
     def __init__(self):
         super().__init__("Orderbook and inventory must not be empty")
+
+
+class WrongKeysAllocatorError(Exception):
+    """
+    Custom exception raised when orderbook or inventory dictionaries does not have a correct key, and allocate_inventory method of InventoryAllocation class is called.
+    """
+
+    def __init__(self):
+        error_message = "Function allocate_inventory takes two dictionaries: orderbook and inventory.\nOrderbook must be outcome from parse_orderbook method called on OrderbookParser object.\nInventory must be outcome from parse_inventory method called on InventoryParser object.\nIf they are not, they may not have correct keys.\n"
+        super().__init__(error_message)

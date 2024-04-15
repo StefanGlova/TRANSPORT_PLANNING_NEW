@@ -1,4 +1,4 @@
-from modules.errors import EmptyDatasetError
+from modules.errors import EmptyDatasetError, WrongKeysAllocatorError
 
 
 class InventoryAllocation:
@@ -17,8 +17,8 @@ class InventoryAllocation:
         orderbook_allocated = dict()
         orderbook_not_allocated = {"trailer": [], "rigid": [], "error": []}
 
-        if self.orderbook == {} or self.inventory == {}:
-            raise EmptyDatasetError()
+        self._check_orderbook()
+        self._check_inventory()
 
         # Iterate over each vehicle in orderbook
         for vehicle in self.orderbook:
@@ -74,3 +74,39 @@ class InventoryAllocation:
                     orderbook_not_allocated[vehicle].append(self.orderbook[vehicle][i])
 
         return orderbook_allocated, self.inventory, orderbook_not_allocated
+
+    def _check_orderbook(self) -> None:
+        """
+        Private method to check if orderbook is not empty and if its not, whether keys in orderbook are correct.
+
+        Raises appropriate error if not.
+        """
+
+        if self.orderbook == {}:
+            raise EmptyDatasetError()
+
+        high_level_keys = ["trailer", "rigid", "ERROR"]
+        low_level_keys = [
+            "Customer Name",
+            "Customer Postcode",
+            "SKU",
+            "Qty",
+            "Due Date",
+        ]
+
+        for vehicle in self.orderbook:
+            if vehicle not in high_level_keys:
+                raise WrongKeysAllocatorError()
+            for order in self.orderbook[vehicle]:
+                for order_detail in order:
+                    if order_detail not in low_level_keys:
+                        raise WrongKeysAllocatorError()
+
+    def _check_inventory(self):
+        """
+        Private method to check if inventory is not empty.
+
+        Raises appropriate error if not.
+        """
+        if self.inventory == {}:
+            raise EmptyDatasetError()
