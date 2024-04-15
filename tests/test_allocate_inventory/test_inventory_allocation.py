@@ -20,7 +20,7 @@ class TestInventoryAllocation(unittest.TestCase):
         - inventory left has correct value after allocating inventory to the order
         - that orderbook_not_allocated does not have any value against vehicle type
         """
-        print("test Allocation simple case")
+        print("test Inventory Allocation simple case")
 
         # Create orderbook sample with just one order
         orderbook = {
@@ -55,7 +55,7 @@ class TestInventoryAllocation(unittest.TestCase):
         """
         Similar to simple case, but 2 orders for same SKU and same vehicle type. Also 2nd different sku which is not used in any of orders.
         """
-        print("test Allocation 2 orders case")
+        print("test Inventory Allocation  2 orders case")
 
         # Create orderbook sample with just one order
         orderbook = {
@@ -96,9 +96,9 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(inventory_left["SKU2"], 100)
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
-    def test_inventory_allocation_more_complex_case(self):
+    def test_inventory_allocation_complex_case(self):
         """ """
-        print("test Allocation more complex case")
+        print("test Inventory Allocation complex case")
 
         # Create orderbook sample with just one order
         orderbook = {
@@ -304,6 +304,14 @@ class TestInventoryAllocation(unittest.TestCase):
             )
 
     def test_inventory_allocation_correct_keys(self):
+        """
+        Test for correct keys in orderbook dictionary.
+        Raises appropriate error if not.
+        """
+
+        print("test Inventory Allocation correct keys")
+
+        # Define correct keys
         orderbook_correct_keys = [
             "Customer Name",
             "Customer Postcode",
