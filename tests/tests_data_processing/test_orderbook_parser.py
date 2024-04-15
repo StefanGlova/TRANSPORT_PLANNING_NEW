@@ -89,13 +89,14 @@ class TestOrderbookParser(unittest.TestCase):
         self.assertEqual(
             orders_by_vehicle["ERROR"][0]["Customer Name"], "Error Vehicle Type"
         )
+
+        # Verify that numeric value of qty and transport volume is correctly converted to number
+        self.assertEqual(orders_by_vehicle["trailer"][0]["Qty"], 57)
         self.assertEqual(orders_by_vehicle["trailer"][0]["Transport Volume (m3)"], 10)
 
-        # Verify that numeric value of qty is correctly converted to number
-        self.assertEqual(orders_by_vehicle["trailer"][0]["Qty"], 57)
-
-        # Verify that numeric valu eof qty is correctly converted to number even with decimal place number
+        # Verify that numeric valu eof qty and transport volume is correctly converted to number even with decimal place number
         self.assertEqual(orders_by_vehicle["rigid"][1]["Qty"], 10.53)
+        self.assertEqual(orders_by_vehicle["rigid"][-1]["Transport Volume (m3)"], 0.005)
 
         # Verify that date value is correctly converted to datetime type
         # First Test
@@ -155,6 +156,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "57",
                 "Vehicle Type": "trailer",
                 "Due Date": "2024-04-10",
+                "Transport Volume": "50",
             },
             {
                 "Customer Name": "Bob",
@@ -174,6 +176,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "57",
                 "Vehicle Type": "trailer",
                 "Due Date": "2024-04-10",
+                "Transport Volume": "not right",
             },
             {
                 "Customer Name": "Bob",
@@ -182,6 +185,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "1000",
                 "Vehicle Type": "rigid",
                 "Due Date": "2023-11-10",
+                "Transport Volume (m3)": "15",
             },
         ]
 
@@ -193,7 +197,8 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "57",
                 "Vehicle Type": "trailer",
                 "Due Date": "2024-04-10",
-                "Transport Volume": "50",
+                "Transport Volume (m3)": "50",
+                "Extra columns": "wrong",
             },
             {
                 "Customer Name": "Bob",
@@ -202,6 +207,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "1000",
                 "Vehicle Type": "rigid",
                 "Due Date": "2023-11-10",
+                "Transport Volume (m3)": "50",
             },
         ]
 
@@ -240,6 +246,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "ABC",
                 "Vehicle Type": "trailer",
                 "Due Date": "2024-04-10",
+                "Transport Volume (m3)": "50",
             },
             {
                 "Customer Name": "Bob",
@@ -248,6 +255,16 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "1000",
                 "Vehicle Type": "rigid",
                 "Due Date": "ABCD",
+                "Transport Volume (m3)": "50",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "1000",
+                "Vehicle Type": "rigid",
+                "Due Date": "2024-04-10",
+                "Transport Volume (m3)": "A",
             },
         ]
 
@@ -264,7 +281,19 @@ class TestOrderbookParser(unittest.TestCase):
 
         with self.assertRaises(WrongValueTypeError) as context:
             PARSER.parse_orderbook()
-            self.assertEqual(str(context.exception), "Parameter Due Date must be date")
+            self.assertEqual(
+                str(context.exception),
+                "Parameter Due Date must be date",
+            )
+
+        PARSER.parsed_data = [parsed_data[2]]
+
+        with self.assertRaises(WrongValueTypeError) as context:
+            PARSER.parse_orderbook()
+            self.assertEqual(
+                str(context.exception),
+                "Parameter Transport Volume (m3) must be number",
+            )
 
     def test_orderbook_numbers_range(self):
         print("test Orderbook numbers range")
