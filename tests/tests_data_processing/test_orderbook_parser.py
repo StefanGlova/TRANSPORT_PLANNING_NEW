@@ -329,6 +329,38 @@ class TestOrderbookParser(unittest.TestCase):
                         str(context.exception), "Parameter Qty cannot be negative"
                     )
 
+        parsed_data = [
+            {
+                "Customer Name": "Alice",
+                "Customer Postcode": "E1W 2RG",
+                "SKU": "SKU123",
+                "Qty": "57",
+                "Vehicle Type": "trailer",
+                "Due Date": "2024-04-10",
+                "Transport Volume (m3)": "15",
+            },
+            {
+                "Customer Name": "Bob",
+                "Customer Postcode": "N9 9LA",
+                "SKU": "SKU456",
+                "Qty": "10.53",
+                "Vehicle Type": "rigid",
+                "Due Date": "2023-11-10",
+                "Transport Volume (m3)": "-0.0001",
+            },
+        ]
+
+        PARSER.parsed_data = parsed_data
+
+        for line in parsed_data:
+            if float(line["Transport Volume (m3)"]) < 0:
+                with self.assertRaises(WrongNumericRange) as context:
+                    PARSER.parse_orderbook()
+                    self.assertEqual(
+                        str(context.exception),
+                        "Parameter Transport Volume (m3) cannot be negative",
+                    )
+
 
 if __name__ == "__main__":
     unittest.main()
