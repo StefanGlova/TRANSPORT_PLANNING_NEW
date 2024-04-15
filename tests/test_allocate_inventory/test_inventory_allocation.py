@@ -303,6 +303,74 @@ class TestInventoryAllocation(unittest.TestCase):
                 str(context.exception), "Orderbook and inventory must not be empty"
             )
 
+    def test_inventory_allocation_correct_keys(self):
+        orderbook_correct_keys = [
+            "Customer Name",
+            "Customer Postcode",
+            "SKU",
+            "Qty",
+            "Due Date",
+        ]
+
+        inventory_correct_keys = ["SKU", "Qty"]
+
+        # Create orderbook sample with wrong key to test if correct Error message is raised with wrong columns in orderbook
+        orderbook_sample_1 = {
+            "trailer": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "ABC": "SKU1",
+                    "Qty": 1000,
+                    "Due Date": 2023 - 11 - 10,
+                }
+            ]
+        }
+        # Create orderbook sample with all correct keys to test if correct Error message is raised with wrong columns in inventory
+        orderbook_sample_2 = {
+            "rigid": [
+                {
+                    "Customer Name": "XYZ",
+                    "Customer Postcode": "XYZ123",
+                    "SKU": "SKU2",
+                    "Qty": 30,
+                    "Due Date": 2023 - 11 - 10,
+                },
+            ]
+        }
+
+        # Create inventory sample with all correct keys to test if correct Error message is raised with wrong columns in orderbook
+        inventory_sample_1 = {"SKU1": 100, "SKU2": 100}
+        # Create inventory sample with wrong key to test if correct Error message is raised with wrong columns in inventory
+        inventory_sample_2 = {"ABC": 100, "SKU2": 100}
+
+        # Create InventoryAllocation objects - allocator_1 has got wrong key in orderbook and correct keys in inventory AND allocator_2 has got wrong key in inventory and all correct keys in orderbook
+        allocator_1 = InventoryAllocation(orderbook_sample_1, inventory_sample_1)
+        allocator_2 = InventoryAllocation(orderbook_sample_2, inventory_sample_2)
+        error_message = """
+                Function allocate_inventory takes two dictionaries: orderbook and inventory. 
+                Orderbook must be outcome from parse_orderbook method called on OrderbookParser object.
+                Inventory must be outcome from parse_inventory method called on InventoryParser object.
+                If they are not, they may not have correct keys.
+                """
+
+        for key in orderbook_sample_1:
+            if key not in ["trailer", "rigid", "ERROR"]:
+                with self.assertRaises(WrongKeysAllocatorError) as context:
+                    allocator_1.allocate_inventory()
+                self.assertEqual(str(context.exception), error_message)
+            for sub_key in orderbook_sample_1[key]:
+                if sub_key not in orderbook_correct_keys:
+                    with self.assertRaises(WrongKeysAllocatorError) as context:
+                        allocator_1.allocate_inventory()
+                    self.assertEqual(str(context.exception), error_message)
+
+        for key in inventory_sample_2:
+            if key not in ["SKU", "Qty"]:
+                with self.assertRaises(WrongKeysAllocatorError) as context:
+                    allocator_1.allocate_inventory()
+                self.assertEqual(str(context.exception), error_message)
+
 
 if __name__ == "__main__":
     unittest.main()
