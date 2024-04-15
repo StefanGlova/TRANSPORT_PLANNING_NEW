@@ -12,6 +12,7 @@ CORRECT_KEYS = [
     "Qty",
     "Vehicle Type",
     "Due Date",
+    "Transport Volume (m3)",
 ]
 
 
@@ -43,6 +44,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "57",
                 "Vehicle Type": "trailer",
                 "Due Date": "2024-04-10",
+                "Transport Volume (m3)": "10",
             },
             {
                 "Customer Name": "Bob",
@@ -51,6 +53,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "1000",
                 "Vehicle Type": "rigid",
                 "Due Date": "2023-11-10",
+                "Transport Volume (m3)": "27",
             },
             # Correct keys but different order
             {
@@ -59,9 +62,11 @@ class TestOrderbookParser(unittest.TestCase):
                 "Due Date": "2023-11-10",
                 "SKU": "SKU2",
                 "Qty": "5",
+                "Transport Volume (m3)": "18",
                 "Vehicle Type": "wrong vehicle",
             },
             {
+                "Transport Volume (m3)": "0.005",
                 "Customer Name": "Abcd",
                 "Customer Postcode": "N9 9LA",
                 "SKU": "SKU456",
@@ -84,6 +89,7 @@ class TestOrderbookParser(unittest.TestCase):
         self.assertEqual(
             orders_by_vehicle["ERROR"][0]["Customer Name"], "Error Vehicle Type"
         )
+        self.assertEqual(orders_by_vehicle["trailer"][0]["Transport Volume (m3)"], 10)
 
         # Verify that numeric value of qty is correctly converted to number
         self.assertEqual(orders_by_vehicle["trailer"][0]["Qty"], 57)
