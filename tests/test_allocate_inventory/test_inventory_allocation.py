@@ -266,9 +266,7 @@ class TestInventoryAllocation(unittest.TestCase):
         allocator = InventoryAllocation(orderbook, inventory)
         if orderbook == {} or inventory == {}:
             with self.assertRaises(EmptyDatasetError) as context:
-                orderbook_allocated, inventory_left, orderbook_not_allocated = (
-                    allocator.allocate_inventory()
-                )
+                allocator.allocate_inventory()
             self.assertEqual(
                 str(context.exception), "Orderbook and inventory must not be empty"
             )
@@ -279,9 +277,7 @@ class TestInventoryAllocation(unittest.TestCase):
 
         if orderbook == {} or inventory == {}:
             with self.assertRaises(EmptyDatasetError) as context:
-                orderbook_allocated, inventory_left, orderbook_not_allocated = (
-                    allocator.allocate_inventory()
-                )
+                allocator.allocate_inventory()
             self.assertEqual(
                 str(context.exception), "Orderbook and inventory must not be empty"
             )
@@ -302,9 +298,7 @@ class TestInventoryAllocation(unittest.TestCase):
         allocator = InventoryAllocation(orderbook, inventory)
         if orderbook == {} or inventory == {}:
             with self.assertRaises(EmptyDatasetError) as context:
-                orderbook_allocated, inventory_left, orderbook_not_allocated = (
-                    allocator.allocate_inventory()
-                )
+                allocator.allocate_inventory()
             self.assertEqual(
                 str(context.exception), "Orderbook and inventory must not be empty"
             )
