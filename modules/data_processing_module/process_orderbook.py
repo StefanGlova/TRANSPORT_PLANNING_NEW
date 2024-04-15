@@ -23,6 +23,7 @@ class ProcessOrderbook:
             "Qty",
             "Vehicle Type",
             "Due Date",
+            "Transport Volume (m3)",
         ]
 
         fields = {
@@ -32,9 +33,13 @@ class ProcessOrderbook:
             "Qty": "number",
             "Vehicle Type": "string",
             "Due Date": "date",
+            "Transport Volume (m3)": "number",
         }
 
-        range = {"Qty": "cannot be negative"}
+        range = {
+            "Qty": "cannot be negative",
+            "Transport Volume (m3)": "cannot be negative",
+        }
 
         # Check if parsed_data is not empty list
         if self.parsed_data == []:
@@ -57,6 +62,14 @@ class ProcessOrderbook:
             except ValueError:
                 raise WrongValueTypeError("Qty", fields)
 
+            # Check if Transport Volume (m3) has numeric value. If has, convert string to floating point nubmer, if not raise error
+            try:
+                volume = float(row["Transport Volume (m3)"])
+                if volume < 0:
+                    raise WrongNumericRange("Transport Volume (m3)", range)
+            except ValueError:
+                raise WrongValueTypeError("Transport Volume (m3)", fields)
+
             # Check if Due Date field has date format. If has, convert string to datetime object, if not, raise error
             try:
                 date_string = row["Due Date"]
@@ -64,6 +77,7 @@ class ProcessOrderbook:
                 date = datetime.strptime(match.group(), "%Y-%m-%d").date()
             except AttributeError:
                 raise WrongValueTypeError("Due Date", fields)
+
             # Create customer variable (dict) which store data from each row
             customer = {
                 "Customer Name": row["Customer Name"],
@@ -71,6 +85,7 @@ class ProcessOrderbook:
                 "SKU": row["SKU"],
                 "Qty": qty,
                 "Due Date": date,
+                "Transport Volume (m3)": volume,
             }
             # Create vehicle variable (str) which stores vehicle type
             vehicle = row["Vehicle Type"]

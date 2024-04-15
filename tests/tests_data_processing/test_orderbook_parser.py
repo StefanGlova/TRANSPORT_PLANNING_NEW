@@ -232,7 +232,7 @@ class TestOrderbookParser(unittest.TestCase):
                 # Check for correct Error message
                 self.assertEqual(
                     str(context.exception),
-                    "Function parse_orderbook only accepts these keys Customer Name, Customer Postcode, SKU, Qty, Vehicle Type, Due Date!",
+                    "Function parse_orderbook only accepts these keys Customer Name, Customer Postcode, SKU, Qty, Vehicle Type, Due Date, Transport Volume (m3)!",
                 )
 
     def test_orderbook_wrong_value_type(self):
@@ -306,6 +306,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "-57",
                 "Vehicle Type": "trailer",
                 "Due Date": "2024-04-10",
+                "Transport Volume (m3)": "15",
             },
             {
                 "Customer Name": "Bob",
@@ -314,6 +315,7 @@ class TestOrderbookParser(unittest.TestCase):
                 "Qty": "-10.53",
                 "Vehicle Type": "rigid",
                 "Due Date": "2023-11-10",
+                "Transport Volume (m3)": "15",
             },
         ]
 
