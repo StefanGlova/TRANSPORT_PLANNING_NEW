@@ -4,9 +4,6 @@ import re
 
 
 class ProcessOrderbook:
-    def __init__(self, parsed_data: list):
-        self.parsed_data = parsed_data
-
     # Initialize global variable for ProcessOrderbook class
     CORRECT_KEYS = [
         "Customer Name",
@@ -33,6 +30,12 @@ class ProcessOrderbook:
         "Transport Volume (m3)": "cannot be negative",
     }
 
+    def __init__(self, parsed_data: list) -> None:
+        """
+        Initialize ProcessOrderbook object.
+        """
+        self.parsed_data = parsed_data
+
     def parse_orderbook(self) -> dict:
         """
         Parse data from parsed_data list into dictionary of lists.
@@ -41,13 +44,14 @@ class ProcessOrderbook:
             parsed_data: list
             Input list must not be empty - check before further process with parse_orderbook method and raises error if it is empty.
             The list must have these fields - validation of numeric and date fields is checked by private methods
+            Expected fields:
                 "Customer Name": "string",
                 "Customer Postcode": "string",
                 "SKU": "string",
-                "Qty": "number",
+                "Qty": "number", "cannot be negative"
                 "Vehicle Type": "string",
                 "Due Date": "date",
-                "Transport Volume (m3)": "number",
+                "Transport Volume (m3)": "number", "cannot be negative"
 
         Returns:
             dictionary: A orderbook dictionary of three lists: trailer, rigid and ERROR. Each list is list of dictionarie containing information about orders.
