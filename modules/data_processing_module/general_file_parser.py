@@ -45,7 +45,7 @@ class GeneralFileParser:
                     for key, value in row.items():
                         row[key] = str(value)
             except pd.errors.EmptyDataError:
-                raise EmptyFileError(self.file_path)
+                raise EmptyFileError(filename=self.file_path)
         else:
             # Initialize parsed_data list variable which will be returned from parse method
             parsed_data = list()
@@ -85,14 +85,18 @@ class GeneralFileParser:
         Private method checking if input list is not empty. If it is, it raises error. For error details, please refer to errors.py file.
         """
         if self.parsed_data == []:
-            raise WrongKeysError(method_called, correct_keys=self.CORRECT_KEYS)
+            raise WrongKeysError(
+                method_called=method_called, correct_keys=self.CORRECT_KEYS
+            )
 
     def _check_correct_keys(self, row: dict, method_called) -> None:
         """
         Private method checking if every row(dictionary) in the input list has correct keys. If not, it raises error. For error details, please refer to errors.py file.
         """
         if sorted(list(set(key for key in row.keys()))) != sorted(self.CORRECT_KEYS):
-            raise WrongKeysError(method_called, correct_keys=self.CORRECT_KEYS)
+            raise WrongKeysError(
+                method_called=method_called, correct_keys=self.CORRECT_KEYS
+            )
 
     def _validate_number_value(self, value: str, field: str) -> float:
         """
@@ -102,21 +106,21 @@ class GeneralFileParser:
             value = float(value)
             if field == "Latitude":
                 if value > 90 or value < -90:
-                    raise WrongNumericRange(field, self.RANGE)
+                    raise WrongNumericRange(parameter=field, range=self.RANGE)
                 else:
                     return value
             elif field == "Longitude":
                 if value > 180 or value < -180:
-                    raise WrongNumericRange(field, self.RANGE)
+                    raise WrongNumericRange(parameter=field, range=self.RANGE)
                 else:
                     return value
             else:
                 if value < 0:
-                    raise WrongNumericRange(field, self.RANGE)
+                    raise WrongNumericRange(parameter=field, range=self.RANGE)
                 else:
                     return value
         except ValueError:
-            raise WrongValueTypeError(field, self.FIELDS)
+            raise WrongValueTypeError(parameter=field, field=self.FIELDS)
 
     def _validate_date(self, value: str) -> datetime:
         """
@@ -128,4 +132,4 @@ class GeneralFileParser:
             date = datetime.strptime(match.group(), "%Y-%m-%d").date()
             return date
         except AttributeError:
-            raise WrongValueTypeError("Due Date", self.FIELDS)
+            raise WrongValueTypeError(parameter="Due Date", field=self.FIELDS)

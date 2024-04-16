@@ -16,7 +16,7 @@ CORRECT_KEYS = [
 ]
 
 
-class TestOrderbookParser(unittest.TestCase):
+class TestProcessOrderbook(unittest.TestCase):
 
     def test_orderbook_correct_input(self) -> None:
         """
