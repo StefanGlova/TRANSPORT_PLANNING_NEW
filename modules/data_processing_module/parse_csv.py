@@ -1,8 +1,20 @@
 import pandas as pd
-from modules.errors import EmptyFileError
+from modules.errors import (
+    EmptyFileError,
+    WrongKeysError,
+    WrongValueTypeError,
+    WrongNumericRange,
+)
+from datetime import datetime
+import re
 
 
 class GeneralFileParser:
+
+    CORRECT_KEYS = []
+    FIELDS = {}
+    RANGE = {}
+
     def __init__(self, file_path: str, delimiter: str = ",") -> None:
         """
         Construction method for the ParseCSV class.
@@ -67,3 +79,53 @@ class GeneralFileParser:
                 parsed_data.append(entry)
 
         return parsed_data
+
+    def _check_empty_list(self, method_called) -> None:
+        """
+        Private method checking if input list is not empty. If it is, it raises error. For error details, please refer to errors.py file.
+        """
+        if self.parsed_data == []:
+            raise WrongKeysError(method_called, correct_keys=self.CORRECT_KEYS)
+
+    def _check_correct_keys(self, row: dict, method_called) -> None:
+        """
+        Private method checking if every row(dictionary) in the input list has correct keys. If not, it raises error. For error details, please refer to errors.py file.
+        """
+        if sorted(list(set(key for key in row.keys()))) != sorted(self.CORRECT_KEYS):
+            raise WrongKeysError(method_called, correct_keys=self.CORRECT_KEYS)
+
+    def _validate_number_value(self, value: str, field: str) -> float:
+        """
+        Private method checking if input value can be converted to floating point number and whether the number is in expected range. If any of these fails, it raises appropriate error. For error details, please refer to errors.py file.
+        """
+        try:
+            value = float(value)
+            if field == "Latitude":
+                if value > 90 or value < -90:
+                    raise WrongNumericRange(field, self.RANGE)
+                else:
+                    return value
+            elif field == "Longitude":
+                if value > 180 or value < -180:
+                    raise WrongNumericRange(field, self.RANGE)
+                else:
+                    return value
+            else:
+                if value < 0:
+                    raise WrongNumericRange(field, self.RANGE)
+                else:
+                    return value
+        except ValueError:
+            raise WrongValueTypeError(field, self.FIELDS)
+
+    def _validate_date(self, value: str) -> datetime:
+        """
+        Private method checking if input value can be converted to datetime object. If not, it raises an error. For error details, please refer to errors.py file.
+        """
+        try:
+            date_string = value
+            match = re.search(r"\d{4}-\d{2}-\d{2}", date_string)
+            date = datetime.strptime(match.group(), "%Y-%m-%d").date()
+            return date
+        except AttributeError:
+            raise WrongValueTypeError("Due Date", self.FIELDS)

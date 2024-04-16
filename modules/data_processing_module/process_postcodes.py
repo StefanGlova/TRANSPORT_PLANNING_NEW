@@ -1,7 +1,7 @@
-from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
+from modules.data_processing_module.parse_csv import GeneralFileParser
 
 
-class ProcessPostcodes:
+class ProcessPostcodes(GeneralFileParser):
     # Initialize global variable for ProcessPostcodes class
     CORRECT_KEYS = ["Postcode", "Latitude", "Longitude"]
 
@@ -16,11 +16,11 @@ class ProcessPostcodes:
         "Longitude": "must be in range from -180 to +180",
     }
 
-    def __init__(self, parsed_data: list) -> None:
+    def __init__(self, file_path: str, delimiter: str = ",") -> None:
         """
         Initialize ProcessPostcodes object.
         """
-        self.parsed_data = parsed_data
+        super().__init__(file_path=file_path, delimiter=delimiter)
 
     def parse_postcodes(self) -> dict:
         """
@@ -39,14 +39,14 @@ class ProcessPostcodes:
             dictionary: An postcode dictionary with postcode as key and value of nasted dictionary with Latitude and Longitude as key and value of float type.
         """
         # Check if input is not empty list
-        self._check_empty_list()
+        self._check_empty_list(method_called="parse_postcodes")
         # Initialize empty postocdes dict
         postcodes = dict()
 
         # Iterate over each item of the parsed_data list
         for row in self.parsed_data:
             # Check if row only contains correct keys
-            self._check_correct_keys(row)
+            self._check_correct_keys(row=row, method_called="parse_postcodes")
 
             # Check if Latitude and Longitude has correct value
             lat = self._validate_number_value(row["Latitude"], "Latitude")
@@ -59,40 +59,3 @@ class ProcessPostcodes:
             postcodes[row["Postcode"]]["Longitude"] = long
 
         return postcodes
-
-    def _check_empty_list(self) -> None:
-        """
-        Private method checking if input list is not empty. If it is, it raises error. For error details, please refer to errors.py file.
-        """
-        if self.parsed_data == []:
-            raise WrongKeysError(
-                method_called="parse_postcodes", correct_keys=self.CORRECT_KEYS
-            )
-
-    def _check_correct_keys(self, row: dict) -> None:
-        """
-        Private method checking if every row(dictionary) in the input list has correct keys. If not, it raises error. For error details, please refer to errors.py file.
-        """
-        if sorted(list(set(key for key in row.keys()))) != sorted(self.CORRECT_KEYS):
-            raise WrongKeysError(
-                method_called="parse_postcodes", correct_keys=self.CORRECT_KEYS
-            )
-
-    def _validate_number_value(self, value: str, field: str) -> float:
-        """
-        Private method checking if input value can be converted to floating point number and whether the number is in expected range. If any of these fails, it raises appropriate error. For error details, please refer to errors.py file.
-        """
-        try:
-            value = float(value)
-            if field == "Latitude":
-                if value > 90 or value < -90:
-                    raise WrongNumericRange(field, self.RANGE)
-                else:
-                    return value
-            elif field == "Longitude":
-                if value > 180 or value < -180:
-                    raise WrongNumericRange(field, self.RANGE)
-                else:
-                    return value
-        except ValueError:
-            raise WrongValueTypeError(field, self.FIELDS)
