@@ -7,7 +7,7 @@ PARSER = ProcessInventory(None)
 CORRECT_KEYS = ["SKU", "Qty"]
 
 
-class TestInventoryParser(unittest.TestCase):
+class TestProcessInventory(unittest.TestCase):
 
     def test_inventory_correct_input(self) -> None:
         """

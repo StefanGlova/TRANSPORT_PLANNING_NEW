@@ -6,7 +6,7 @@ PARSER = ProcessPostcodes(None)
 CORRECT_KEYS = ["Postcode", "Latitude", "Longitude"]
 
 
-class TestPostcodeParser(unittest.TestCase):
+class TestProcessPostcodes(unittest.TestCase):
 
     def test_postcode_correct_input(self) -> None:
         """
