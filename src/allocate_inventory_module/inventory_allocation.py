@@ -1,4 +1,4 @@
-from modules.errors import EmptyDatasetError, WrongKeysAllocatorError
+from src.errors import EmptyDatasetError, WrongKeysAllocatorError
 
 
 class InventoryAllocation:

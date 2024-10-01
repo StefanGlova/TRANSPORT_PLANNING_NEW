@@ -1,6 +1,6 @@
 import unittest
-from modules.data_processing_module.process_postcodes import ProcessPostcodes
-from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
+from src.data_processing_module.process_postcodes import ProcessPostcodes
+from src.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
 
 PARSER = ProcessPostcodes(None)
 CORRECT_KEYS = ["Postcode", "Latitude", "Longitude"]

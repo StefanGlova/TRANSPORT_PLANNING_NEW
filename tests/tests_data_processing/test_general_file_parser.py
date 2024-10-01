@@ -1,8 +1,8 @@
 import unittest
 import threading
 import os
-from modules.data_processing_module.general_file_parser import GeneralFileParser
-from modules.errors import EmptyFileError
+from src.data_processing_module.general_file_parser import GeneralFileParser
+from src.errors import EmptyFileError
 
 
 # Crate path to directory where tesing files will be stored

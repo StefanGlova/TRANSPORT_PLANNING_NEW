@@ -1,5 +1,5 @@
 import pandas as pd
-from modules.errors import (
+from src.errors import (
     EmptyFileError,
     WrongKeysError,
     WrongValueTypeError,

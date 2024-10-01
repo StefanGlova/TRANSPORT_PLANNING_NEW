@@ -1,6 +1,6 @@
 import unittest
-from modules.data_processing_module.process_orderbook import ProcessOrderbook
-from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
+from src.data_processing_module.process_orderbook import ProcessOrderbook
+from src.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
 from datetime import datetime
 import re
 

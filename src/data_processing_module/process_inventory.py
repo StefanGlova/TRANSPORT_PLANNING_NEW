@@ -1,4 +1,4 @@
-from modules.data_processing_module.general_file_parser import GeneralFileParser
+from src.data_processing_module.general_file_parser import GeneralFileParser
 
 
 class ProcessInventory(GeneralFileParser):

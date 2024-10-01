@@ -1,7 +1,7 @@
 import unittest
-from modules.allocate_inventory_module.inventory_allocation import InventoryAllocation
+from src.allocate_inventory_module.inventory_allocation import InventoryAllocation
 
-from modules.errors import EmptyDatasetError, WrongKeysAllocatorError
+from src.errors import EmptyDatasetError, WrongKeysAllocatorError
 
 
 class TestInventoryAllocation(unittest.TestCase):

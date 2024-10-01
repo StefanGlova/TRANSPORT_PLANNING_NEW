@@ -1,6 +1,6 @@
 import unittest
-from modules.data_processing_module.process_inventory import ProcessInventory
-from modules.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
+from src.data_processing_module.process_inventory import ProcessInventory
+from src.errors import WrongKeysError, WrongValueTypeError, WrongNumericRange
 
 
 PARSER = ProcessInventory(None)
