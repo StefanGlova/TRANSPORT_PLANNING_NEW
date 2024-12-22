@@ -1,6 +1,6 @@
 # TRANSPORT_PLANNING_NEW
 
-This is newer version of original Transport planning project ([link](https://github.com/StefanGlova/transport-planning)). It is re-built from scratch, using knowledge and algorithms from the original version. It is built on Test Driven Developement principle, where I write failing test first, then code to make test passed, then re-factor and back to new failing test, etc. It also uses OOP, coparing with declarative approach in the original version.
+This is newer version of original Transport planning project ([link](https://github.com/StefanGlova/transport-planning)). It is re-built from scratch, using knowledge and algorithms from the original version. It is built on Test Driven Developement principle, where I write failing test first, then code to make test passed, then re-factor and back to new failing test, etc. It also uses OOP, in contrast with declarative approach in the original version.
 
 ## Modules
 
