@@ -428,21 +428,25 @@ class TestInventoryAllocation(unittest.TestCase):
         of the line and due date.
         Expected outcome is dict datatype with this structure:
         {
-        'Customer Name',
-        'Customer Postcode',
-        'Vehicle Type',
-        'Total Transport Volume',
-        'Line Details': 
+        'Vehicle Type':
             [
                 {
-                'SKU',
-                'Qty',
-                'Transport Volume',
-                'Due Date'
+                'Customer Name',
+                'Customer Postcode',
+                'Total Transport Volume',
+                'Line Details': 
+                    [
+                        {
+                        'SKU',
+                        'Qty',
+                        'Transport Volume',
+                        'Due Date'
+                        },
+                        {
+                        ...
+                        }
+                    ],
                 },
-                {
-                ...
-                }
             ]
         }
         """
@@ -456,6 +460,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
+                    "Transport Volume (m3)": 1
                 },
                 {
                     "Customer Name": "ABC",
@@ -463,6 +468,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 10,
                     "Due Date": 2023 - 11 - 11,
+                    "Transport Volume (m3)": 2
                 },
             ]
         }
@@ -479,7 +485,7 @@ class TestInventoryAllocation(unittest.TestCase):
             allocator.allocate_inventory()
         )
         # Create a new dict with orderbook grouped by customer
-        grouped_orderbook_allocated = allocator.group_by_customer()
+        grouped_orderbook_allocated = allocator.group_by_customer(orderbook_allocated)
 
         # Verify the outcome of allocate_inventory method
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 60)
@@ -487,7 +493,7 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
         # # Verify the outcome of group_by_customer method
-        self.assertEqual(len(grouped_orderbook_allocated["trailer"][0]["Line Details"]) == 2)
+        self.assertEqual(len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2)
 
 
 if __name__ == "__main__":

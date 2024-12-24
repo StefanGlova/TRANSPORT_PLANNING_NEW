@@ -44,6 +44,56 @@ class InventoryAllocation:
                     orderbook_not_allocated[vehicle].append(order)
 
         return orderbook_allocated, self.inventory, orderbook_not_allocated
+    
+    def group_by_customer(self, orderbook_allocated: dict) -> dict:
+        orderbook_grouped = dict()
+        customers_check = []
+
+        for vehicle, orders in orderbook_allocated.items():
+            orderbook_grouped[vehicle] = []
+            for order in orders:
+                customer = order["Customer Name"]
+                if customer in customers_check:
+                    i = customers_check.index(customer)
+                    sku = order["SKU"]
+                    qty = order["Allocated Qty"]
+                    volume = order["Transport Volume (m3)"]
+                    due_date = order["Due Date"]
+                    order_details = {
+                        "SKU": sku,
+                        "Qty": qty,
+                        "Due Date": due_date,
+                        "Transport Volume (m3)": volume
+                    }
+                    orderbook_grouped[vehicle][i]["Total Volume"] += volume
+                    orderbook_grouped[vehicle][i]["Line Details"].append(order_details)
+                else:
+                    customers_check.append(customer)
+                    i = customers_check.index(customer)
+                    sku = order["SKU"]
+                    qty = order["Allocated Qty"]
+                    volume = order["Transport Volume (m3)"]
+                    due_date = order["Due Date"]
+                    postcode = order["Customer Postcode"]
+                    order_details = {
+                        "SKU": sku,
+                        "Qty": qty,
+                        "Due Date": due_date,
+                        "Transport Volume (m3)": volume
+                    }
+                    customer_details = {
+                        "Customer Name": customer,
+                        "Customer Postcode": postcode,
+                        "Total Volume": volume,
+                        "Line Details": []
+                    }
+                    orderbook_grouped[vehicle].append(customer_details)
+                    orderbook_grouped[vehicle][i]["Line Details"].append(order_details)                   
+
+
+        return orderbook_grouped
+
+
 
     def _allocate_qty(self, order: dict) -> int:
         """
@@ -85,6 +135,7 @@ class InventoryAllocation:
             "SKU",
             "Qty",
             "Due Date",
+            "Transport Volume (m3)"
         ]
 
         for vehicle in self.orderbook:
