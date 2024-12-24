@@ -53,34 +53,23 @@ class InventoryAllocation:
             orderbook_grouped[vehicle] = []
             for order in orders:
                 customer = order["Customer Name"]
+                sku = order["SKU"]
+                qty = order["Allocated Qty"]
+                volume = order["Transport Volume (m3)"]
+                due_date = order["Due Date"]
+                order_details = {
+                    "SKU": sku,
+                    "Qty": qty,
+                    "Due Date": due_date,
+                    "Transport Volume (m3)": volume
+                }
                 if customer in customers_check:
                     i = customers_check.index(customer)
-                    sku = order["SKU"]
-                    qty = order["Allocated Qty"]
-                    volume = order["Transport Volume (m3)"]
-                    due_date = order["Due Date"]
-                    order_details = {
-                        "SKU": sku,
-                        "Qty": qty,
-                        "Due Date": due_date,
-                        "Transport Volume (m3)": volume
-                    }
                     orderbook_grouped[vehicle][i]["Total Volume"] += volume
-                    orderbook_grouped[vehicle][i]["Line Details"].append(order_details)
                 else:
                     customers_check.append(customer)
                     i = customers_check.index(customer)
-                    sku = order["SKU"]
-                    qty = order["Allocated Qty"]
-                    volume = order["Transport Volume (m3)"]
-                    due_date = order["Due Date"]
                     postcode = order["Customer Postcode"]
-                    order_details = {
-                        "SKU": sku,
-                        "Qty": qty,
-                        "Due Date": due_date,
-                        "Transport Volume (m3)": volume
-                    }
                     customer_details = {
                         "Customer Name": customer,
                         "Customer Postcode": postcode,
@@ -88,7 +77,7 @@ class InventoryAllocation:
                         "Line Details": []
                     }
                     orderbook_grouped[vehicle].append(customer_details)
-                    orderbook_grouped[vehicle][i]["Line Details"].append(order_details)                   
+                orderbook_grouped[vehicle][i]["Line Details"].append(order_details)                   
 
 
         return orderbook_grouped
