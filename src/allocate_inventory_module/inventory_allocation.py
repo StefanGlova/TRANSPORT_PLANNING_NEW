@@ -47,7 +47,8 @@ class InventoryAllocation:
     
     def group_by_customer(self, orderbook_allocated: dict) -> dict:
         orderbook_grouped = dict()
-        customers_check = []
+        customers_check_trailer = []
+        customers_check_rigid = []
 
         for vehicle, orders in orderbook_allocated.items():
             orderbook_grouped[vehicle] = []
@@ -63,12 +64,19 @@ class InventoryAllocation:
                     "Due Date": due_date,
                     "Transport Volume (m3)": volume
                 }
-                if customer in customers_check:
-                    i = customers_check.index(customer)
+                if customer in customers_check_trailer:
+                    i = customers_check_trailer.index(customer)
+                    orderbook_grouped[vehicle][i]["Total Volume"] += volume
+                elif customer in customers_check_rigid:
+                    i = customers_check_rigid.index(customer)
                     orderbook_grouped[vehicle][i]["Total Volume"] += volume
                 else:
-                    customers_check.append(customer)
-                    i = customers_check.index(customer)
+                    if vehicle == "trailer":
+                        customers_check_trailer.append(customer)
+                        i = customers_check_trailer.index(customer)
+                    elif vehicle == "rigid":
+                        customers_check_rigid.append(customer)
+                        i = customers_check_rigid.index(customer)                       
                     postcode = order["Customer Postcode"]
                     customer_details = {
                         "Customer Name": customer,
