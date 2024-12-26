@@ -139,7 +139,57 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(inventory_left["SKU1"], 0)
         self.assertEqual(orderbook_not_allocated["trailer"][0]["Transport Volume (m3)"], 10.0)
 
+    def test_inventory_allocation_two_orders_case_no_enough_inventory_volume_recalculation(self):
+        """
+        Similar to test_inventory_allocation_two_orders, but testing for volume recalculation if not enough invcentory.
+        """
 
+        # Create orderbook sample with just one order
+        orderbook = {
+            "trailer": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Transport Volume (m3)": 60
+                },
+                {
+                    "Customer Name": "XYZ",
+                    "Customer Postcode": "XYZ123",
+                    "SKU": "SKU1",
+                    "Qty": 30,
+                    "Due Date": 2023 - 11 - 10,
+                    "Transport Volume (m3)": 30
+                },
+            ]
+        }
+
+        # Create inventory sample with just one sku
+        inventory = {
+            "SKU1": 50,
+            "SKU2": 100,
+        }
+
+        # Create allocator as object of InventoryAllocation class and run allocate_inventory method on the created object
+        allocator = InventoryAllocation(orderbook, inventory)
+        orderbook_allocated, inventory_left, orderbook_not_allocated = (
+            allocator.allocate_inventory()
+        )
+
+        # Verify the outcome of allocate_inventory method
+        self.assertEqual(orderbook_allocated["trailer"][0]["Customer Name"], "ABC")
+        self.assertEqual(orderbook_not_allocated["trailer"][0]["Customer Name"], "ABC")
+        self.assertEqual(orderbook_not_allocated["trailer"][1]["Customer Name"], "XYZ")
+        self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 50)
+        self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Volume"], 50)
+        self.assertEqual(orderbook_not_allocated["trailer"][0]["Qty"], 10)
+        self.assertEqual(orderbook_not_allocated["trailer"][0]["Transport Volume (m3)"], 10)
+        self.assertEqual(orderbook_not_allocated["trailer"][1]["Qty"], 30)
+        self.assertEqual(orderbook_not_allocated["trailer"][1]["Transport Volume (m3)"], 30)
+        self.assertEqual(inventory_left["SKU1"], 0)
+        self.assertEqual(inventory_left["SKU2"], 100)
 
 
     # def test_inventory_allocation_complex_case(self):
