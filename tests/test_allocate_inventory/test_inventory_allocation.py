@@ -534,86 +534,86 @@ class TestInventoryAllocation(unittest.TestCase):
                             allocator_3.allocate_inventory()
                         self.assertEqual(str(context.exception), error_message)
 
-    # def test_inventory_allocation_simple_group(self):
-    #     """
-    #     Simple test to check if method simple_group in the class InvcentoryAllocation 
-    #     group orders by customer with common name, postcode, vehicle type, adding total 
-    #     transport volume and list of line details, such as sku, qty, transport volume 
-    #     of the line and due date.
-    #     Expected outcome is dict datatype with this structure:
-    #     {
-    #     'Vehicle Type':
-    #         [
-    #             {
-    #             'Customer Name',
-    #             'Customer Postcode',
-    #             'Total Transport Volume',
-    #             'Line Details': 
-    #                 [
-    #                     {
-    #                     'SKU',
-    #                     'Qty',
-    #                     'Transport Volume',
-    #                     'Due Date'
-    #                     },
-    #                     {
-    #                     ...
-    #                     }
-    #                 ],
-    #             },
-    #         ]
-    #     }
-    #     """
+    def test_inventory_allocation_simple_group(self):
+        """
+        Simple test to check if method simple_group in the class InvcentoryAllocation 
+        group orders by customer with common name, postcode, vehicle type, adding total 
+        transport volume and list of line details, such as sku, qty, transport volume 
+        of the line and due date.
+        Expected outcome is dict datatype with this structure:
+        {
+        'Vehicle Type':
+            [
+                {
+                'Customer Name',
+                'Customer Postcode',
+                'Total Transport Volume',
+                'Line Details': 
+                    [
+                        {
+                        'SKU',
+                        'Qty',
+                        'Transport Volume',
+                        'Due Date'
+                        },
+                        {
+                        ...
+                        }
+                    ],
+                },
+            ]
+        }
+        """
 
-    #     # Create orderbook sample with same customer but two orders
-    #     orderbook = {
-    #         "trailer": [
-    #             {
-    #                 "Customer Name": "ABC",
-    #                 "Customer Postcode": "ABC123",
-    #                 "SKU": "SKU1",
-    #                 "Qty": 60,
-    #                 "Due Date": 2023 - 11 - 10,
-    #                 "Transport Volume (m3)": 1
-    #             },
-    #             {
-    #                 "Customer Name": "ABC",
-    #                 "Customer Postcode": "ABC123",
-    #                 "SKU": "SKU2",
-    #                 "Qty": 10,
-    #                 "Due Date": 2023 - 11 - 11,
-    #                 "Transport Volume (m3)": 2
-    #             },
-    #         ]
-    #     }
+        # Create orderbook sample with same customer but two orders
+        orderbook = {
+            "trailer": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Transport Volume (m3)": 1
+                },
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "SKU": "SKU2",
+                    "Qty": 10,
+                    "Due Date": 2023 - 11 - 11,
+                    "Transport Volume (m3)": 2
+                },
+            ]
+        }
 
-    #     # Create inventory sample with just two skus
-    #     inventory = {
-    #         "SKU1": 100,
-    #         "SKU2": 100,
-    #     }
+        # Create inventory sample with just two skus
+        inventory = {
+            "SKU1": 100,
+            "SKU2": 100,
+        }
 
-    #     # Create allocator as object of InventoryAllocation class and run allocate_inventory method on the created object
-    #     allocator = InventoryAllocation(orderbook, inventory)
-    #     orderbook_allocated, inventory_left, orderbook_not_allocated = (
-    #         allocator.allocate_inventory()
-    #     )
-    #     # Create a new dict with orderbook grouped by customer
-    #     grouped_orderbook_allocated = allocator.group_by_customer(orderbook_allocated)
+        # Create allocator as object of InventoryAllocation class and run allocate_inventory method on the created object
+        allocator = InventoryAllocation(orderbook, inventory)
+        orderbook_allocated, inventory_left, orderbook_not_allocated = (
+            allocator.allocate_inventory()
+        )
+        # Create a new dict with orderbook grouped by customer
+        grouped_orderbook_allocated = allocator.group_by_customer(orderbook_allocated)
 
-    #     # Verify the outcome of allocate_inventory method
-    #     self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 60)
-    #     self.assertEqual(inventory_left["SKU1"], 40)
-    #     self.assertEqual(orderbook_not_allocated["trailer"], [])
+        # Verify the outcome of allocate_inventory method
+        self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 60)
+        self.assertEqual(inventory_left["SKU1"], 40)
+        self.assertEqual(orderbook_not_allocated["trailer"], [])
 
-    #     # # Verify the outcome of group_by_customer method
-    #     self.assertEqual(len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2)
-    #     self.assertEqual(len(grouped_orderbook_allocated["trailer"]), 1)
-    #     self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC")
-    #     self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123")  
-    #     self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)    
-    #     self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 1})  
-    #     self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})     
+        # # Verify the outcome of group_by_customer method
+        self.assertEqual(len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2)
+        self.assertEqual(len(grouped_orderbook_allocated["trailer"]), 1)
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC")
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123")  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)    
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 1})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})     
 
 
     # def test_inventory_allocation_group_two_customers_same_vehicle_enough_inventory(self):
