@@ -261,53 +261,53 @@ class TestInventoryAllocation(unittest.TestCase):
     #     self.assertEqual(orderbook_not_allocated["rigid"][1]["SKU"], "SKU5")
     #     self.assertEqual(orderbook_not_allocated["rigid"][1]["Qty"], 50)
 
-    # def test_inventory_allocation_empty_dataset(self):
-    #     """
-    #     Test for empty dataset.
-    #     """
-    #     print("test Inventory Allocation empty dataset")
+    def test_inventory_allocation_empty_dataset(self):
+        """
+        Test for empty dataset.
+        """
+        print("test Inventory Allocation empty dataset")
 
-    #     # Both, orderbook and inventory are empty
-    #     orderbook, inventory = dict(), dict()
-    #     allocator = InventoryAllocation(orderbook, inventory)
-    #     if orderbook == {} or inventory == {}:
-    #         with self.assertRaises(EmptyDatasetError) as context:
-    #             allocator.allocate_inventory()
-    #         self.assertEqual(
-    #             str(context.exception), "Orderbook and inventory must not be empty"
-    #         )
+        # Both, orderbook and inventory are empty
+        orderbook, inventory = dict(), dict()
+        allocator = InventoryAllocation(orderbook, inventory)
+        if orderbook == {} or inventory == {}:
+            with self.assertRaises(EmptyDatasetError) as context:
+                allocator.allocate_inventory()
+            self.assertEqual(
+                str(context.exception), "Orderbook and inventory must not be empty"
+            )
 
-    #     # Orderbook is empty, but inventory has some data
-    #     orderbook, inventory = dict(), {"SKU1": 100}
-    #     allocator = InventoryAllocation(orderbook, inventory)
+        # Orderbook is empty, but inventory has some data
+        orderbook, inventory = dict(), {"SKU1": 100}
+        allocator = InventoryAllocation(orderbook, inventory)
 
-    #     if orderbook == {} or inventory == {}:
-    #         with self.assertRaises(EmptyDatasetError) as context:
-    #             allocator.allocate_inventory()
-    #         self.assertEqual(
-    #             str(context.exception), "Orderbook and inventory must not be empty"
-    #         )
+        if orderbook == {} or inventory == {}:
+            with self.assertRaises(EmptyDatasetError) as context:
+                allocator.allocate_inventory()
+            self.assertEqual(
+                str(context.exception), "Orderbook and inventory must not be empty"
+            )
 
-    #     # Inventory is empty, but orderbook has some data
-    #     inventory = {}
-    #     orderbook = {
-    #         "trailer": [
-    #             {
-    #                 "Customer Name": "ABC",
-    #                 "Customer Postcode": "ABC123",
-    #                 "SKU": "SKU1",
-    #                 "Qty": 1000,
-    #                 "Due Date": 2023 - 11 - 10,
-    #             },
-    #         ]
-    #     }
-    #     allocator = InventoryAllocation(orderbook, inventory)
-    #     if orderbook == {} or inventory == {}:
-    #         with self.assertRaises(EmptyDatasetError) as context:
-    #             allocator.allocate_inventory()
-    #         self.assertEqual(
-    #             str(context.exception), "Orderbook and inventory must not be empty"
-    #         )
+        # Inventory is empty, but orderbook has some data
+        inventory = {}
+        orderbook = {
+            "trailer": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "SKU": "SKU1",
+                    "Qty": 1000,
+                    "Due Date": 2023 - 11 - 10,
+                },
+            ]
+        }
+        allocator = InventoryAllocation(orderbook, inventory)
+        if orderbook == {} or inventory == {}:
+            with self.assertRaises(EmptyDatasetError) as context:
+                allocator.allocate_inventory()
+            self.assertEqual(
+                str(context.exception), "Orderbook and inventory must not be empty"
+            )
 
     # def test_inventory_allocation_correct_keys(self):
     #     """
