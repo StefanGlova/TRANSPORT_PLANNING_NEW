@@ -412,122 +412,127 @@ class TestInventoryAllocation(unittest.TestCase):
                 str(context.exception), "Orderbook and inventory must not be empty"
             )
 
-    # def test_inventory_allocation_correct_keys(self):
-    #     """
-    #     Test for correct keys in orderbook dictionary.
-    #     Raises appropriate error if not.
-    #     """
+    def test_inventory_allocation_correct_keys(self):
+        """
+        Test for correct keys in orderbook dictionary.
+        Raises appropriate error if not.
+        """
 
-    #     print("test Inventory Allocation correct keys")
+        print("test Inventory Allocation correct keys")
 
-    #     # Define correct keys
-    #     orderbook_correct_keys = [
-    #         "Customer Name",
-    #         "Customer Postcode",
-    #         "SKU",
-    #         "Qty",
-    #         "Due Date",
-    #     ]
+        # Define correct keys
+        orderbook_correct_keys = [
+            "Customer Name",
+            "Customer Postcode",
+            "SKU",
+            "Qty",
+            "Due Date",
+            "Transport Volume (m3)"
+        ]
 
-    #     inventory_correct_keys = ["SKU", "Qty"]
+        inventory_correct_keys = ["SKU", "Qty"]
 
-    #     # Create orderbook sample with wrong key to test if correct Error message is raised with wrong columns in orderbook
-    #     orderbook_sample_1 = {
-    #         "trailer": [
-    #             {
-    #                 "Customer Name": "ABC",
-    #                 "Customer Postcode": "ABC123",
-    #                 "ABC": "SKU1",
-    #                 "Qty": 1000,
-    #                 "Due Date": 2023 - 11 - 10,
-    #             }
-    #         ]
-    #     }
-    #     # Create orderbook sample with all correct keys
-    #     orderbook_sample_2 = {
-    #         "rigid": [
-    #             {
-    #                 "Customer Name": "XYZ",
-    #                 "Customer Postcode": "XYZ123",
-    #                 "SKU": "SKU2",
-    #                 "Qty": 30,
-    #                 "Due Date": 2023 - 11 - 10,
-    #             },
-    #         ]
-    #     }
-    #     # Create orderbook sample with wrong top level key
-    #     orderbook_sample_3 = {
-    #         "trailer": [
-    #             {
-    #                 "Customer Name": "ABC",
-    #                 "Customer Postcode": "ABC123",
-    #                 "ABC": "SKU1",
-    #                 "Qty": 1000,
-    #                 "Due Date": 2023 - 11 - 10,
-    #             }
-    #         ],
-    #         "delivery_van": [
-    #             {
-    #                 "Customer Name": "ABC",
-    #                 "Customer Postcode": "ABC123",
-    #                 "ABC": "SKU1",
-    #                 "Qty": 1000,
-    #                 "Due Date": 2023 - 11 - 10,
-    #             }
-    #         ],
-    #     }
+        # Create orderbook sample with wrong key to test if correct Error message is raised with wrong columns in orderbook
+        orderbook_sample_1 = {
+            "trailer": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "ABC": "SKU1",
+                    "Qty": 1000,
+                    "Due Date": 2023 - 11 - 10,
+                    "Transport Volume (m3)": 1000
+                }
+            ]
+        }
+        # Create orderbook sample with all correct keys
+        orderbook_sample_2 = {
+            "rigid": [
+                {
+                    "Customer Name": "XYZ",
+                    "Customer Postcode": "XYZ123",
+                    "SKU": "SKU2",
+                    "Qty": 30,
+                    "Due Date": 2023 - 11 - 10,
+                    "Transport Volume (m3)": 30
+                },
+            ]
+        }
+        # Create orderbook sample with wrong top level key
+        orderbook_sample_3 = {
+            "trailer": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "ABC": "SKU1",
+                    "Qty": 1000,
+                    "Due Date": 2023 - 11 - 10,
+                    "Transport Volume (m3)": 1000
+                }
+            ],
+            "delivery_van": [
+                {
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "ABC": "SKU1",
+                    "Qty": 1000,
+                    "Due Date": 2023 - 11 - 10,
+                    "Transport Volume (m3)": 1000
+                }
+            ],
+        }
 
-    #     # Create inventory samples with all correct keys
-    #     inventory_sample_1 = {"SKU1": 100, "SKU2": 100}
-    #     inventory_sample_2 = {"ABC": 100, "SKU2": 100}
-    #     inventory_sample_3 = {"SKU1": 100, "SKU2": 100}
+        # Create inventory samples with all correct keys
+        inventory_sample_1 = {"SKU1": 100, "SKU2": 100}
+        inventory_sample_2 = {"ABC": 100, "SKU2": 100}
+        inventory_sample_3 = {"SKU1": 100, "SKU2": 100}
 
-    #     # Create InventoryAllocation objects - allocator_1 has got wrong key in orderbook and correct keys in inventory AND allocator_2 has got wrong key in inventory and all correct keys in orderbook
-    #     allocator_1 = InventoryAllocation(orderbook_sample_1, inventory_sample_1)
-    #     allocator_2 = InventoryAllocation(orderbook_sample_2, inventory_sample_2)
-    #     allocator_3 = InventoryAllocation(orderbook_sample_3, inventory_sample_3)
+        # Create InventoryAllocation objects - allocator_1 has got wrong key in orderbook and correct keys in inventory AND allocator_2 has got wrong key in inventory and all correct keys in orderbook
+        allocator_1 = InventoryAllocation(orderbook_sample_1, inventory_sample_1)
+        allocator_2 = InventoryAllocation(orderbook_sample_2, inventory_sample_2)
+        allocator_3 = InventoryAllocation(orderbook_sample_3, inventory_sample_3)
 
-    #     # Error message used in WrongKeysAllocatorError
-    #     error_message = "Function allocate_inventory takes two dictionaries: orderbook and inventory.\nOrderbook must be outcome from parse_orderbook method called on OrderbookParser object.\nInventory must be outcome from parse_inventory method called on InventoryParser object.\nIf they are not, they may not have correct keys.\n"
+        # Error message used in WrongKeysAllocatorError
+        error_message = "Function allocate_inventory takes two dictionaries: orderbook and inventory.\nOrderbook must be outcome from parse_orderbook method called on OrderbookParser object.\nInventory must be outcome from parse_inventory method called on InventoryParser object.\nIf they are not, they may not have correct keys.\n"
 
-    #     # Test case for orderbook_sampel_1 should raise the error
-    #     for vehicle in orderbook_sample_1:
-    #         if vehicle not in ["trailer", "rigid", "ERROR"]:
-    #             with self.assertRaises(WrongKeysAllocatorError) as context:
-    #                 allocator_1.allocate_inventory()
-    #             self.assertEqual(str(context.exception), error_message)
-    #         for entry in orderbook_sample_1[vehicle]:
-    #             for sub_key in entry:
-    #                 if sub_key not in orderbook_correct_keys:
-    #                     with self.assertRaises(WrongKeysAllocatorError) as context:
-    #                         allocator_1.allocate_inventory()
-    #                     self.assertEqual(str(context.exception), error_message)
+        # Test case for orderbook_sampel_1 should raise the error
+        for vehicle in orderbook_sample_1:
+            if vehicle not in ["trailer", "rigid", "ERROR"]:
+                with self.assertRaises(WrongKeysAllocatorError) as context:
+                    allocator_1.allocate_inventory()
+                self.assertEqual(str(context.exception), error_message)
+            for entry in orderbook_sample_1[vehicle]:
+                for sub_key in entry:
+                    if sub_key not in orderbook_correct_keys:
+                        with self.assertRaises(WrongKeysAllocatorError) as context:
+                            allocator_1.allocate_inventory()
+                        self.assertEqual(str(context.exception), error_message)
 
-    #     # Test case for orderbook_sample_2 should process correctly and all outcomes should pass
-    #     orderbook_allocated, inventory_left, orderbook_not_allocated = (
-    #         allocator_2.allocate_inventory()
-    #     )
+        # Test case for orderbook_sample_2 should process correctly and all outcomes should pass
+        orderbook_allocated, inventory_left, orderbook_not_allocated = (
+            allocator_2.allocate_inventory()
+        )
 
-    #     self.assertEqual(orderbook_allocated["rigid"][0]["SKU"], "SKU2")
-    #     self.assertEqual(orderbook_allocated["rigid"][0]["Qty"], 30)
-    #     self.assertEqual(inventory_left["SKU2"], 70)
-    #     self.assertEqual(inventory_left["ABC"], 100)
-    #     self.assertDictEqual(
-    #         orderbook_not_allocated, {"trailer": [], "rigid": [], "error": []}
-    #     )
+        self.assertEqual(orderbook_allocated["rigid"][0]["SKU"], "SKU2")
+        self.assertEqual(orderbook_allocated["rigid"][0]["Qty"], 30)
+        self.assertEqual(inventory_left["SKU2"], 70)
+        self.assertEqual(inventory_left["ABC"], 100)
+        self.assertDictEqual(
+            orderbook_not_allocated, {"trailer": [], "rigid": [], "error": []}
+        )
 
-    #     # Test case for orderbook_sample_3 should raise error due to top level wrong key
-    #     for vehicle in orderbook_sample_3:
-    #         if vehicle not in ["trailer", "rigid", "ERROR"]:
-    #             with self.assertRaises(WrongKeysAllocatorError) as context:
-    #                 allocator_3.allocate_inventory()
-    #             self.assertEqual(str(context.exception), error_message)
-    #         for entry in orderbook_sample_3[vehicle]:
-    #             for sub_key in entry:
-    #                 if sub_key not in orderbook_correct_keys:
-    #                     with self.assertRaises(WrongKeysAllocatorError) as context:
-    #                         allocator_3.allocate_inventory()
-    #                     self.assertEqual(str(context.exception), error_message)
+        # Test case for orderbook_sample_3 should raise error due to top level wrong key
+        for vehicle in orderbook_sample_3:
+            if vehicle not in ["trailer", "rigid", "ERROR"]:
+                with self.assertRaises(WrongKeysAllocatorError) as context:
+                    allocator_3.allocate_inventory()
+                self.assertEqual(str(context.exception), error_message)
+            for entry in orderbook_sample_3[vehicle]:
+                for sub_key in entry:
+                    if sub_key not in orderbook_correct_keys:
+                        with self.assertRaises(WrongKeysAllocatorError) as context:
+                            allocator_3.allocate_inventory()
+                        self.assertEqual(str(context.exception), error_message)
 
     # def test_inventory_allocation_simple_group(self):
     #     """
