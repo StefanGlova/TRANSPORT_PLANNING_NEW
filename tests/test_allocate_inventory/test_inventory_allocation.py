@@ -137,7 +137,7 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 50)
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Volume"], 50)
         self.assertEqual(inventory_left["SKU1"], 0)
-        self.assertEqual(orderbook_not_allocated["trailer"], [])
+        self.assertEqual(orderbook_not_allocated["trailer"][0]["Transport Volume (m3)"], 10.0)
 
 
 

@@ -31,14 +31,16 @@ class InventoryAllocation:
                 try:
                     # Call _allocate_qty private method which returns allocated_qty and unallocated_qty
                     allocated_qty, unallocated_qty = self._allocate_qty(order)
+                    allocated_volume, unallocated_volume = self._recalculate_volume(order, allocated_qty, unallocated_qty)
                     # If allocated_qty is more then 0, add key to order dict and append the order to orderbook_allocated
                     if allocated_qty > 0:
                         order["Allocated Qty"] = allocated_qty
-                        order["Allocated Volume"] = order["Transport Volume (m3)"]
+                        order["Allocated Volume"] = allocated_volume
                         orderbook_allocated[vehicle].append(order)
                     # If unallocated_qty is more then 0, update Qty on the order and append order to orderbook_not_allocated
                     if unallocated_qty > 0:
                         order["Qty"] = unallocated_qty
+                        order["Transport Volume (m3)"] = unallocated_volume
                         orderbook_not_allocated[vehicle].append(order)
                 except KeyError:
                     self.inventory[order["SKU"]] = 0
@@ -60,7 +62,7 @@ class InventoryAllocation:
                 volume = order["Transport Volume (m3)"]
                 due_date = order["Due Date"]
                 order_details = {
-                    "SKU": sku,
+                    "SKU": sku, 
                     "Qty": qty,
                     "Due Date": due_date,
                     "Transport Volume (m3)": volume
@@ -90,6 +92,19 @@ class InventoryAllocation:
 
 
         return orderbook_grouped
+
+    def _recalculate_volume(self, order: dict, allocated_qty: int, unallocated_qty: int) -> float:
+        """
+        Private method to recalculate allocated and unallocated volume for given order.
+        
+        Returns allocated_volume and unallocated volume.
+        """
+        qty = order["Qty"]
+        volume = order["Transport Volume (m3)"]
+        allocated_volume = volume / qty * allocated_qty
+        unallocated_volume = volume / qty * unallocated_qty
+
+        return allocated_volume, unallocated_volume
 
 
 
