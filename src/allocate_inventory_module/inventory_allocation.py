@@ -34,6 +34,7 @@ class InventoryAllocation:
                     # If allocated_qty is more then 0, add key to order dict and append the order to orderbook_allocated
                     if allocated_qty > 0:
                         order["Allocated Qty"] = allocated_qty
+                        order["Allocated Volume"] = order["Transport Volume (m3)"]
                         orderbook_allocated[vehicle].append(order)
                     # If unallocated_qty is more then 0, update Qty on the order and append order to orderbook_not_allocated
                     if unallocated_qty > 0:
