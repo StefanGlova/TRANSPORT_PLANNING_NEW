@@ -494,6 +494,12 @@ class TestInventoryAllocation(unittest.TestCase):
 
         # # Verify the outcome of group_by_customer method
         self.assertEqual(len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2)
+        self.assertEqual(len(grouped_orderbook_allocated["trailer"]), 1)
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC")
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123")  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)    
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 1})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})     
 
 
 if __name__ == "__main__":
