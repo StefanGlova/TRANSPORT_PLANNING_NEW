@@ -612,8 +612,8 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC")
         self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123")  
         self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)    
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})     
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})     
 
 
     def test_inventory_allocation_group_two_customers_same_vehicle_enough_inventory(self):
@@ -688,10 +688,10 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Customer Name"], "XYZ")
         self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Customer Postcode"], "XYZ123")  
         self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Total Volume"], 3)           
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
 
     def test_inventory_allocation_group_three_customers_different_vehicle_not_enough_inventory(self):
         """
@@ -771,6 +771,11 @@ class TestInventoryAllocation(unittest.TestCase):
 
         # Verify the outcome of allocate_inventory method
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 60)
+        self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Volume"], 1)
+        self.assertEqual(orderbook_allocated["trailer"][1]["Allocated Qty"], 10)
+        self.assertEqual(orderbook_allocated["trailer"][1]["Allocated Volume"], 2)
+        self.assertEqual(orderbook_allocated["rigid"][0]["Allocated Qty"], 80)
+        self.assertEqual(orderbook_allocated["rigid"][0]["Allocated Volume"], 40)                
         self.assertEqual(inventory_left["SKU1"], 0)
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
@@ -789,12 +794,12 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Customer Name"], "IJK")
         self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Customer Postcode"], "IJK123")  
         self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Total Volume"], 42)         
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})  
-        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 80, "Due Date": 2023 - 11 - 10, "Transport Volume (m3)": 40})  
-        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Transport Volume (m3)": 2})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
+        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 80, "Due Date": 2023 - 11 - 10, "Allocated Volume": 40})  
+        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
         
 if __name__ == "__main__":
     unittest.main()

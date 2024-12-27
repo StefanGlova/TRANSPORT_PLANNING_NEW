@@ -59,13 +59,13 @@ class InventoryAllocation:
                 customer = order["Customer Name"]
                 sku = order["SKU"]
                 qty = order["Allocated Qty"]
-                volume = order["Transport Volume (m3)"]
+                volume = order["Allocated Volume"]
                 due_date = order["Due Date"]
                 order_details = {
                     "SKU": sku, 
                     "Qty": qty,
                     "Due Date": due_date,
-                    "Transport Volume (m3)": volume
+                    "Allocated Volume": volume
                 }
                 if customer in customers_check_trailer:
                     i = customers_check_trailer.index(customer)
