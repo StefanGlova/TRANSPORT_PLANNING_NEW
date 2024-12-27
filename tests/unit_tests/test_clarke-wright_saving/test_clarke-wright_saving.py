@@ -29,6 +29,11 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         saver = ClarkeWrightSavingCalculator(all_postcodes, orderbook)
         postcodes = saver.select_used_postcodes()
 
+        self.assertIn("ABC123", postcodes)
+        self.assertNotIn("EFG456", postcodes)
+        self.assertEqual(postcodes["ABC123"]["Latitude"], 1.123456)
+        self.assertEqual(postcodes["ABC123"]["Longitude"], 50.123456)
+
 
 
 if __name__ == "__main__":
