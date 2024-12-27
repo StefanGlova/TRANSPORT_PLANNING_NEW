@@ -547,7 +547,7 @@ class TestInventoryAllocation(unittest.TestCase):
                 {
                 'Customer Name',
                 'Customer Postcode',
-                'Total Transport Volume',
+                'Total Volume',
                 'Line Details': 
                     [
                         {
