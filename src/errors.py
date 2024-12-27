@@ -60,3 +60,14 @@ class WrongKeysAllocatorError(Exception):
     def __init__(self):
         error_message = "Function allocate_inventory takes two dictionaries: orderbook and inventory.\nOrderbook must be outcome from parse_orderbook method called on OrderbookParser object.\nInventory must be outcome from parse_inventory method called on InventoryParser object.\nIf they are not, they may not have correct keys.\n"
         super().__init__(error_message)
+
+
+class MissingPostcodeError(Exception):
+    """
+    Custom exception raised when postcode used on order is not in all_postcodes list.
+    """
+
+    def __init__(self, postcode: str):
+        self.postcode = postcode
+        super().__init__(f"Postcode {postcode} is not in postcodes list. Please update postcodes database first")
+

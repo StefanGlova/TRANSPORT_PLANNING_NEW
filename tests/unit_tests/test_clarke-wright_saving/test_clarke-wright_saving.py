@@ -1,5 +1,6 @@
 import unittest
 from src.clarke_wright_saving_module.clarke_wright_saving_calculator import ClarkeWrightSavingCalculator
+from src.errors import MissingPostcodeError
 
 class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
