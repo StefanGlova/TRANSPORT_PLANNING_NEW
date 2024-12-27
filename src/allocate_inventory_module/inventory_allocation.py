@@ -31,7 +31,9 @@ class InventoryAllocation:
                 try:
                     # Call _allocate_qty private method which returns allocated_qty and unallocated_qty
                     allocated_qty, unallocated_qty = self._allocate_qty(order)
-                    allocated_volume, unallocated_volume = self._recalculate_volume(order, allocated_qty, unallocated_qty)
+                    allocated_volume, unallocated_volume = self._recalculate_volume(
+                        order, allocated_qty, unallocated_qty
+                    )
                     # If allocated_qty is more then 0, add key to order dict and append the order to orderbook_allocated
                     if allocated_qty > 0:
                         order["Allocated Qty"] = allocated_qty
@@ -47,7 +49,7 @@ class InventoryAllocation:
                     orderbook_not_allocated[vehicle].append(order)
 
         return orderbook_allocated, self.inventory, orderbook_not_allocated
-    
+
     def group_by_customer(self, orderbook_allocated: dict) -> dict:
         orderbook_grouped = dict()
         customers_check_trailer = []
@@ -62,10 +64,10 @@ class InventoryAllocation:
                 volume = order["Allocated Volume"]
                 due_date = order["Due Date"]
                 order_details = {
-                    "SKU": sku, 
+                    "SKU": sku,
                     "Qty": qty,
                     "Due Date": due_date,
-                    "Allocated Volume": volume
+                    "Allocated Volume": volume,
                 }
                 if customer in customers_check_trailer:
                     i = customers_check_trailer.index(customer)
@@ -79,24 +81,69 @@ class InventoryAllocation:
                         i = customers_check_trailer.index(customer)
                     elif vehicle == "rigid":
                         customers_check_rigid.append(customer)
-                        i = customers_check_rigid.index(customer)                       
+                        i = customers_check_rigid.index(customer)
                     postcode = order["Customer Postcode"]
                     customer_details = {
                         "Customer Name": customer,
                         "Customer Postcode": postcode,
                         "Total Volume": volume,
-                        "Line Details": []
+                        "Line Details": [],
                     }
                     orderbook_grouped[vehicle].append(customer_details)
-                orderbook_grouped[vehicle][i]["Line Details"].append(order_details)                   
-
+                orderbook_grouped[vehicle][i]["Line Details"].append(order_details)
 
         return orderbook_grouped
 
-    def _recalculate_volume(self, order: dict, allocated_qty: int, unallocated_qty: int) -> float:
+    def split_by_volume(
+        self,
+        orderbook_allocated: dict,
+        trailer_max: float,
+        trailer_min: float,
+        rigid_max: float,
+        rigid_min: float,
+        parcel_limit: float,
+    ) -> dict:
+        """
+        This method is called after inventory allocation and group by customer to split orderbook to 3 orderbooks:
+        1. full loads
+        2. parcels
+        3. multidrop loads
+        """
+        full_loads_trailers = list()
+        full_loads_rigids = list()
+        parcels = list()
+        multidrop_loads_trailers = list()
+        multidrop_loads_rigids = list()
+
+        for vehicle, orders in orderbook_allocated.items():
+            for order in orders:
+                volume = order["Total Volume"]
+                if volume <= parcel_limit:
+                    parcels.append(order)
+                elif vehicle == "trailer":
+                    if volume > trailer_min and volume < trailer_max:
+                        full_loads_trailers.append(order)
+                    else:
+                        multidrop_loads_trailers.append(order)
+                elif vehicle == "rigid":
+                    if volume > rigid_min and volume < rigid_max:
+                        full_loads_rigids.append(order)
+                    else:
+                        multidrop_loads_rigids.append(order)
+        return (
+            full_loads_trailers,
+            full_loads_rigids,
+            parcels,
+            multidrop_loads_trailers,
+            multidrop_loads_rigids,
+        )
+
+    def _recalculate_volume(
+        self, order: dict, allocated_qty: int, unallocated_qty: int
+    ) -> float:
         """
         Private method to recalculate allocated and unallocated volume for given order.
-        
+
         Returns allocated_volume and unallocated volume.
         """
         qty = order["Qty"]
@@ -105,8 +152,6 @@ class InventoryAllocation:
         unallocated_volume = volume / qty * unallocated_qty
 
         return allocated_volume, unallocated_volume
-
-
 
     def _allocate_qty(self, order: dict) -> int:
         """
@@ -148,7 +193,7 @@ class InventoryAllocation:
             "SKU",
             "Qty",
             "Due Date",
-            "Transport Volume (m3)"
+            "Transport Volume (m3)",
         ]
 
         for vehicle in self.orderbook:

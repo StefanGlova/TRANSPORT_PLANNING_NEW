@@ -3,11 +3,6 @@ from src.allocate_inventory_module.inventory_allocation import InventoryAllocati
 
 from src.errors import EmptyDatasetError, WrongKeysAllocatorError
 
-TRAILER_MAX = 55
-TRAILER_MIN = 50
-RIGID_MAX = 25
-RIGID_MIN = 20
-PARCEL_LIMIT = 2
 
 class TestInventoryAllocation(unittest.TestCase):
     """
@@ -36,7 +31,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 60
+                    "Transport Volume (m3)": 60,
                 },
             ]
         }
@@ -73,7 +68,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 60
+                    "Transport Volume (m3)": 60,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -81,7 +76,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 30,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 30
+                    "Transport Volume (m3)": 30,
                 },
             ]
         }
@@ -107,8 +102,9 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(inventory_left["SKU2"], 100)
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
-
-    def test_inventory_allocation_simple_case_no_enough_inventory_volume_recalculation(self):
+    def test_inventory_allocation_simple_case_no_enough_inventory_volume_recalculation(
+        self,
+    ):
         """
         Test case similar to simple case, but with not enough inventory to test correct recalulation of allocated volume
         """
@@ -122,7 +118,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 60
+                    "Transport Volume (m3)": 60,
                 },
             ]
         }
@@ -142,9 +138,13 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 50)
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Volume"], 50)
         self.assertEqual(inventory_left["SKU1"], 0)
-        self.assertEqual(orderbook_not_allocated["trailer"][0]["Transport Volume (m3)"], 10.0)
+        self.assertEqual(
+            orderbook_not_allocated["trailer"][0]["Transport Volume (m3)"], 10.0
+        )
 
-    def test_inventory_allocation_two_orders_case_no_enough_inventory_volume_recalculation(self):
+    def test_inventory_allocation_two_orders_case_no_enough_inventory_volume_recalculation(
+        self,
+    ):
         """
         Similar to test_inventory_allocation_two_orders, but testing for volume recalculation if not enough invcentory.
         """
@@ -158,7 +158,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 60
+                    "Transport Volume (m3)": 60,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -166,7 +166,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 30,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 30
+                    "Transport Volume (m3)": 30,
                 },
             ]
         }
@@ -190,12 +190,15 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Qty"], 50)
         self.assertEqual(orderbook_allocated["trailer"][0]["Allocated Volume"], 50)
         self.assertEqual(orderbook_not_allocated["trailer"][0]["Qty"], 10)
-        self.assertEqual(orderbook_not_allocated["trailer"][0]["Transport Volume (m3)"], 10)
+        self.assertEqual(
+            orderbook_not_allocated["trailer"][0]["Transport Volume (m3)"], 10
+        )
         self.assertEqual(orderbook_not_allocated["trailer"][1]["Qty"], 30)
-        self.assertEqual(orderbook_not_allocated["trailer"][1]["Transport Volume (m3)"], 30)
+        self.assertEqual(
+            orderbook_not_allocated["trailer"][1]["Transport Volume (m3)"], 30
+        )
         self.assertEqual(inventory_left["SKU1"], 0)
         self.assertEqual(inventory_left["SKU2"], 100)
-
 
     def test_inventory_allocation_complex_case(self):
         """ """
@@ -210,7 +213,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 1000,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1000
+                    "Transport Volume (m3)": 1000,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -218,7 +221,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 30,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 30
+                    "Transport Volume (m3)": 30,
                 },
                 {
                     "Customer Name": "EFG",
@@ -226,7 +229,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU6",
                     "Qty": 100,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 100
+                    "Transport Volume (m3)": 100,
                 },
                 {
                     "Customer Name": "EFG",
@@ -234,7 +237,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU4",
                     "Qty": 50,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 50
+                    "Transport Volume (m3)": 50,
                 },
                 {
                     "Customer Name": "EFG",
@@ -242,7 +245,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU6",
                     "Qty": 100,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 100
+                    "Transport Volume (m3)": 100,
                 },
                 {
                     "Customer Name": "EFG",
@@ -250,7 +253,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU5",
                     "Qty": 50,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 50
+                    "Transport Volume (m3)": 50,
                 },
                 {
                     "Customer Name": "EFG",
@@ -258,7 +261,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU6",
                     "Qty": 200,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 200
+                    "Transport Volume (m3)": 200,
                 },
             ],
             "rigid": [
@@ -268,7 +271,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 60
+                    "Transport Volume (m3)": 60,
                 },
                 {
                     "Customer Name": "EFG",
@@ -276,7 +279,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU6",
                     "Qty": 100,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 100
+                    "Transport Volume (m3)": 100,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -284,7 +287,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU3",
                     "Qty": 30,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 30
+                    "Transport Volume (m3)": 30,
                 },
                 {
                     "Customer Name": "EFG",
@@ -292,7 +295,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU6",
                     "Qty": 100,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 100
+                    "Transport Volume (m3)": 100,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -300,7 +303,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU5",
                     "Qty": 100,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 100
+                    "Transport Volume (m3)": 100,
                 },
                 {
                     "Customer Name": "EFG",
@@ -308,7 +311,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU6",
                     "Qty": 200,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 100
+                    "Transport Volume (m3)": 100,
                 },
             ],
         }
@@ -432,7 +435,7 @@ class TestInventoryAllocation(unittest.TestCase):
             "SKU",
             "Qty",
             "Due Date",
-            "Transport Volume (m3)"
+            "Transport Volume (m3)",
         ]
 
         inventory_correct_keys = ["SKU", "Qty"]
@@ -446,7 +449,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "ABC": "SKU1",
                     "Qty": 1000,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1000
+                    "Transport Volume (m3)": 1000,
                 }
             ]
         }
@@ -459,7 +462,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 30,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 30
+                    "Transport Volume (m3)": 30,
                 },
             ]
         }
@@ -472,7 +475,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "ABC": "SKU1",
                     "Qty": 1000,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1000
+                    "Transport Volume (m3)": 1000,
                 }
             ],
             "delivery_van": [
@@ -482,7 +485,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "ABC": "SKU1",
                     "Qty": 1000,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1000
+                    "Transport Volume (m3)": 1000,
                 }
             ],
         }
@@ -541,9 +544,9 @@ class TestInventoryAllocation(unittest.TestCase):
 
     def test_inventory_allocation_simple_group(self):
         """
-        Simple test to check if method simple_group in the class InvcentoryAllocation 
-        group orders by customer with common name, postcode, vehicle type, adding total 
-        transport volume and list of line details, such as sku, qty, transport volume 
+        Simple test to check if method simple_group in the class InvcentoryAllocation
+        group orders by customer with common name, postcode, vehicle type, adding total
+        transport volume and list of line details, such as sku, qty, transport volume
         of the line and due date.
         Expected outcome is dict datatype with this structure:
         {
@@ -553,7 +556,7 @@ class TestInventoryAllocation(unittest.TestCase):
                 'Customer Name',
                 'Customer Postcode',
                 'Total Volume',
-                'Line Details': 
+                'Line Details':
                     [
                         {
                         'SKU',
@@ -579,7 +582,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1
+                    "Transport Volume (m3)": 1,
                 },
                 {
                     "Customer Name": "ABC",
@@ -587,7 +590,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 10,
                     "Due Date": 2023 - 11 - 11,
-                    "Transport Volume (m3)": 2
+                    "Transport Volume (m3)": 2,
                 },
             ]
         }
@@ -612,19 +615,42 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
         # # Verify the outcome of group_by_customer method
-        self.assertEqual(len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2)
+        self.assertEqual(
+            len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2
+        )
         self.assertEqual(len(grouped_orderbook_allocated["trailer"]), 1)
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC")
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123")  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)    
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})     
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC"
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123"
+        )
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Line Details"][0],
+            {
+                "SKU": "SKU1",
+                "Qty": 60,
+                "Due Date": 2023 - 11 - 10,
+                "Allocated Volume": 1,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Line Details"][1],
+            {
+                "SKU": "SKU2",
+                "Qty": 10,
+                "Due Date": 2023 - 11 - 11,
+                "Allocated Volume": 2,
+            },
+        )
 
-
-    def test_inventory_allocation_group_two_customers_same_vehicle_enough_inventory(self):
+    def test_inventory_allocation_group_two_customers_same_vehicle_enough_inventory(
+        self,
+    ):
         """
         Testing for inventory allocation and grouping by customer with two different customers with same vehicle type and enough inventory to cover all orders
-   
+
         """
 
         # Create orderbook sample with same customer but two orders
@@ -636,7 +662,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1
+                    "Transport Volume (m3)": 1,
                 },
                 {
                     "Customer Name": "ABC",
@@ -644,7 +670,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 10,
                     "Due Date": 2023 - 11 - 11,
-                    "Transport Volume (m3)": 2
+                    "Transport Volume (m3)": 2,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -652,7 +678,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1
+                    "Transport Volume (m3)": 1,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -660,8 +686,8 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 10,
                     "Due Date": 2023 - 11 - 11,
-                    "Transport Volume (m3)": 2
-                },                
+                    "Transport Volume (m3)": 2,
+                },
             ]
         }
 
@@ -685,23 +711,67 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
         # # Verify the outcome of group_by_customer method
-        self.assertEqual(len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2)
+        self.assertEqual(
+            len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2
+        )
         self.assertEqual(len(grouped_orderbook_allocated["trailer"]), 2)
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC")
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123")  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)   
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Customer Name"], "XYZ")
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Customer Postcode"], "XYZ123")  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Total Volume"], 3)           
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC"
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123"
+        )
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][1]["Customer Name"], "XYZ"
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][1]["Customer Postcode"], "XYZ123"
+        )
+        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Total Volume"], 3)
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Line Details"][0],
+            {
+                "SKU": "SKU1",
+                "Qty": 60,
+                "Due Date": 2023 - 11 - 10,
+                "Allocated Volume": 1,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Line Details"][1],
+            {
+                "SKU": "SKU2",
+                "Qty": 10,
+                "Due Date": 2023 - 11 - 11,
+                "Allocated Volume": 2,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][1]["Line Details"][0],
+            {
+                "SKU": "SKU1",
+                "Qty": 60,
+                "Due Date": 2023 - 11 - 10,
+                "Allocated Volume": 1,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][1]["Line Details"][1],
+            {
+                "SKU": "SKU2",
+                "Qty": 10,
+                "Due Date": 2023 - 11 - 11,
+                "Allocated Volume": 2,
+            },
+        )
 
-    def test_inventory_allocation_group_three_customers_different_vehicle_not_enough_inventory(self):
+    def test_inventory_allocation_group_three_customers_different_vehicle_not_enough_inventory(
+        self,
+    ):
         """
         Testing for inventory allocation and grouping by customer with three different customers with different vehicle type and not enough inventory to cover all orders
-   
+
         """
 
         # Create orderbook sample with same customer but two orders
@@ -713,7 +783,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1
+                    "Transport Volume (m3)": 1,
                 },
                 {
                     "Customer Name": "ABC",
@@ -721,7 +791,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 10,
                     "Due Date": 2023 - 11 - 11,
-                    "Transport Volume (m3)": 2
+                    "Transport Volume (m3)": 2,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -729,7 +799,7 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU1",
                     "Qty": 60,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 1
+                    "Transport Volume (m3)": 1,
                 },
                 {
                     "Customer Name": "XYZ",
@@ -737,17 +807,17 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 10,
                     "Due Date": 2023 - 11 - 11,
-                    "Transport Volume (m3)": 2
-                },                
+                    "Transport Volume (m3)": 2,
+                },
             ],
             "rigid": [
-                 {
+                {
                     "Customer Name": "IJK",
                     "Customer Postcode": "IJK123",
                     "SKU": "SKU1",
                     "Qty": 100,
                     "Due Date": 2023 - 11 - 10,
-                    "Transport Volume (m3)": 50
+                    "Transport Volume (m3)": 50,
                 },
                 {
                     "Customer Name": "IJK",
@@ -755,9 +825,9 @@ class TestInventoryAllocation(unittest.TestCase):
                     "SKU": "SKU2",
                     "Qty": 10,
                     "Due Date": 2023 - 11 - 11,
-                    "Transport Volume (m3)": 2
-                },               
-            ]
+                    "Transport Volume (m3)": 2,
+                },
+            ],
         }
 
         # Create inventory sample with just two skus
@@ -780,52 +850,163 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(orderbook_allocated["trailer"][1]["Allocated Qty"], 10)
         self.assertEqual(orderbook_allocated["trailer"][1]["Allocated Volume"], 2)
         self.assertEqual(orderbook_allocated["rigid"][0]["Allocated Qty"], 80)
-        self.assertEqual(orderbook_allocated["rigid"][0]["Allocated Volume"], 40)                
+        self.assertEqual(orderbook_allocated["rigid"][0]["Allocated Volume"], 40)
         self.assertEqual(inventory_left["SKU1"], 0)
         self.assertEqual(orderbook_not_allocated["trailer"], [])
 
         # # Verify the outcome of group_by_customer method
-        self.assertEqual(len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2)
-        self.assertEqual(len(grouped_orderbook_allocated["trailer"][1]["Line Details"]), 2)
-        self.assertEqual(len(grouped_orderbook_allocated["rigid"][0]["Line Details"]), 2)
+        self.assertEqual(
+            len(grouped_orderbook_allocated["trailer"][0]["Line Details"]), 2
+        )
+        self.assertEqual(
+            len(grouped_orderbook_allocated["trailer"][1]["Line Details"]), 2
+        )
+        self.assertEqual(
+            len(grouped_orderbook_allocated["rigid"][0]["Line Details"]), 2
+        )
         self.assertEqual(len(grouped_orderbook_allocated["trailer"]), 2)
         self.assertEqual(len(grouped_orderbook_allocated["rigid"]), 1)
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC")
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123")  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)   
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Customer Name"], "XYZ")
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Customer Postcode"], "XYZ123")  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Total Volume"], 3)   
-        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Customer Name"], "IJK")
-        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Customer Postcode"], "IJK123")  
-        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Total Volume"], 42)         
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"], [
-            {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1},
-            {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2}
-        ])
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"], [
-            {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1},
-            {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2}
-        ])        
-        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 80, "Due Date": 2023 - 11 - 10, "Allocated Volume": 40})  
-        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
-        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"], [
-            {"SKU": "SKU1", "Qty": 80, "Due Date": 2023 - 11 - 10, "Allocated Volume": 40},
-            {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2}
-        ])        
-
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Customer Name"], "ABC"
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Customer Postcode"], "ABC123"
+        )
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Total Volume"], 3)
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][1]["Customer Name"], "XYZ"
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][1]["Customer Postcode"], "XYZ123"
+        )
+        self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Total Volume"], 3)
+        self.assertEqual(
+            grouped_orderbook_allocated["rigid"][0]["Customer Name"], "IJK"
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["rigid"][0]["Customer Postcode"], "IJK123"
+        )
+        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Total Volume"], 42)
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Line Details"][0],
+            {
+                "SKU": "SKU1",
+                "Qty": 60,
+                "Due Date": 2023 - 11 - 10,
+                "Allocated Volume": 1,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Line Details"][1],
+            {
+                "SKU": "SKU2",
+                "Qty": 10,
+                "Due Date": 2023 - 11 - 11,
+                "Allocated Volume": 2,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Line Details"],
+            [
+                {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 1,
+                },
+                {
+                    "SKU": "SKU2",
+                    "Qty": 10,
+                    "Due Date": 2023 - 11 - 11,
+                    "Allocated Volume": 2,
+                },
+            ],
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][1]["Line Details"][0],
+            {
+                "SKU": "SKU1",
+                "Qty": 60,
+                "Due Date": 2023 - 11 - 10,
+                "Allocated Volume": 1,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][1]["Line Details"][1],
+            {
+                "SKU": "SKU2",
+                "Qty": 10,
+                "Due Date": 2023 - 11 - 11,
+                "Allocated Volume": 2,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["trailer"][0]["Line Details"],
+            [
+                {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 1,
+                },
+                {
+                    "SKU": "SKU2",
+                    "Qty": 10,
+                    "Due Date": 2023 - 11 - 11,
+                    "Allocated Volume": 2,
+                },
+            ],
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["rigid"][0]["Line Details"][0],
+            {
+                "SKU": "SKU1",
+                "Qty": 80,
+                "Due Date": 2023 - 11 - 10,
+                "Allocated Volume": 40,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["rigid"][0]["Line Details"][1],
+            {
+                "SKU": "SKU2",
+                "Qty": 10,
+                "Due Date": 2023 - 11 - 11,
+                "Allocated Volume": 2,
+            },
+        )
+        self.assertEqual(
+            grouped_orderbook_allocated["rigid"][0]["Line Details"],
+            [
+                {
+                    "SKU": "SKU1",
+                    "Qty": 80,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 40,
+                },
+                {
+                    "SKU": "SKU2",
+                    "Qty": 10,
+                    "Due Date": 2023 - 11 - 11,
+                    "Allocated Volume": 2,
+                },
+            ],
+        )
 
     def test_split_orderbook_by_volume_simple(self):
         """
-        This tests methoc split_orderbook_by_volume which splits orderbook to 3 orderbooks:
-        1. full_loads - orders which are just about a full vehicle
+        This tests methoc split_orderbook_by_volume which splits orderbook to 5 orderbooks:
+        1. full_loads_trailers and full_loads_rigids- orders which are just about a full vehicle
         2. parcels - orders which too small
-        3. multidrop_orders - orders which are between the first two
+        3. multidrop_orders_trailers and multidrop_orders_rigids - orders which are between the first two
         """
+        
+        # Testing parameters
+        TRAILER_MAX = 55
+        TRAILER_MIN = 50
+        RIGID_MAX = 25
+        RIGID_MIN = 20
+        PARCEL_LIMIT = 2
 
         orderbook = {
             "trailer": [
@@ -834,81 +1015,87 @@ class TestInventoryAllocation(unittest.TestCase):
                     "Customer Name": "ABC",
                     "Customer Postcode": "ABC123",
                     "Total Volume": 52,
-                    "Line Details": 
-                    [
+                    "Line Details": [
                         {
                             "SKU": "SKU1",
                             "Qty": 50,
                             "Due Date": 2023 - 11 - 10,
-                            "Allocated Volume": 50
-                        }, 
+                            "Allocated Volume": 50,
+                        },
                         {
                             "SKU": "SKU1",
                             "Qty": 2,
                             "Due Date": 2023 - 11 - 10,
-                            "Allocated Volume": 2
-                        }
-                    ]
+                            "Allocated Volume": 2,
+                        },
+                    ],
                 },
                 {
                     # Customer for parcel
                     "Customer Name": "XYZ",
                     "Customer Postcode": "XYZ123",
                     "Total Volume": 1,
-                    "Line Details": 
-                    [
+                    "Line Details": [
                         {
                             "SKU": "SKU1",
                             "Qty": 1,
                             "Due Date": 2023 - 11 - 10,
-                            "Allocated Volume": 0.5
-                        }, 
+                            "Allocated Volume": 0.5,
+                        },
                         {
                             "SKU": "SKU1",
                             "Qty": 1,
                             "Due Date": 2023 - 11 - 10,
-                            "Allocated Volume": 0.5
-                        }
-                    ]
-
-                },    
+                            "Allocated Volume": 0.5,
+                        },
+                    ],
+                },
                 {
                     # Customer for multidrop
                     "Customer Name": "DEF",
                     "Customer Postcode": "DEF123",
                     "Total Volume": 30,
-                    "Line Details": 
-                    [
+                    "Line Details": [
                         {
                             "SKU": "SKU1",
                             "Qty": 15,
                             "Due Date": 2023 - 11 - 10,
-                            "Allocated Volume": 15
-                        }, 
+                            "Allocated Volume": 15,
+                        },
                         {
                             "SKU": "SKU1",
                             "Qty": 15,
                             "Due Date": 2023 - 11 - 10,
-                            "Allocated Volume": 15
-                        }
-                    ]
-                }                           
+                            "Allocated Volume": 15,
+                        },
+                    ],
+                },
             ]
         }
 
         allocator = InventoryAllocation.__new__(InventoryAllocation)
-        full_loads, parcels, multidrop_loads = allocator.split_by_volume(orderbook)
+        (
+            full_loads_trailers,
+            full_loads_rigids,
+            parcels,
+            multidrop_loads_trailers,
+            multidrop_loads_rigids,
+        ) = allocator.split_by_volume(
+            orderbook, TRAILER_MAX, TRAILER_MIN, RIGID_MAX, RIGID_MIN, PARCEL_LIMIT
+        )
 
-        self.assertEqual(len(full_loads["trailer"]), 1)
-        self.assertEqual(len(parcels["trailer"]), 1)
-        self.assertEqual(len(multidrop_loads["trailer"]), 1)
-        self.assertEqual(full_loads["trailer"][0]["Customer Name"], "ABC")
-        self.assertEqual(parcels["trailer"][0]["Customer Name"], "XYZ")
-        self.assertEqual(multidrop_loads["trailer"][0]["Customer Name"], "DEF")
-        self.assertEqual(len(full_loads["trailer"][0]["Line Details"]), 2)
-        self.assertEqual(len(parcels["trailer"][0]["Line Details"]), 2)
-        self.assertEqual(len(multidrop_loads["trailer"][0]["Line Details"]), 2)        
+        self.assertEqual(len(full_loads_trailers), 1)
+        self.assertEqual(len(full_loads_rigids), 0)
+        self.assertEqual(len(parcels), 1)
+        self.assertEqual(len(multidrop_loads_trailers), 1)
+        self.assertEqual(len(multidrop_loads_rigids), 0)
+        self.assertEqual(full_loads_trailers[0]["Customer Name"], "ABC")
+        self.assertEqual(parcels[0]["Customer Name"], "XYZ")
+        self.assertEqual(multidrop_loads_trailers[0]["Customer Name"], "DEF")
+        self.assertEqual(len(full_loads_trailers[0]["Line Details"]), 2)
+        self.assertEqual(len(parcels[0]["Line Details"]), 2)
+        self.assertEqual(len(multidrop_loads_trailers[0]["Line Details"]), 2)
 
-        
+
 if __name__ == "__main__":
     unittest.main()
