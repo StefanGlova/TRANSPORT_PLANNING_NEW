@@ -1,5 +1,5 @@
 import unittest
-
+from src.clarke_wright_saving_module.clarke_wright_saving_calculator import ClarkeWrightSavingCalculator
 
 class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
@@ -27,7 +27,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         }
 
         saver = ClarkeWrightSavingCalculator(all_postcodes, orderbook)
-        postcodes = saver.used_postcodes()
+        postcodes = saver.select_used_postcodes()
 
 
 
