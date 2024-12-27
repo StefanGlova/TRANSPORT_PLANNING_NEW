@@ -3,6 +3,11 @@ from src.allocate_inventory_module.inventory_allocation import InventoryAllocati
 
 from src.errors import EmptyDatasetError, WrongKeysAllocatorError
 
+TRAILER_MAX = 55
+TRAILER_MIN = 50
+RIGID_MAX = 25
+RIGID_MIN = 20
+PARCEL_LIMIT = 2
 
 class TestInventoryAllocation(unittest.TestCase):
     """
@@ -795,11 +800,115 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Customer Postcode"], "IJK123")  
         self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Total Volume"], 42)         
         self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
-        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"], [
+            {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1},
+            {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2}
+        ])
         self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][0], {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1})  
         self.assertEqual(grouped_orderbook_allocated["trailer"][1]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
+        self.assertEqual(grouped_orderbook_allocated["trailer"][0]["Line Details"], [
+            {"SKU": "SKU1", "Qty": 60, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1},
+            {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2}
+        ])        
         self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"][0], {"SKU": "SKU1", "Qty": 80, "Due Date": 2023 - 11 - 10, "Allocated Volume": 40})  
         self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"][1], {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2})  
+        self.assertEqual(grouped_orderbook_allocated["rigid"][0]["Line Details"], [
+            {"SKU": "SKU1", "Qty": 80, "Due Date": 2023 - 11 - 10, "Allocated Volume": 40},
+            {"SKU": "SKU2", "Qty": 10, "Due Date": 2023 - 11 - 11, "Allocated Volume": 2}
+        ])        
+
+
+    def test_split_orderbook_by_volume_simple(self):
+        """
+        This tests methoc split_orderbook_by_volume which splits orderbook to 3 orderbooks:
+        1. full_loads - orders which are just about a full vehicle
+        2. parcels - orders which too small
+        3. multidrop_orders - orders which are between the first two
+        """
+
+        orderbook = {
+            "trailer": [
+                {
+                    # Customer for full_load
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "Total Volume": 52,
+                    "Line Details": 
+                    [
+                        {
+                            "SKU": "SKU1",
+                            "Qty": 50,
+                            "Due Date": 2023 - 11 - 10,
+                            "Allocated Volume": 50
+                        }, 
+                        {
+                            "SKU": "SKU1",
+                            "Qty": 2,
+                            "Due Date": 2023 - 11 - 10,
+                            "Allocated Volume": 2
+                        }
+                    ]
+                },
+                {
+                    # Customer for parcel
+                    "Customer Name": "XYZ",
+                    "Customer Postcode": "XYZ123",
+                    "Total Volume": 1,
+                    "Line Details": 
+                    [
+                        {
+                            "SKU": "SKU1",
+                            "Qty": 1,
+                            "Due Date": 2023 - 11 - 10,
+                            "Allocated Volume": 0.5
+                        }, 
+                        {
+                            "SKU": "SKU1",
+                            "Qty": 1,
+                            "Due Date": 2023 - 11 - 10,
+                            "Allocated Volume": 0.5
+                        }
+                    ]
+
+                },    
+                {
+                    # Customer for multidrop
+                    "Customer Name": "DEF",
+                    "Customer Postcode": "DEF123",
+                    "Total Volume": 30,
+                    "Line Details": 
+                    [
+                        {
+                            "SKU": "SKU1",
+                            "Qty": 15,
+                            "Due Date": 2023 - 11 - 10,
+                            "Allocated Volume": 15
+                        }, 
+                        {
+                            "SKU": "SKU1",
+                            "Qty": 15,
+                            "Due Date": 2023 - 11 - 10,
+                            "Allocated Volume": 15
+                        }
+                    ]
+                }                           
+            ]
+        }
+
+        allocator = InventoryAllocation.__new__(InventoryAllocation)
+        full_loads, parcels, multidrop_loads = allocator.split_by_volume(orderbook)
+
+        self.assertEqual(len(full_loads["trailer"]), 1)
+        self.assertEqual(len(parcels["trailer"]), 1)
+        self.assertEqual(len(multidrop_loads["trailer"]), 1)
+        self.assertEqual(full_loads["trailer"][0]["Customer Name"], "ABC")
+        self.assertEqual(parcels["trailer"][0]["Customer Name"], "XYZ")
+        self.assertEqual(multidrop_loads["trailer"][0]["Customer Name"], "DEF")
+        self.assertEqual(len(full_loads["trailer"][0]["Line Details"]), 2)
+        self.assertEqual(len(parcels["trailer"][0]["Line Details"]), 2)
+        self.assertEqual(len(multidrop_loads["trailer"][0]["Line Details"]), 2)        
+
         
 if __name__ == "__main__":
     unittest.main()
