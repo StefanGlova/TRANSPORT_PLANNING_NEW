@@ -72,7 +72,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         multidrop_loads_rigids = [
                 {
                     "Customer Name": "ABC",
-                    "Customer Postcode": "IJK123",
+                    "Customer Postcode": "ABC123",
                     "Total Volume": 5,
                     "Line Details": {
                         "SKU": "SKU1",
@@ -82,8 +82,8 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
                     },
                 },
                 {
-                    "Customer Name": "DEF",
-                    "Customer Postcode": "ABC123",
+                    "Customer Name": "IJK",
+                    "Customer Postcode": "IJK123",
                     "Total Volume": 5,
                     "Line Details": {
                         "SKU": "SKU1",
@@ -102,11 +102,11 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
         self.assertIn("ABC123", postcodes_trailers)
         self.assertIn("DEF123", postcodes_trailers)
-        self.assertIn("DEF123", postcodes_rigids)
+        self.assertIn("ABC123", postcodes_rigids)
         self.assertIn("IJK123", postcodes_rigids)
         self.assertNotIn("LMN123", postcodes_rigids)
-        self.assertNotIn("OPQ123", postcodes_rigids)
-        self.assertNotIn("RST123", postcodes_trailers)
+        self.assertNotIn("DEF123", postcodes_rigids)
+        self.assertNotIn("IJK123", postcodes_trailers)
         self.assertEqual(postcodes_trailers["ABC123"]["Latitude"], 1.123456)
         self.assertEqual(postcodes_rigids["ABC123"]["Longitude"], 50.123456)
         counter = 0
@@ -114,7 +114,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
             counter += 1
         for _ in postcodes_trailers:
             counter += 1
-        self.assertEqual(counter, 3)
+        self.assertEqual(counter, 4)
 
     def test_used_postcodes_missing_postcode(self):
 
