@@ -115,21 +115,27 @@ class InventoryAllocation:
         multidrop_loads_trailers = list()
         multidrop_loads_rigids = list()
 
-        for vehicle, orders in orderbook_allocated.items():
-            for order in orders:
-                volume = order["Total Volume"]
+        for vehicle, customers in orderbook_allocated.items():
+            for customer in customers:
+                volume = customer["Total Volume"]
                 if volume <= parcel_limit:
-                    parcels.append(order)
+                    parcels.append(customer)
                 elif vehicle == "trailer":
-                    if volume > trailer_min and volume < trailer_max:
-                        full_loads_trailers.append(order)
+                    if volume >= trailer_min:
+                        trailers, reminder = self._split_too_large_customer(customer, trailer_max, trailer_min)
+                        full_loads_trailers.extend(trailers)
+                        if reminder:
+                            multidrop_loads_trailers.extend(reminder)
                     else:
-                        multidrop_loads_trailers.append(order)
+                        multidrop_loads_trailers.append(customer)
                 elif vehicle == "rigid":
-                    if volume > rigid_min and volume < rigid_max:
-                        full_loads_rigids.append(order)
+                    if volume >= rigid_min:
+                        rigids, remidner = self._split_too_large_customer(customer, rigid_max, rigid_min)
+                        full_loads_rigids.extend(rigids)
+                        if reminder:
+                            multidrop_loads_rigids.extend(reminder)
                     else:
-                        multidrop_loads_rigids.append(order)
+                        multidrop_loads_rigids.append(customer)
         return (
             full_loads_trailers,
             full_loads_rigids,
@@ -137,6 +143,46 @@ class InventoryAllocation:
             multidrop_loads_trailers,
             multidrop_loads_rigids,
         )
+
+    def _split_too_large_customer(self, customer: dict, volume_max: float, volume_min: float):
+        """
+        Private method to split orders which are larger then volume of given vehicle. For example, if volume limit of vehicle is 50 and customer volume is 100.
+        """
+
+        loads, reminder = list(), dict()
+        name = customer["Customer Name"]
+        postcode = customer["Customer Postcode"]
+        line_details = customer["Line Details"]
+        total_volume = 0
+        lines = []      
+
+        for line in line_details:
+            order_volume = line["Allocated Volume"]
+            if total_volume + order_volume <= volume_max:
+                total_volume += order_volume
+                lines.append(line)
+            else:
+                load = {"Customer Name": name, "Customer Postcode": postcode, "Total Volume": total_volume, "Line Details": lines}
+                loads.append(load)
+                lines = [line]
+                total_volume = order_volume
+                
+        if total_volume >= volume_min:
+            loads.append({
+                "Customer Name": name,
+                "Customer Postcode": postcode,
+                "Total Volume": total_volume,
+                "Line Details": lines,
+            })
+        else:
+            reminder = {
+                "Customer Name": name,
+                "Customer Postcode": postcode,
+                "Total Volume": total_volume,
+                "Line Details": lines,
+            }
+
+        return loads, reminder
 
     def _recalculate_volume(
         self, order: dict, allocated_qty: int, unallocated_qty: int
