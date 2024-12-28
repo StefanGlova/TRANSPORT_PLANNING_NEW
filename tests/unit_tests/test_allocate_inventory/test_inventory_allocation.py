@@ -1297,7 +1297,7 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(full_loads_trailers[1]["Customer Name"], "ABC")
         self.assertEqual(full_loads_trailers[1]["Customer Postcode"], "ABC123")
         self.assertEqual(full_loads_trailers[1]["Total Volume"], 50)
-        self.assertEqual(len(full_loads_trailers[0]["Line Details"]), 2)
+        self.assertEqual(len(full_loads_trailers[1]["Line Details"]), 2)
         self.assertEqual(full_loads_trailers[1]["Line Details"], [
             {"SKU": "SKU1", "Qty": 25, "Due Date": 2023 - 11 - 10, "Allocated Volume": 25},
             {"SKU": "SKU2", "Qty": 25, "Due Date": 2023 - 11 - 10, "Allocated Volume": 25}

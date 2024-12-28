@@ -102,7 +102,7 @@ class InventoryAllocation:
         rigid_max: float,
         rigid_min: float,
         parcel_limit: float,
-    ) -> dict:
+    ) -> tuple:
         """
         This method is called after inventory allocation and group by customer to split orderbook to 3 orderbooks:
         1. full loads
@@ -125,15 +125,15 @@ class InventoryAllocation:
                         trailers, reminder = self._split_too_large_customer(customer, trailer_max, trailer_min)
                         full_loads_trailers.extend(trailers)
                         if reminder:
-                            multidrop_loads_trailers.extend(reminder)
+                            multidrop_loads_trailers.append(reminder)
                     else:
                         multidrop_loads_trailers.append(customer)
                 elif vehicle == "rigid":
                     if volume >= rigid_min:
-                        rigids, remidner = self._split_too_large_customer(customer, rigid_max, rigid_min)
+                        rigids, reminder = self._split_too_large_customer(customer, rigid_max, rigid_min)
                         full_loads_rigids.extend(rigids)
                         if reminder:
-                            multidrop_loads_rigids.extend(reminder)
+                            multidrop_loads_rigids.append(reminder)
                     else:
                         multidrop_loads_rigids.append(customer)
         return (
@@ -154,18 +154,56 @@ class InventoryAllocation:
         postcode = customer["Customer Postcode"]
         line_details = customer["Line Details"]
         total_volume = 0
-        lines = []      
+        lines = []     
 
         for line in line_details:
-            order_volume = line["Allocated Volume"]
-            if total_volume + order_volume <= volume_max:
-                total_volume += order_volume
-                lines.append(line)
-            else:
-                load = {"Customer Name": name, "Customer Postcode": postcode, "Total Volume": total_volume, "Line Details": lines}
-                loads.append(load)
-                lines = [line]
-                total_volume = order_volume
+            remaining_volume = line["Allocated Volume"]
+            qty = line["Qty"]
+            volume_per_item = remaining_volume / qty
+
+            while remaining_volume > 0:
+
+                if total_volume >= volume_min:
+                    load = {
+                        "Customer Name": name,
+                        "Customer Postcode": postcode,
+                        "Total Volume": total_volume,
+                        "Line Details": lines,                        
+                    }
+                    loads.append(load)
+                    lines = []
+                    total_volume = 0
+
+                if total_volume + remaining_volume <= volume_max:
+                    total_volume += remaining_volume
+                    lines.append({
+                        "SKU": line["SKU"],
+                        "Qty": qty,
+                        "Due Date": line["Due Date"],
+                        "Allocated Volume": remaining_volume,                    
+                    })
+                    remaining_volume = 0
+
+                else:
+                    volume_to_add = volume_max - total_volume
+                    qty_to_add = int(volume_to_add * qty / remaining_volume)
+                    allocated_volume = qty_to_add * volume_per_item
+
+                    if total_volume + allocated_volume < volume_min:
+                        break
+
+                    lines.append({
+                        "SKU": line["SKU"],
+                        "Qty": qty_to_add,
+                        "Due Date": line["Due Date"],
+                        "Allocated Volume": allocated_volume,                       
+                    })
+                    remaining_volume -= allocated_volume
+                    qty -= qty_to_add
+                    load = {"Customer Name": name, "Customer Postcode": postcode, "Total Volume": volume_max, "Line Details": lines}
+                    loads.append(load)
+                    lines = []
+                    total_volume = 0
                 
         if total_volume >= volume_min:
             loads.append({
@@ -174,13 +212,37 @@ class InventoryAllocation:
                 "Total Volume": total_volume,
                 "Line Details": lines,
             })
-        else:
+        elif total_volume > 0:
             reminder = {
                 "Customer Name": name,
                 "Customer Postcode": postcode,
                 "Total Volume": total_volume,
                 "Line Details": lines,
             }
+        
+        # Attempt to add the reminder to existing loads
+        if reminder:
+            for line in reminder["Line Details"]:
+                for load in loads:
+                    if load["Total Volume"] + line["Allocated Volume"] <= volume_max:
+                        load["Line Details"].append(line)
+                        load["Total Volume"] += line["Allocated Volume"]
+                        break
+                else:
+                    # If no load could accommodate the line, it remains in the reminder
+                    reminder = {
+                        "Customer Name": name,
+                        "Customer Postcode": postcode,
+                        "Total Volume": sum(line["Allocated Volume"] for line in reminder["Line Details"]),
+                        "Line Details": [
+                            line for line in reminder["Line Details"]
+                            if line["Allocated Volume"] > 0
+                        ],
+                    }
+                    break
+            else:
+                # If all lines were added, clear the reminder
+                reminder = None
 
         return loads, reminder
 
