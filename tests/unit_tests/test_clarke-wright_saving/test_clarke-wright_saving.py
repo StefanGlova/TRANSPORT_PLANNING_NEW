@@ -11,8 +11,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
             "EFG456": {"Latitude": 1.987654, "Longitude": 50.654987},
         }
 
-        orderbook = {
-            "trailer": [
+        multidrop_loads_trailers = [
                 {
                     "Customer Name": "ABC",
                     "Customer Postcode": "ABC123",
@@ -25,9 +24,9 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
                     },
                 },
             ]
-        }
 
-        saver = ClarkeWrightSavingCalculator(all_postcodes, orderbook)
+
+        saver = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_trailers)
         postcodes = saver.select_used_postcodes()
 
         self.assertIn("ABC123", postcodes)
@@ -46,8 +45,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
             "RST123": {"Latitude": 1.987654, "Longitude": 50.654987},            
         }
 
-        orderbook = {
-            "trailer": [
+        multidrop_loads_trailers = [
                 {
                     "Customer Name": "ABC",
                     "Customer Postcode": "ABC123",
@@ -70,8 +68,8 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
                         "Allocated Volume": 5,
                     },
                 },
-            ],
-            "rigid": [
+            ]
+        multidrop_loads_rigids = [
                 {
                     "Customer Name": "ABC",
                     "Customer Postcode": "IJK123",
@@ -94,22 +92,27 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
                         "Allocated Volume": 5,
                     },
                 },
-            ],            
-        }
+            ]            
 
-        saver = ClarkeWrightSavingCalculator(all_postcodes, orderbook)
-        postcodes = saver.select_used_postcodes()
 
-        self.assertIn("ABC123", postcodes)
-        self.assertIn("DEF123", postcodes)
-        self.assertIn("IJK123", postcodes)
-        self.assertNotIn("LMN123", postcodes)
-        self.assertNotIn("OPQ123", postcodes)
-        self.assertNotIn("RST123", postcodes)
-        self.assertEqual(postcodes["ABC123"]["Latitude"], 1.123456)
-        self.assertEqual(postcodes["ABC123"]["Longitude"], 50.123456)
+        saver_trailers = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_trailers)
+        saver_rigids = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_rigids)
+        postcodes_trailers = saver_trailers.select_used_postcodes()
+        postcodes_rigids = saver_rigids.select_used_postcodes()
+
+        self.assertIn("ABC123", postcodes_trailers)
+        self.assertIn("DEF123", postcodes_trailers)
+        self.assertIn("DEF123", postcodes_rigids)
+        self.assertIn("IJK123", postcodes_rigids)
+        self.assertNotIn("LMN123", postcodes_rigids)
+        self.assertNotIn("OPQ123", postcodes_rigids)
+        self.assertNotIn("RST123", postcodes_trailers)
+        self.assertEqual(postcodes_trailers["ABC123"]["Latitude"], 1.123456)
+        self.assertEqual(postcodes_rigids["ABC123"]["Longitude"], 50.123456)
         counter = 0
-        for _ in postcodes:
+        for _ in postcodes_rigids:
+            counter += 1
+        for _ in postcodes_trailers:
             counter += 1
         self.assertEqual(counter, 3)
 
@@ -123,8 +126,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
             "RST123": {"Latitude": 1.987654, "Longitude": 50.654987},            
         }
 
-        orderbook = {
-            "trailer": [
+        multidrop_loads_trailers = [
                 {
                     "Customer Name": "ABC",
                     "Customer Postcode": "ABC123",
@@ -147,34 +149,9 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
                         "Allocated Volume": 5,
                     },
                 },
-            ],
-            "rigid": [
-                {
-                    "Customer Name": "ABC",
-                    "Customer Postcode": "IJK123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
-                },
-                {
-                    "Customer Name": "DEF",
-                    "Customer Postcode": "ABC123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
-                },
-            ],            
-        }
+            ]
 
-        saver = ClarkeWrightSavingCalculator(all_postcodes, orderbook)
+        saver = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_trailers)
  
         with self.assertRaises(MissingPostcodeError):
             saver.select_used_postcodes()
