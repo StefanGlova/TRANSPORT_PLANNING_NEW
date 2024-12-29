@@ -372,6 +372,21 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertEqual(distance[9]["postcode_2"], "RST123")
         self.assertAlmostEqual(distance[9]["distance"], self._haversine_formula(4.123456, 5.987654, 53.123456, 54.654987), places=2)
 
+
+    def test_calculate_distance_between_each_postcode_and_origin_simple(self):
+        """
+        """
+        postcodes = {
+            "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
+        }
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+        distance_from_origin = saver.calculate_distance_from_origin(postcodes)
+
+        self.assertEqual(len(distance_from_origin), 1)
+        self.assertEqual(distance_from_origin["DEF123"], self._haversine_formula(ORIGIN_LAT, 1.987654, ORIGIN_LONG, 50.654987))
+
+
     def _haversine_formula(self, lat_1: float, lat_2: float, long_1: float, long_2: float, circuity: float = 1.2) -> float:
         from math import pi, sin, cos, acos
 
