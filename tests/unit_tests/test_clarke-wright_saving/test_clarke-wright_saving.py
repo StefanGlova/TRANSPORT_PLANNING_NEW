@@ -158,10 +158,10 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
         saver = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_trailers)
 
-        with self.assertRaises(MissingPostcodeError) as message:
+        with self.assertRaises(MissingPostcodeError) as cm:
             saver.select_used_postcodes()
         
-        self.assertEqual(str(message.exception), "Postcode ABC123 is not in postcodes list. Please update postcodes database first")
+        self.assertEqual(str(cm.exception), "Postcode ABC123 is not in postcodes list. Please update postcodes database first")
 
     def test_postcode_pairs_simple(self):
         """
@@ -265,9 +265,12 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         postcodes = dict()
 
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
-        pairs = saver.create_pairs(postcodes)
+        
 
-        self.assertEqual(pairs, [])
+        with self.assertRaises(PairsCreationError) as cm:
+            pairs = saver.create_pairs(postcodes)
+
+        self.assertEqual(str(cm.exception), "To create pairs, there must be at least 2 postcodes.")
 
     def test_postcode_pairs_single_postcode(self):
         """
@@ -277,10 +280,11 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         postcodes = {"DEF123": {"Latitude": 1.987654, "Longitude": 50.654987}}
 
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
-        pairs = saver.create_pairs(postcodes)
+        
+        with self.assertRaises(PairsCreationError) as cm:
+            pairs = saver.create_pairs(postcodes)
 
-        self.assertEqual(pairs, [])
-
+        self.assertEqual(str(cm.exception), "To create pairs, there must be at least 2 postcodes.")
 
 
 
