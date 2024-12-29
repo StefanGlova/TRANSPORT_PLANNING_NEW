@@ -478,6 +478,38 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
             places=2,
         )
 
+    def test_calculate_saving_simple(self):
+        """
+        Test to calculate saving if two postcodes are delivered together. Simple test, just with 2 postcodes.
+        Result is returned in format of list of touples, sorted by saving value from largest:
+        savings = [(postcode_1, postcode_2, saving), ...]
+        """
+
+        postcodes = {
+            "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
+            "IJK123": {"Latitude": 1.123456, "Longitude": 50.123456},
+        }
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+        pairs = saver.create_pairs(postcodes)
+        distance = saver.calculate_distance(postcodes, pairs, CIRCUITY_FACTOR)
+        distance_from_origin = saver.calculate_distance_from_origin(
+            postcodes, ORIGIN_LAT, ORIGIN_LONG, CIRCUITY_FACTOR
+        )
+        savings = saver.calculate_saving(distance, distance_from_origin)
+
+        self.assertEqual(len(savings), 1)
+        self.assertEqual(
+            savings[0],
+            (
+                "DEF123",
+                "IJK123",
+                distance_from_origin["DEF123"]
+                + distance_from_origin["IJK123"]
+                - distance[0]["distance"],
+            ),
+        )
+
     def _haversine_formula(
         self,
         lat_1: float,
