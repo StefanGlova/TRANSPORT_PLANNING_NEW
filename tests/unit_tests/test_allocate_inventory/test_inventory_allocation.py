@@ -1303,6 +1303,78 @@ class TestInventoryAllocation(unittest.TestCase):
             {"SKU": "SKU2", "Qty": 25, "Due Date": 2023 - 11 - 10, "Allocated Volume": 25}
             ])
 
+    def test_split_orderbook_by_volume_simple_check_for_too_large_order_with_reminder(self):
+        """
+        This tests methoc split_orderbook_by_volume for the case if order it bigger than full load - scenario 3 - order is for more then 1 full load, 
+        but order does need breaking down and splitting same product for more loads with reminder which needs adding to multidrop list.
+        """
+        
+        orderbook = {
+            "trailer": [
+                {
+                    # 1st product needs split, partially to 1 load and partially, together with 2nd product to 2nd load
+                    "Customer Name": "ABC",
+                    "Customer Postcode": "ABC123",
+                    "Total Volume": 130,
+                    "Line Details": [
+                        {
+                            "SKU": "SKU1",
+                            "Qty": 80,
+                            "Due Date": 2023 - 11 - 10,
+                            "Allocated Volume": 80,
+                        },
+                        {
+                            "SKU": "SKU2",
+                            "Qty": 50,
+                            "Due Date": 2023 - 11 - 10,
+                            "Allocated Volume": 50,
+                        },
+                    ],
+                },
+             ]
+        }
+
+        allocator = InventoryAllocation.__new__(InventoryAllocation)
+        (
+            full_loads_trailers,
+            full_loads_rigids,
+            parcels,
+            multidrop_loads_trailers,
+            multidrop_loads_rigids,
+        ) = allocator.split_by_volume(
+            orderbook, TRAILER_MAX, TRAILER_MIN, RIGID_MAX, RIGID_MIN, PARCEL_LIMIT
+        )
+
+        self.assertEqual(len(full_loads_trailers), 2)
+        self.assertEqual(len(full_loads_rigids), 0)
+        self.assertEqual(len(parcels), 0)
+        self.assertEqual(len(multidrop_loads_trailers), 1)
+        self.assertEqual(len(multidrop_loads_rigids), 0)
+
+        self.assertEqual(full_loads_trailers[0]["Customer Name"], "ABC")
+        self.assertEqual(full_loads_trailers[0]["Customer Postcode"], "ABC123")
+        self.assertEqual(full_loads_trailers[0]["Total Volume"], 55)
+        self.assertEqual(len(full_loads_trailers[0]["Line Details"]), 1)
+        self.assertEqual(full_loads_trailers[0]["Line Details"], [
+            {"SKU": "SKU1", "Qty": 55, "Due Date": 2023 - 11 - 10, "Allocated Volume": 55},
+            ])
+
+        self.assertEqual(full_loads_trailers[1]["Customer Name"], "ABC")
+        self.assertEqual(full_loads_trailers[1]["Customer Postcode"], "ABC123")
+        self.assertEqual(full_loads_trailers[1]["Total Volume"], 55)
+        self.assertEqual(len(full_loads_trailers[1]["Line Details"]), 2)
+        self.assertEqual(full_loads_trailers[1]["Line Details"], [
+            {"SKU": "SKU1", "Qty": 25, "Due Date": 2023 - 11 - 10, "Allocated Volume": 25},
+            {"SKU": "SKU2", "Qty": 30, "Due Date": 2023 - 11 - 10, "Allocated Volume": 30}
+            ])
+        
+        self.assertEqual(multidrop_loads_trailers[0]["Customer Name"], "ABC")
+        self.assertEqual(multidrop_loads_trailers[0]["Customer Postcode"], "ABC123")
+        self.assertEqual(multidrop_loads_trailers[0]["Total Volume"], 20)
+        self.assertEqual(len(multidrop_loads_trailers[0]["Line Details"]), 1)
+        self.assertEqual(multidrop_loads_trailers[0]["Line Details"], [
+            {"SKU": "SKU2", "Qty": 20, "Due Date": 2023 - 11 - 10, "Allocated Volume": 20}
+            ])
 
 
 if __name__ == "__main__":
