@@ -161,6 +161,50 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         with self.assertRaises(MissingPostcodeError):
             saver.select_used_postcodes()
 
+    def test_postcode_pairs_simple(self):
+        """
+        Simple test for method which creates postcode pairs.
+        """
+
+        postcodes = {
+            "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
+            "IJK123": {"Latitude": 1.123456, "Longitude": 50.123456},
+            "LMN123": {"Latitude": 1.987654, "Longitude": 50.654987},
+            "OPQ123": {"Latitude": 1.123456, "Longitude": 50.123456},
+            "RST123": {"Latitude": 1.987654, "Longitude": 50.654987},
+        }
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+
+        pairs = saver.create_pairs(postcodes)
+
+        self.assertEqual(len(saver), 10)
+        self.assertIn(("DEF123", "IJK123"), pairs)
+        self.assertIn(("DEF123", "LMN123"), pairs)
+        self.assertIn(("DEF123", "OPQ123"), pairs)
+        self.assertIn(("DEF123", "RST123"), pairs)
+        self.assertIn(("IJK123", "LMN123"), pairs)
+        self.assertIn(("IJK123", "RST123"), pairs)
+        self.assertIn(("IJK123", "OPQ123"), pairs)
+        self.assertIn(("LMN123", "RST123"), pairs)
+        self.assertIn(("LMN123", "IJK123"), pairs)
+        self.assertIn(("OPQ123", "RST123"), pairs)
+        self.assertNotIn(("DEF123", "DEF123"), pairs)
+        self.assertNotIn(("IJK123", "IJK123"), pairs)
+        self.assertNotIn(("LMN123", "LMN123"), pairs)
+        self.assertNotIn(("OPQ123", "OPQ123"), pairs)
+        self.assertNotIn(("RST123", "RST123"), pairs)
+        self.assertIsInstance(pairs[0], tuple)
+        self.assertIsInstance(pairs[1], tuple)
+        self.assertIsInstance(pairs[2], tuple)
+        self.assertIsInstance(pairs[3], tuple)
+        self.assertIsInstance(pairs[4], tuple)
+        self.assertIsInstance(pairs[5], tuple)
+        self.assertIsInstance(pairs[6], tuple)
+        self.assertIsInstance(pairs[7], tuple)
+        self.assertIsInstance(pairs[8], tuple)
+        self.assertIsInstance(pairs[9], tuple)
+
 
 if __name__ == "__main__":
     unittest.main()
