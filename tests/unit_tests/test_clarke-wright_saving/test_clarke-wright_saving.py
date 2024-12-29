@@ -255,6 +255,19 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertIsInstance(pairs[8], tuple)
         self.assertIsInstance(pairs[9], tuple)
 
+    def test_postcode_pairs_empty_input(self):
+        """
+        Tests for empty input
+        """
+
+        postcodes = dict()
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+        pairs = saver.create_pairs(postcodes)
+
+        self.assertEqual(pairs, [])
+
+
 
 if __name__ == "__main__":
     unittest.main()
