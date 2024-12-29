@@ -178,7 +178,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
         pairs = saver.create_pairs(postcodes)
 
-        self.assertEqual(len(saver), 10)
+        self.assertEqual(len(pairs), 10)
         self.assertIn(("DEF123", "IJK123"), pairs)
         self.assertIn(("DEF123", "LMN123"), pairs)
         self.assertIn(("DEF123", "OPQ123"), pairs)
@@ -187,7 +187,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertIn(("IJK123", "RST123"), pairs)
         self.assertIn(("IJK123", "OPQ123"), pairs)
         self.assertIn(("LMN123", "RST123"), pairs)
-        self.assertIn(("LMN123", "IJK123"), pairs)
+        self.assertIn(("LMN123", "OPQ123"), pairs)
         self.assertIn(("OPQ123", "RST123"), pairs)
         self.assertNotIn(("DEF123", "DEF123"), pairs)
         self.assertNotIn(("IJK123", "IJK123"), pairs)

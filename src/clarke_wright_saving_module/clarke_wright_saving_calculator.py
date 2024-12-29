@@ -2,7 +2,7 @@ from src.errors import MissingPostcodeError
 
 
 class ClarkeWrightSavingCalculator:
-    def __init__(self, all_postcodes: dict, orderbook: list):
+    def __init__(self, all_postcodes: dict, orderbook: list) -> dict:
         self.all_postcodes = all_postcodes
         self.orderbook = orderbook
 
@@ -22,3 +22,17 @@ class ClarkeWrightSavingCalculator:
                     raise (MissingPostcodeError(postcode))
 
         return postcodes
+    
+    def create_pairs(self, postcodes: dict) -> list[tuple]:
+        pairs = list()
+        postcodes_list = list(dict.fromkeys(postcodes))
+
+        for i in range(len(postcodes_list)):
+            for j in range(i+1, len(postcodes_list)):
+                pairs.append((postcodes_list[i], postcodes_list[j]))
+
+        return pairs
+
+        
+            
+
