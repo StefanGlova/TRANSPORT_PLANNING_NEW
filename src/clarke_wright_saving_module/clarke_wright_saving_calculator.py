@@ -68,7 +68,7 @@ class ClarkeWrightSavingCalculator:
         origin_lat: float,
         origin_long: float,
         circuity: float = 1.2,
-    ) -> float:
+    ) -> dict:
         """ """
         distance_from_origin = dict()
 
@@ -81,6 +81,30 @@ class ClarkeWrightSavingCalculator:
             distance_from_origin[postcode] = distance
 
         return distance_from_origin
+    
+    def calculate_saving(self, distance: list[dict], distance_from_origin: dict) -> list[tuple]:
+        """
+        """
+        savings = list()
+
+        for data in distance:
+            postcode_1 = data["postcode_1"]
+            postcode_2 = data["postcode_2"]
+            dist = data["distance"]
+            postcode_1_from_origin = distance_from_origin[postcode_1]
+            postcode_2_from_origin = distance_from_origin[postcode_2]
+            saving = postcode_1_from_origin + postcode_2_from_origin - dist
+            savings.append(
+                (
+                    postcode_1,
+                    postcode_2,
+                    saving
+                )
+            )
+        
+        return savings
+
+
 
     def _haversine_formula(
         self,
