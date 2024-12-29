@@ -3,6 +3,7 @@ from src.clarke_wright_saving_module.clarke_wright_saving_calculator import (
     ClarkeWrightSavingCalculator,
 )
 
+
 class TestClarkeWrightSavingCalculatorIntegration(unittest.TestCase):
 
     def test_clarke_wright_saving_calculator_simple(self):
@@ -56,13 +57,18 @@ class TestClarkeWrightSavingCalculatorIntegration(unittest.TestCase):
             f"PC{i:03}": {"Latitude": i, "Longitude": -i} for i in range(1, 1001)
         }
         orderbook = [
-            {"Customer Name": f"Customer {i}", "Customer Postcode": f"PC{i:03}", "Total Volume": 5}
+            {
+                "Customer Name": f"Customer {i}",
+                "Customer Postcode": f"PC{i:03}",
+                "Total Volume": 5,
+            }
             for i in range(1, 500)
         ]
         saver = ClarkeWrightSavingCalculator(all_postcodes, orderbook)
         postcodes = saver.select_used_postcodes()
         pairs = saver.create_pairs(postcodes)
-        self.assertEqual(len(pairs), 124251)  
+        self.assertEqual(len(pairs), 124251)
+
 
 if __name__ == "__main__":
     unittest.main()

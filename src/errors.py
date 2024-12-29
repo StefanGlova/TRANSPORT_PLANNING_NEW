@@ -72,3 +72,12 @@ class MissingPostcodeError(Exception):
         super().__init__(
             f"Postcode {postcode} is not in postcodes list. Please update postcodes database first"
         )
+
+
+class PairsCreationError(Exception):
+    """
+    Custom error raised when trying to crate postcode pairs and there is none or just 1 postcode.
+    """
+
+    def __init__(self):
+        super().__init__("To create pairs, there must be at least 2 postcodes.")

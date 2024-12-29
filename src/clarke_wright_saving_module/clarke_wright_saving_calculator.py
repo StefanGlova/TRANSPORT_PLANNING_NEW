@@ -1,4 +1,4 @@
-from src.errors import MissingPostcodeError
+from src.errors import MissingPostcodeError, PairsCreationError
 
 
 class ClarkeWrightSavingCalculator:
@@ -22,17 +22,16 @@ class ClarkeWrightSavingCalculator:
                     raise (MissingPostcodeError(postcode))
 
         return postcodes
-    
+
     def create_pairs(self, postcodes: dict) -> list[tuple]:
         pairs = list()
         postcodes_list = list(dict.fromkeys(postcodes))
 
+        if len(postcodes_list) < 2:
+            raise PairsCreationError
+
         for i in range(len(postcodes_list)):
-            for j in range(i+1, len(postcodes_list)):
+            for j in range(i + 1, len(postcodes_list)):
                 pairs.append((postcodes_list[i], postcodes_list[j]))
 
         return pairs
-
-        
-            
-

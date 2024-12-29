@@ -2,7 +2,7 @@ import unittest
 from src.clarke_wright_saving_module.clarke_wright_saving_calculator import (
     ClarkeWrightSavingCalculator,
 )
-from src.errors import MissingPostcodeError
+from src.errors import MissingPostcodeError, PairsCreationError
 
 
 class TestClarkeWrightSavingCalculator(unittest.TestCase):
@@ -160,8 +160,11 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
         with self.assertRaises(MissingPostcodeError) as cm:
             saver.select_used_postcodes()
-        
-        self.assertEqual(str(cm.exception), "Postcode ABC123 is not in postcodes list. Please update postcodes database first")
+
+        self.assertEqual(
+            str(cm.exception),
+            "Postcode ABC123 is not in postcodes list. Please update postcodes database first",
+        )
 
     def test_postcode_pairs_simple(self):
         """
@@ -206,7 +209,6 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertIsInstance(pairs[7], tuple)
         self.assertIsInstance(pairs[8], tuple)
         self.assertIsInstance(pairs[9], tuple)
-
 
     def test_postcode_pairs_duplicated_postcodes(self):
         """
@@ -265,12 +267,13 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         postcodes = dict()
 
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
-        
 
         with self.assertRaises(PairsCreationError) as cm:
             pairs = saver.create_pairs(postcodes)
 
-        self.assertEqual(str(cm.exception), "To create pairs, there must be at least 2 postcodes.")
+        self.assertEqual(
+            str(cm.exception), "To create pairs, there must be at least 2 postcodes."
+        )
 
     def test_postcode_pairs_single_postcode(self):
         """
@@ -280,12 +283,13 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         postcodes = {"DEF123": {"Latitude": 1.987654, "Longitude": 50.654987}}
 
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
-        
+
         with self.assertRaises(PairsCreationError) as cm:
             pairs = saver.create_pairs(postcodes)
 
-        self.assertEqual(str(cm.exception), "To create pairs, there must be at least 2 postcodes.")
-
+        self.assertEqual(
+            str(cm.exception), "To create pairs, there must be at least 2 postcodes."
+        )
 
 
 if __name__ == "__main__":
