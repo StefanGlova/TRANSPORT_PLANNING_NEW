@@ -434,6 +434,50 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
             places=2,
         )
 
+    def test_calculate_distance_between_each_postcode_and_origin_complex(self):
+        """
+        Test for method calculate_distance_from_origin, more complex version with 5 postcodes.
+        """
+        postcodes = {
+            "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
+            "IJK123": {"Latitude": 2.123456, "Longitude": 51.123456},
+            "LMN123": {"Latitude": 3.987654, "Longitude": 52.654987},
+            "OPQ123": {"Latitude": 4.123456, "Longitude": 53.123456},
+            "RST123": {"Latitude": 5.987654, "Longitude": 54.654987},
+        }
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+        distance_from_origin = saver.calculate_distance_from_origin(
+            postcodes, ORIGIN_LAT, ORIGIN_LONG, CIRCUITY_FACTOR
+        )
+
+        self.assertEqual(len(distance_from_origin), 5)
+        self.assertAlmostEqual(
+            distance_from_origin["DEF123"],
+            self._haversine_formula(ORIGIN_LAT, 1.987654, ORIGIN_LONG, 50.654987),
+            places=2,
+        )
+        self.assertAlmostEqual(
+            distance_from_origin["IJK123"],
+            self._haversine_formula(ORIGIN_LAT, 2.123456, ORIGIN_LONG, 51.123456),
+            places=2,
+        )
+        self.assertAlmostEqual(
+            distance_from_origin["LMN123"],
+            self._haversine_formula(ORIGIN_LAT, 3.987654, ORIGIN_LONG, 52.654987),
+            places=2,
+        )
+        self.assertAlmostEqual(
+            distance_from_origin["OPQ123"],
+            self._haversine_formula(ORIGIN_LAT, 4.123456, ORIGIN_LONG, 53.123456),
+            places=2,
+        )
+        self.assertAlmostEqual(
+            distance_from_origin["RST123"],
+            self._haversine_formula(ORIGIN_LAT, 5.987654, ORIGIN_LONG, 54.654987),
+            places=2,
+        )
+
     def _haversine_formula(
         self,
         lat_1: float,
