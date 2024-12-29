@@ -69,5 +69,6 @@ class MissingPostcodeError(Exception):
 
     def __init__(self, postcode: str):
         self.postcode = postcode
-        super().__init__(f"Postcode {postcode} is not in postcodes list. Please update postcodes database first")
-
+        super().__init__(
+            f"Postcode {postcode} is not in postcodes list. Please update postcodes database first"
+        )

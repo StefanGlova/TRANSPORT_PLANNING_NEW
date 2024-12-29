@@ -1,6 +1,9 @@
 import unittest
-from src.clarke_wright_saving_module.clarke_wright_saving_calculator import ClarkeWrightSavingCalculator
+from src.clarke_wright_saving_module.clarke_wright_saving_calculator import (
+    ClarkeWrightSavingCalculator,
+)
 from src.errors import MissingPostcodeError
+
 
 class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
@@ -12,19 +15,18 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         }
 
         multidrop_loads_trailers = [
-                {
-                    "Customer Name": "ABC",
-                    "Customer Postcode": "ABC123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
+            {
+                "Customer Name": "ABC",
+                "Customer Postcode": "ABC123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
                 },
-            ]
-
+            },
+        ]
 
         saver = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_trailers)
         postcodes = saver.select_used_postcodes()
@@ -42,61 +44,64 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
             "IJK123": {"Latitude": 1.123456, "Longitude": 50.123456},
             "LMN123": {"Latitude": 1.987654, "Longitude": 50.654987},
             "OPQ123": {"Latitude": 1.123456, "Longitude": 50.123456},
-            "RST123": {"Latitude": 1.987654, "Longitude": 50.654987},            
+            "RST123": {"Latitude": 1.987654, "Longitude": 50.654987},
         }
 
         multidrop_loads_trailers = [
-                {
-                    "Customer Name": "ABC",
-                    "Customer Postcode": "ABC123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
+            {
+                "Customer Name": "ABC",
+                "Customer Postcode": "ABC123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
                 },
-                {
-                    "Customer Name": "DEF",
-                    "Customer Postcode": "DEF123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
+            },
+            {
+                "Customer Name": "DEF",
+                "Customer Postcode": "DEF123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
                 },
-            ]
+            },
+        ]
         multidrop_loads_rigids = [
-                {
-                    "Customer Name": "ABC",
-                    "Customer Postcode": "ABC123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
+            {
+                "Customer Name": "ABC",
+                "Customer Postcode": "ABC123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
                 },
-                {
-                    "Customer Name": "IJK",
-                    "Customer Postcode": "IJK123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
+            },
+            {
+                "Customer Name": "IJK",
+                "Customer Postcode": "IJK123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
                 },
-            ]            
+            },
+        ]
 
-
-        saver_trailers = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_trailers)
-        saver_rigids = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_rigids)
+        saver_trailers = ClarkeWrightSavingCalculator(
+            all_postcodes, multidrop_loads_trailers
+        )
+        saver_rigids = ClarkeWrightSavingCalculator(
+            all_postcodes, multidrop_loads_rigids
+        )
         postcodes_trailers = saver_trailers.select_used_postcodes()
         postcodes_rigids = saver_rigids.select_used_postcodes()
 
@@ -123,36 +128,36 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
             "IJK123": {"Latitude": 1.123456, "Longitude": 50.123456},
             "LMN123": {"Latitude": 1.987654, "Longitude": 50.654987},
             "OPQ123": {"Latitude": 1.123456, "Longitude": 50.123456},
-            "RST123": {"Latitude": 1.987654, "Longitude": 50.654987},            
+            "RST123": {"Latitude": 1.987654, "Longitude": 50.654987},
         }
 
         multidrop_loads_trailers = [
-                {
-                    "Customer Name": "ABC",
-                    "Customer Postcode": "ABC123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
+            {
+                "Customer Name": "ABC",
+                "Customer Postcode": "ABC123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
                 },
-                {
-                    "Customer Name": "DEF",
-                    "Customer Postcode": "DEF123",
-                    "Total Volume": 5,
-                    "Line Details": {
-                        "SKU": "SKU1",
-                        "Qty": 60,
-                        "Due Date": 2023 - 11 - 10,
-                        "Allocated Volume": 5,
-                    },
+            },
+            {
+                "Customer Name": "DEF",
+                "Customer Postcode": "DEF123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
                 },
-            ]
+            },
+        ]
 
         saver = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_trailers)
- 
+
         with self.assertRaises(MissingPostcodeError):
             saver.select_used_postcodes()
 
