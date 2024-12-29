@@ -47,5 +47,22 @@ class TestClarkeWrightSavingCalculatorIntegration(unittest.TestCase):
         self.assertNotIn(("EFG456", "EFG456"), pairs)
         self.assertIsInstance(pairs[0], tuple)
 
+    def test_clarke_wright_saving_calculator_large_dataset(self):
+        """
+        Test integration between select_used_postcodes and create_pairs in large dataset
+        """
+
+        all_postcodes = {
+            f"PC{i:03}": {"Latitude": i, "Longitude": -i} for i in range(1, 1001)
+        }
+        orderbook = [
+            {"Customer Name": f"Customer {i}", "Customer Postcode": f"PC{i:03}", "Total Volume": 5}
+            for i in range(1, 500)
+        ]
+        saver = ClarkeWrightSavingCalculator(all_postcodes, orderbook)
+        postcodes = saver.select_used_postcodes()
+        pairs = saver.create_pairs(postcodes)
+        self.assertEqual(len(pairs), 124251)  
+
 if __name__ == "__main__":
     unittest.main()
