@@ -4,6 +4,9 @@ from src.clarke_wright_saving_module.clarke_wright_saving_calculator import (
 )
 from src.errors import MissingPostcodeError, PairsCreationError
 
+ORIGIN_LAT = 53.484253
+ORIGIN_LONG = -1.18073
+CIRCUITY_FACTOR = 1.2
 
 class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
@@ -290,6 +293,40 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertEqual(
             str(cm.exception), "To create pairs, there must be at least 2 postcodes."
         )
+
+    def test_calculate_distance_between_postcodes_simple(self):
+        """
+        Test whether distance between two postcodes is calculated correctly.
+        Output should be in format of list of dicts
+        distance = [
+        {
+            "postcode_1": "DEF123"
+            "postcode_2": "IJK123"
+            "distance": some floating number
+        },
+        ]
+        """
+        from math import pi, acos, sin, cos
+
+        postcodes = {
+            "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
+            "IJK123": {"Latitude": 1.123456, "Longitude": 50.123456},
+        }
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+        pairs = saver.create_pairs(postcodes)
+        distance = saver.calculate_distance(postcodes, pairs, CIRCUITY_FACTOR)
+
+        expected_distance = 3959 * (acos(sin(1.987654 * pi / 180) * sin(1.123456 * pi / 180)
+                                           + cos(1.987654 * pi / 180) * cos(1.123456 * pi / 180)
+                                           * cos(50.654987 * pi / 180 - 50.123456 * pi / 180)
+                                           )) * CIRCUITY_FACTOR
+
+        self.assertEqual(len(distance), 1)
+        self.assertEqual(distance[0]["postcode_1"], "DEF123")
+        self.assertEqual(distance[0]["postcode_2"], "IJK123")
+        self.assertAlmostEqual(distance[0]["distance"], expected_distance, places=2)
+
 
 
 if __name__ == "__main__":
