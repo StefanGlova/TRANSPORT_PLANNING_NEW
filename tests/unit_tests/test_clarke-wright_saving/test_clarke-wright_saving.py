@@ -8,6 +8,7 @@ ORIGIN_LAT = 53.484253
 ORIGIN_LONG = -1.18073
 CIRCUITY_FACTOR = 1.2
 
+
 class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
     def test_used_postcodes_simple(self):
@@ -315,13 +316,14 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
         pairs = saver.create_pairs(postcodes)
         distance = saver.calculate_distance(postcodes, pairs, CIRCUITY_FACTOR)
-        expected_distance = self._haversine_formula(1.987654, 1.123456, 50.654987, 50.123456)
+        expected_distance = self._haversine_formula(
+            1.987654, 1.123456, 50.654987, 50.123456
+        )
 
         self.assertEqual(len(distance), 1)
         self.assertEqual(distance[0]["postcode_1"], "DEF123")
         self.assertEqual(distance[0]["postcode_2"], "IJK123")
         self.assertAlmostEqual(distance[0]["distance"], expected_distance, places=2)
-
 
     def test_calculate_distance_between_postcodes_complex(self):
         """
@@ -343,58 +345,119 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertEqual(len(distance), 10)
         self.assertEqual(distance[0]["postcode_1"], "DEF123")
         self.assertEqual(distance[0]["postcode_2"], "IJK123")
-        self.assertAlmostEqual(distance[0]["distance"], self._haversine_formula(1.987654, 2.123456, 50.654987, 51.123456), places=2)    
+        self.assertAlmostEqual(
+            distance[0]["distance"],
+            self._haversine_formula(1.987654, 2.123456, 50.654987, 51.123456),
+            places=2,
+        )
         self.assertEqual(distance[1]["postcode_1"], "DEF123")
         self.assertEqual(distance[1]["postcode_2"], "LMN123")
-        self.assertAlmostEqual(distance[1]["distance"], self._haversine_formula(1.987654, 3.987654, 50.654987, 52.654987), places=2)    
+        self.assertAlmostEqual(
+            distance[1]["distance"],
+            self._haversine_formula(1.987654, 3.987654, 50.654987, 52.654987),
+            places=2,
+        )
         self.assertEqual(distance[2]["postcode_1"], "DEF123")
         self.assertEqual(distance[2]["postcode_2"], "OPQ123")
-        self.assertAlmostEqual(distance[2]["distance"], self._haversine_formula(1.987654, 4.123456, 50.654987, 53.123456), places=2)
+        self.assertAlmostEqual(
+            distance[2]["distance"],
+            self._haversine_formula(1.987654, 4.123456, 50.654987, 53.123456),
+            places=2,
+        )
         self.assertEqual(distance[3]["postcode_1"], "DEF123")
         self.assertEqual(distance[3]["postcode_2"], "RST123")
-        self.assertAlmostEqual(distance[3]["distance"], self._haversine_formula(1.987654, 5.987654, 50.654987, 54.654987), places=2)
+        self.assertAlmostEqual(
+            distance[3]["distance"],
+            self._haversine_formula(1.987654, 5.987654, 50.654987, 54.654987),
+            places=2,
+        )
         self.assertEqual(distance[4]["postcode_1"], "IJK123")
         self.assertEqual(distance[4]["postcode_2"], "LMN123")
-        self.assertAlmostEqual(distance[4]["distance"], self._haversine_formula(2.123456, 3.987654, 51.123456, 52.654987), places=2)
+        self.assertAlmostEqual(
+            distance[4]["distance"],
+            self._haversine_formula(2.123456, 3.987654, 51.123456, 52.654987),
+            places=2,
+        )
         self.assertEqual(distance[5]["postcode_1"], "IJK123")
         self.assertEqual(distance[5]["postcode_2"], "OPQ123")
-        self.assertAlmostEqual(distance[5]["distance"], self._haversine_formula(2.123456, 4.123456, 51.123456, 53.123456), places=2)
+        self.assertAlmostEqual(
+            distance[5]["distance"],
+            self._haversine_formula(2.123456, 4.123456, 51.123456, 53.123456),
+            places=2,
+        )
         self.assertEqual(distance[6]["postcode_1"], "IJK123")
         self.assertEqual(distance[6]["postcode_2"], "RST123")
-        self.assertAlmostEqual(distance[6]["distance"], self._haversine_formula(2.123456, 5.987654, 51.123456, 54.654987), places=2)
+        self.assertAlmostEqual(
+            distance[6]["distance"],
+            self._haversine_formula(2.123456, 5.987654, 51.123456, 54.654987),
+            places=2,
+        )
         self.assertEqual(distance[7]["postcode_1"], "LMN123")
         self.assertEqual(distance[7]["postcode_2"], "OPQ123")
-        self.assertAlmostEqual(distance[7]["distance"], self._haversine_formula(3.987654, 4.123456, 52.654987, 53.123456), places=2)
+        self.assertAlmostEqual(
+            distance[7]["distance"],
+            self._haversine_formula(3.987654, 4.123456, 52.654987, 53.123456),
+            places=2,
+        )
         self.assertEqual(distance[8]["postcode_1"], "LMN123")
         self.assertEqual(distance[8]["postcode_2"], "RST123")
-        self.assertAlmostEqual(distance[8]["distance"], self._haversine_formula(3.987654, 5.987654, 52.654987, 54.654987), places=2)
+        self.assertAlmostEqual(
+            distance[8]["distance"],
+            self._haversine_formula(3.987654, 5.987654, 52.654987, 54.654987),
+            places=2,
+        )
         self.assertEqual(distance[9]["postcode_1"], "OPQ123")
         self.assertEqual(distance[9]["postcode_2"], "RST123")
-        self.assertAlmostEqual(distance[9]["distance"], self._haversine_formula(4.123456, 5.987654, 53.123456, 54.654987), places=2)
-
+        self.assertAlmostEqual(
+            distance[9]["distance"],
+            self._haversine_formula(4.123456, 5.987654, 53.123456, 54.654987),
+            places=2,
+        )
 
     def test_calculate_distance_between_each_postcode_and_origin_simple(self):
         """
+        Test for method calculate_distance_from_origin, simple version with just one postcode.
         """
         postcodes = {
             "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
         }
 
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
-        distance_from_origin = saver.calculate_distance_from_origin(postcodes, ORIGIN_LAT, ORIGIN_LONG, CIRCUITY_FACTOR)
+        distance_from_origin = saver.calculate_distance_from_origin(
+            postcodes, ORIGIN_LAT, ORIGIN_LONG, CIRCUITY_FACTOR
+        )
 
         self.assertEqual(len(distance_from_origin), 1)
-        self.assertAlmostEqual(distance_from_origin["DEF123"], self._haversine_formula(ORIGIN_LAT, 1.987654, ORIGIN_LONG, 50.654987), places=2)
+        self.assertAlmostEqual(
+            distance_from_origin["DEF123"],
+            self._haversine_formula(ORIGIN_LAT, 1.987654, ORIGIN_LONG, 50.654987),
+            places=2,
+        )
 
-
-    def _haversine_formula(self, lat_1: float, lat_2: float, long_1: float, long_2: float, circuity: float = 1.2) -> float:
+    def _haversine_formula(
+        self,
+        lat_1: float,
+        lat_2: float,
+        long_1: float,
+        long_2: float,
+        circuity: float = 1.2,
+    ) -> float:
         from math import pi, sin, cos, acos
 
-        haversine_distance = 3959 * (acos(sin(lat_1 * pi / 180) * sin(lat_2 * pi / 180)
-                                    + cos(lat_1 * pi / 180) * cos(lat_2 * pi / 180)
-                                    * cos(long_1 * pi / 180 - long_2 * pi / 180)
-                                    )) * circuity
+        haversine_distance = (
+            3959
+            * (
+                acos(
+                    sin(lat_1 * pi / 180) * sin(lat_2 * pi / 180)
+                    + cos(lat_1 * pi / 180)
+                    * cos(lat_2 * pi / 180)
+                    * cos(long_1 * pi / 180 - long_2 * pi / 180)
+                )
+            )
+            * circuity
+        )
         return haversine_distance
+
 
 if __name__ == "__main__":
     unittest.main()
