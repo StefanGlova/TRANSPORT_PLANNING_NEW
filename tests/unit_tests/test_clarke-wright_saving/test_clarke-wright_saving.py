@@ -315,7 +315,6 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
         pairs = saver.create_pairs(postcodes)
         distance = saver.calculate_distance(postcodes, pairs, CIRCUITY_FACTOR)
-
         expected_distance = self._haversine_formula(1.987654, 1.123456, 50.654987, 50.123456)
 
         self.assertEqual(len(distance), 1)
@@ -324,6 +323,54 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertAlmostEqual(distance[0]["distance"], expected_distance, places=2)
 
 
+    def test_calculate_distance_between_postcodes_complex(self):
+        """
+        Test calculate distance with 5 postcodes which makes 10 pairs
+        """
+
+        postcodes = {
+            "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
+            "IJK123": {"Latitude": 2.123456, "Longitude": 51.123456},
+            "LMN123": {"Latitude": 3.987654, "Longitude": 52.654987},
+            "OPQ123": {"Latitude": 4.123456, "Longitude": 53.123456},
+            "RST123": {"Latitude": 5.987654, "Longitude": 54.654987},
+        }
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+        pairs = saver.create_pairs(postcodes)
+        distance = saver.calculate_distance(postcodes, pairs, CIRCUITY_FACTOR)
+
+        self.assertEqual(len(distance), 10)
+        self.assertEqual(distance[0]["postcode_1"], "DEF123")
+        self.assertEqual(distance[0]["postcode_2"], "IJK123")
+        self.assertAlmostEqual(distance[0]["distance"], self._haversine_formula(1.987654, 2.123456, 50.654987, 51.123456), places=2)    
+        self.assertEqual(distance[1]["postcode_1"], "DEF123")
+        self.assertEqual(distance[1]["postcode_2"], "LMN123")
+        self.assertAlmostEqual(distance[1]["distance"], self._haversine_formula(1.987654, 3.987654, 50.654987, 52.654987), places=2)    
+        self.assertEqual(distance[2]["postcode_1"], "DEF123")
+        self.assertEqual(distance[2]["postcode_2"], "OPQ123")
+        self.assertAlmostEqual(distance[2]["distance"], self._haversine_formula(1.987654, 4.123456, 50.654987, 53.123456), places=2)
+        self.assertEqual(distance[3]["postcode_1"], "DEF123")
+        self.assertEqual(distance[3]["postcode_2"], "RST123")
+        self.assertAlmostEqual(distance[3]["distance"], self._haversine_formula(1.987654, 5.987654, 50.654987, 54.654987), places=2)
+        self.assertEqual(distance[4]["postcode_1"], "IJK123")
+        self.assertEqual(distance[4]["postcode_2"], "LMN123")
+        self.assertAlmostEqual(distance[4]["distance"], self._haversine_formula(2.123456, 3.987654, 51.123456, 52.654987), places=2)
+        self.assertEqual(distance[5]["postcode_1"], "IJK123")
+        self.assertEqual(distance[5]["postcode_2"], "OPQ123")
+        self.assertAlmostEqual(distance[5]["distance"], self._haversine_formula(2.123456, 4.123456, 51.123456, 53.123456), places=2)
+        self.assertEqual(distance[6]["postcode_1"], "IJK123")
+        self.assertEqual(distance[6]["postcode_2"], "RST123")
+        self.assertAlmostEqual(distance[6]["distance"], self._haversine_formula(2.123456, 5.987654, 51.123456, 54.654987), places=2)
+        self.assertEqual(distance[7]["postcode_1"], "LMN123")
+        self.assertEqual(distance[7]["postcode_2"], "OPQ123")
+        self.assertAlmostEqual(distance[7]["distance"], self._haversine_formula(3.987654, 4.123456, 52.654987, 53.123456), places=2)
+        self.assertEqual(distance[8]["postcode_1"], "LMN123")
+        self.assertEqual(distance[8]["postcode_2"], "RST123")
+        self.assertAlmostEqual(distance[8]["distance"], self._haversine_formula(3.987654, 5.987654, 52.654987, 54.654987), places=2)
+        self.assertEqual(distance[9]["postcode_1"], "OPQ123")
+        self.assertEqual(distance[9]["postcode_2"], "RST123")
+        self.assertAlmostEqual(distance[9]["distance"], self._haversine_formula(4.123456, 5.987654, 53.123456, 54.654987), places=2)
 
     def _haversine_formula(self, lat_1: float, lat_2: float, long_1: float, long_2: float, circuity: float = 1.2) -> float:
         from math import pi, sin, cos, acos
