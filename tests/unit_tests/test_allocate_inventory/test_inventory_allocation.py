@@ -1236,7 +1236,7 @@ class TestInventoryAllocation(unittest.TestCase):
         self.assertEqual(len(full_loads_trailers[5]["Line Details"]), 1)
         self.assertEqual(full_loads_trailers[5]["Line Details"], [
             {"SKU": "SKU1", "Qty": 10, "Due Date": 2023 - 11 - 10, "Allocated Volume": 52}
-            ])              
+            ])
 
     def test_split_orderbook_by_volume_too_large_order_breaking_down_order(self):
         """
@@ -1448,6 +1448,41 @@ class TestInventoryAllocation(unittest.TestCase):
             {"SKU": "SKU2", "Qty": 1, "Due Date": 2023 - 11 - 10, "Allocated Volume": 1}
             ])
 
+
+    def test_split_orderbook_by_volume_complex(self):
+        """
+        This tests methoc split_orderbook_by_volume complex orderbook.
+        """
+        from tests.unit_tests.test_allocate_inventory.test_data.test_data_complex_split_orderbook import orderbook
+        from tests.unit_tests.test_allocate_inventory.test_data.test_data_complex_split_result import full_loads_trailers_result, full_loads_rigids_result, parcels_result, multidrop_loads_trailers_result, multidrop_loads_rigids_result
+
+        self.maxDiff = None
+
+        allocator = InventoryAllocation.__new__(InventoryAllocation)
+        (
+            full_loads_trailers,
+            full_loads_rigids,
+            parcels,
+            multidrop_loads_trailers,
+            multidrop_loads_rigids,
+        ) = allocator.split_by_volume(
+            orderbook, TRAILER_MAX, TRAILER_MIN, RIGID_MAX, RIGID_MIN, PARCEL_LIMIT
+        )
+
+        for i, result in enumerate(full_loads_trailers_result):
+            self.assertEqual(full_loads_trailers[i], result)
+
+        for i, result in enumerate(full_loads_rigids_result):
+            self.assertEqual(full_loads_rigids[i], result)
+
+        for i, result in enumerate(parcels_result):
+            self.assertEqual(parcels[i], result)
+        
+        for i, result in enumerate(multidrop_loads_trailers_result):
+            self.assertEqual(multidrop_loads_trailers[i], result)
+        
+        for i, result in enumerate(multidrop_loads_rigids_result):
+            self.assertEqual(multidrop_loads_rigids[i], result)
 
 
 
