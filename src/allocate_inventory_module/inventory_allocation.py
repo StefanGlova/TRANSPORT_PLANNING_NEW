@@ -125,7 +125,10 @@ class InventoryAllocation:
                         trailers, reminder = self._split_too_large_customer(customer, trailer_max, trailer_min)
                         full_loads_trailers.extend(trailers)
                         if reminder:
-                            multidrop_loads_trailers.append(reminder)
+                            if reminder["Total Volume"] <=parcel_limit:
+                                parcels.append(reminder)
+                            else:
+                                multidrop_loads_trailers.append(reminder)
                     else:
                         multidrop_loads_trailers.append(customer)
                 elif vehicle == "rigid":
@@ -133,7 +136,10 @@ class InventoryAllocation:
                         rigids, reminder = self._split_too_large_customer(customer, rigid_max, rigid_min)
                         full_loads_rigids.extend(rigids)
                         if reminder:
-                            multidrop_loads_rigids.append(reminder)
+                            if reminder["Total Volume"] <=parcel_limit:
+                                parcels.append(reminder)
+                            else:                            
+                                multidrop_loads_rigids.append(reminder)
                     else:
                         multidrop_loads_rigids.append(customer)
         return (
