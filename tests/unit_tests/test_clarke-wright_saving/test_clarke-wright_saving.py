@@ -306,7 +306,6 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         },
         ]
         """
-        from math import pi, acos, sin, cos
 
         postcodes = {
             "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
@@ -317,10 +316,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         pairs = saver.create_pairs(postcodes)
         distance = saver.calculate_distance(postcodes, pairs, CIRCUITY_FACTOR)
 
-        expected_distance = 3959 * (acos(sin(1.987654 * pi / 180) * sin(1.123456 * pi / 180)
-                                           + cos(1.987654 * pi / 180) * cos(1.123456 * pi / 180)
-                                           * cos(50.654987 * pi / 180 - 50.123456 * pi / 180)
-                                           )) * CIRCUITY_FACTOR
+        expected_distance = self._haversine_formula(1.987654, 1.123456, 50.654987, 50.123456)
 
         self.assertEqual(len(distance), 1)
         self.assertEqual(distance[0]["postcode_1"], "DEF123")
@@ -328,6 +324,15 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertAlmostEqual(distance[0]["distance"], expected_distance, places=2)
 
 
+
+    def _haversine_formula(self, lat_1: float, lat_2: float, long_1: float, long_2: float, circuity: float = 1.2) -> float:
+        from math import pi, sin, cos, acos
+
+        haversine_distance = 3959 * (acos(sin(lat_1 * pi / 180) * sin(lat_2 * pi / 180)
+                                    + cos(lat_1 * pi / 180) * cos(lat_2 * pi / 180)
+                                    * cos(long_1 * pi / 180 - long_2 * pi / 180)
+                                    )) * circuity
+        return haversine_distance
 
 if __name__ == "__main__":
     unittest.main()
