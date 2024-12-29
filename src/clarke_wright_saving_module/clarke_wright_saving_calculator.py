@@ -59,6 +59,21 @@ class ClarkeWrightSavingCalculator:
             )
         
         return distance
+    
+    def calculate_distance_from_origin(self, postcodes: dict, origin_lat: float, origin_long: float, circuity: float = 1.2) -> float:
+        """
+        """
+        distance_from_origin = dict()
+
+        for postcode in postcodes:
+            lat = postcodes[postcode]["Latitude"]
+            long = postcodes[postcode]["Longitude"]
+            distance = self._haversine_formula(lat, origin_lat, long, origin_long, circuity)
+            distance_from_origin[postcode] = distance
+
+        return distance_from_origin
+
+
 
     def _haversine_formula(self, lat_1: float, lat_2: float, long_1: float, long_2: float, circuity: float = 1.2) -> float:
         from math import pi, sin, cos, acos

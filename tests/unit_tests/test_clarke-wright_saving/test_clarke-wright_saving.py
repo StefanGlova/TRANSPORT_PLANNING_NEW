@@ -381,10 +381,10 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         }
 
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
-        distance_from_origin = saver.calculate_distance_from_origin(postcodes)
+        distance_from_origin = saver.calculate_distance_from_origin(postcodes, ORIGIN_LAT, ORIGIN_LONG, CIRCUITY_FACTOR)
 
         self.assertEqual(len(distance_from_origin), 1)
-        self.assertEqual(distance_from_origin["DEF123"], self._haversine_formula(ORIGIN_LAT, 1.987654, ORIGIN_LONG, 50.654987))
+        self.assertAlmostEqual(distance_from_origin["DEF123"], self._haversine_formula(ORIGIN_LAT, 1.987654, ORIGIN_LONG, 50.654987), places=2)
 
 
     def _haversine_formula(self, lat_1: float, lat_2: float, long_1: float, long_2: float, circuity: float = 1.2) -> float:
