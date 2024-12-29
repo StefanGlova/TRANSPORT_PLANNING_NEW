@@ -267,6 +267,17 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
         self.assertEqual(pairs, [])
 
+    def test_postcode_pairs_single_postcode(self):
+        """
+        Test for just 1 postcode
+        """
+
+        postcodes = {"DEF123": {"Latitude": 1.987654, "Longitude": 50.654987}}
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+        pairs = saver.create_pairs(postcodes)
+
+        self.assertEqual(pairs, [])
 
 
 if __name__ == "__main__":
