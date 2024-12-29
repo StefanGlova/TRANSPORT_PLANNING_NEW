@@ -158,8 +158,10 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
 
         saver = ClarkeWrightSavingCalculator(all_postcodes, multidrop_loads_trailers)
 
-        with self.assertRaises(MissingPostcodeError):
+        with self.assertRaises(MissingPostcodeError) as message:
             saver.select_used_postcodes()
+        
+        self.assertEqual(str(message.exception), "Postcode ABC123 is not in postcodes list. Please update postcodes database first")
 
     def test_postcode_pairs_simple(self):
         """
