@@ -316,9 +316,6 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
         pairs = saver.create_pairs(postcodes)
         distance = saver.calculate_distance(postcodes, pairs, CIRCUITY_FACTOR)
-        expected_distance = self._haversine_formula(
-            1.987654, 1.123456, 50.654987, 50.123456
-        )
 
         self.assertEqual(len(distance), 1)
         self.assertEqual(distance[0]["postcode_1"], "DEF123")
