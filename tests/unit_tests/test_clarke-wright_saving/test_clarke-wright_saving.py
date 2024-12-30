@@ -323,7 +323,7 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertEqual(len(distance), 1)
         self.assertEqual(distance[0]["postcode_1"], "DEF123")
         self.assertEqual(distance[0]["postcode_2"], "IJK123")
-        self.assertAlmostEqual(distance[0]["distance"], expected_distance, places=2)
+        self.assertAlmostEqual(distance[0]["distance"], 84.1169, places=2)
 
     def test_calculate_distance_between_postcodes_complex(self):
         """
