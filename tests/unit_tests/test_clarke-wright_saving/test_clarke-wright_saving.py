@@ -322,6 +322,25 @@ class TestClarkeWrightSavingCalculator(unittest.TestCase):
         self.assertEqual(distance[0]["postcode_2"], "IJK123")
         self.assertAlmostEqual(distance[0]["distance"], 84.1169, places=2)
 
+    def test_calculate_distance_between_two_postcodes_with_same_coordinates(self):
+        """
+        Test whether distance between two postcodes with the same coordinates is equal 0.
+        """
+
+        postcodes = {
+            "DEF123": {"Latitude": 1.987654, "Longitude": 50.654987},
+            "DEF121": {"Latitude": 1.987654, "Longitude": 50.654987},
+        }
+
+        saver = ClarkeWrightSavingCalculator.__new__(ClarkeWrightSavingCalculator)
+        pairs = saver.create_pairs(postcodes)
+        distance = saver.calculate_distance(postcodes, pairs, CIRCUITY_FACTOR)
+
+        self.assertEqual(len(distance), 1)
+        self.assertEqual(distance[0]["postcode_1"], "DEF123")
+        self.assertEqual(distance[0]["postcode_2"], "DEF121")
+        self.assertAlmostEqual(distance[0]["distance"], 0, places=2)
+
     def test_calculate_distance_between_postcodes_complex(self):
         """
         Test calculate distance with 5 postcodes which makes 10 pairs
