@@ -1,5 +1,7 @@
 import unittest
 
+from src.clarke_wright_vehicle_module.clarke_wright_vehicle_planner import ClarkeWrightVehiclePlanner
+
 
 # Testing parameters
 TRAILER_MAX = 55
