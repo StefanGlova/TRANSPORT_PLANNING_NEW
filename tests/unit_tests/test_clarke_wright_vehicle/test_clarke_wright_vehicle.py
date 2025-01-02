@@ -40,5 +40,65 @@ class TestClarkeWrightVehiclePlanner(unittest.TestCase):
         self.assertEqual(postcodes_count["ABC123"], 1)
 
 
+    def test_postcodes_count_more_postcodes_all_same(self):
+        """
+        Test count of more then one postcode if all are same.
+        """
+
+
+        multidrop_loads_trailers = [
+            {
+                "Customer Name": "ABC",
+                "Customer Postcode": "ABC123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
+                },
+            },
+            {
+                "Customer Name": "DEF",
+                "Customer Postcode": "ABC123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
+                },
+            },
+            {
+                "Customer Name": "GHI",
+                "Customer Postcode": "ABC123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
+                },
+            },
+            {
+                "Customer Name": "JKL",
+                "Customer Postcode": "ABC123",
+                "Total Volume": 5,
+                "Line Details": {
+                    "SKU": "SKU1",
+                    "Qty": 60,
+                    "Due Date": 2023 - 11 - 10,
+                    "Allocated Volume": 5,
+                },
+            },
+        ]
+
+        planner = ClarkeWrightVehiclePlanner()
+        postcodes_count = planner.count_postcodes(orderbook=multidrop_loads_trailers)
+
+        self.assertEqual(len(postcodes_count), 1)
+        self.assertEqual(postcodes_count["ABC123"], 4)
+
+
 if __name__ == "__main__":
     unittest.main()
